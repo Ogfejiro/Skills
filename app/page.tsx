@@ -10,10 +10,10 @@ const page = () => {
   return (
     <div>
       <HomeView/>
+      <SponsorsSection/>
       <AboutSection/>
       <WhyAttendSection/>
       <SpeakersSection/>
-      <SponsorsSection/>
       <Footer/>
     </div>
   )

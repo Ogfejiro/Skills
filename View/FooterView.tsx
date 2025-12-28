@@ -1,4 +1,5 @@
-import { Twitter, Discord, MessageCircle } from 'lucide-react';
+import { Twitter, Disc, MessageCircle } from 'lucide-react';
+
 
 const Footer = () => {
   return (
@@ -27,7 +28,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             className="text-gray-400 hover:text-white transition"
           >
-            <Discord className="w-6 h-6" />
+            <Disc className="w-6 h-6" />
           </a>
 
           {/* Telegram */}
