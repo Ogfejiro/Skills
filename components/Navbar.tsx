@@ -30,8 +30,8 @@ export default function Navbar() {
       className={`fixed top-0 md:top-4 left-0 md:left-1/2 md:-translate-x-1/2 z-50 w-full md:w-[95%] md:max-w-6xl px-4 md:px-6 py-3 transition-all duration-300
       ${
         scrolled
-          ? "bg-black/95 backdrop-blur-xl border-b md:border border-gold/20 shadow-2xl shadow-gold/5"
-          : "bg-black/95 md:bg-black/40 backdrop-blur-lg border-b md:border border-gold/10"
+          ? "bg-black backdrop-blur-xl border-b md:border border-gold/20 shadow-2xl shadow-gold/5"
+          : "bg-black md:bg-black/40 backdrop-blur-lg border-b md:border border-gold/10"
       } md:rounded-2xl`}
     >
       <div className="container mx-auto flex items-center justify-between">
@@ -41,8 +41,8 @@ export default function Navbar() {
             <div className="relative w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden">
               {/* Your logo - Fixed image path */}
               <div className="relative w-8 h-8 md:w-10 md:h-10">
-                <Image 
-                  src="/images/hbd.png" 
+                <Image
+                  src="/images/hds.jpg" 
                   alt="LoFT3 Logo" 
                   width={32}
                   height={32}
@@ -96,7 +96,7 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop - Changed to solid black for mobile */}
+            {/* Backdrop - Solid black for mobile */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

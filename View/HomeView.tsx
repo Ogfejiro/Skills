@@ -1,4 +1,4 @@
-// app/page.tsx
+// app/page.tsx (or View/HomeView.tsx if that's your actual file)
 'use client';
 
 import { motion } from 'framer-motion';
@@ -21,15 +21,14 @@ import {
   Infinity
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
-import SplitText from '../components/SplitText'; // Import your SplitText component
 
 export default function HomePage() {
   const xAccountLink = "https://twitter.com/YourTwitterHandle";
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
-    // CHANGE THIS to your Valentine event image URL or local path
-    valentineEvent: "/images/valentine-event.jpg", // Your image path here
+    // CHANGE THIS to your Valentine event video URL or local path
+    valentineEvent: "/images/video2.mp4", // Your video path here
     
     // Other events (keep as is)
     musicFestival: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2070&auto=format&fit=crop",
@@ -68,33 +67,50 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              {/* SplitText for "WELCOME TO LOFTE-3" */}
-              <div className="mb-6">
-                <div className="mb-4">
-                  {/* Using SplitText for the entire phrase */}
-                  <SplitText
-                    text="WELCOME TO LOFTE-3"
-                    tag="h1"
-                    className="text-4xl md:text-7xl font-bold"
-                    splitType="words"
-                    delay={100}
-                    duration={0.8}
-                    from={{ opacity: 0, y: 40 }}
-                    to={{ opacity: 1, y: 0 }}
-                    textAlign="center"
-                  />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6 }}
+                className="mb-6"
+              >
+                {/* Split text animation for "WELCOME TO" */}
+                <div className="flex justify-center gap-2 md:gap-4 flex-wrap mb-4">
+                  {["WELCOME", "TO"].map((word, index) => (
+                    <motion.span
+                      key={word}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ 
+                        delay: index * 0.2, 
+                        duration: 0.6,
+                        ease: "easeOut"
+                      }}
+                      className="text-4xl md:text-5xl font-bold text-white"
+                    >
+                      {word}
+                    </motion.span>
+                  ))}
                 </div>
                 
-                {/* Fade in for the subtitle */}
-                <motion.h2
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.6 }}
-                  className="text-3xl md:text-4xl text-gray-300 mb-8"
+                {/* LOFTE-3 with gold gradient */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.4, duration: 0.6 }}
+                  className="text-5xl md:text-7xl font-bold"
                 >
-                  Where <span className="text-gold font-bold">Web3</span> Meets Celebration
-                </motion.h2>
+                  <span className="gold-gradient">LOFTE-3</span>
+                </motion.div>
               </motion.div>
+              
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.6 }}
+                className="text-3xl md:text-4xl text-gray-300 mb-8"
+              >
+                Where <span className="text-gold font-bold">Web3</span> Meets Celebration
+              </motion.h2>
             </motion.div>
 
             {/* DESCRIPTION with Fade-up */}
@@ -136,7 +152,7 @@ export default function HomePage() {
                         }}
                         transition={{ 
                           duration: 3,
-                          repeat: Infinity,
+                      
                           ease: "easeInOut"
                         }}
                         className="absolute inset-0 text-gold/50"
@@ -192,7 +208,7 @@ export default function HomePage() {
                   "0 0 60px rgba(212, 175, 55, 0.2)"
                 ]
               }}
-              transition={{ duration: 2, repeat: Infinity }}
+              transition={{ duration: 2 }}
               className="absolute -inset-4 bg-gold/10 rounded-2xl blur-xl"
             />
             
@@ -264,7 +280,7 @@ export default function HomePage() {
               <span>Learn More About Us</span>
               <motion.div
                 animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
+                transition={{ duration: 1.5 }}
               >
                 <ExternalLink className="w-5 h-5" />
               </motion.div>
@@ -296,12 +312,12 @@ export default function HomePage() {
         
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 20, ease: "linear" }}
           className="absolute -top-40 -right-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl"
         />
         <motion.div
           animate={{ rotate: -360 }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 25,  ease: "linear" }}
           className="absolute -bottom-40 -left-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl"
         />
 
@@ -374,7 +390,7 @@ export default function HomePage() {
 
                 {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Image Side */}
+                  {/* Video Side */}
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -386,15 +402,14 @@ export default function HomePage() {
                       whileHover={{ scale: 1.02 }}
                       className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
                     >
-                      {/* YOUR IMAGE HERE - Replace with your Valentine event image */}
-                      <motion.img
-                        initial={{ scale: 1.1 }}
-                        whileInView={{ scale: 1 }}
-                        transition={{ duration: 1.2 }}
-                        viewport={{ once: true }}
+                      {/* Valentine Event Video */}
+                      <video
                         src={eventImages.valentineEvent}
-                        alt="LOFTE-3 Dinner Night and Pool Party"
                         className="w-full h-64 md:h-80 object-cover"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
                       />
                       
                       <motion.div
@@ -525,7 +540,7 @@ export default function HomePage() {
                         <motion.a
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          href="https://forms.gle/hGhEC5kq3yGdV3mdA"
+                          href="https://forms.gle/gwhB683FptSMNsE39"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20"

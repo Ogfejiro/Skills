@@ -736,20 +736,8 @@ export default function WhyAttendPage() {
       </section>
 
       {/* Footer with Fade In */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="border-t border-gold/10 py-8"
-      >
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-500 text-sm">
-            © {new Date().getFullYear()} LOFT3. All rights reserved. 
-            <span className="text-gold ml-2">Where Culture Meets Web3</span>
-          </p>
-        </div>
-      </motion.footer>
+     
+      
     </main>
   );
 }
