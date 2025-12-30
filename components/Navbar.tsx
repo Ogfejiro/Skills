@@ -1,3 +1,4 @@
+// components/Navbar.tsx
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -26,25 +27,25 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl px-6 py-3 transition-all duration-300
+      className={`fixed top-0 md:top-4 left-0 md:left-1/2 md:-translate-x-1/2 z-50 w-full md:w-[95%] md:max-w-6xl px-4 md:px-6 py-3 transition-all duration-300
       ${
         scrolled
-          ? "bg-black/80 backdrop-blur-xl border border-gold/20 shadow-2xl shadow-gold/5"
-          : "bg-black/40 backdrop-blur-lg border border-gold/10"
-      } rounded-2xl`}
+          ? "bg-black/95 backdrop-blur-xl border-b md:border border-gold/20 shadow-2xl shadow-gold/5"
+          : "bg-black/95 md:bg-black/40 backdrop-blur-lg border-b md:border border-gold/10"
+      } md:rounded-2xl`}
     >
-      <div className="flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between">
         {/* LOGO with Web3 flair */}
         <div className="flex items-center gap-3">
           <div className="relative">
-            <div className="relative w-12 h-12 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden">
-              {/* Your logo */}
-              <div className="relative w-10 h-10">
+            <div className="relative w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden">
+              {/* Your logo - Fixed image path */}
+              <div className="relative w-8 h-8 md:w-10 md:h-10">
                 <Image 
                   src="/images/hbd.png" 
                   alt="LoFT3 Logo" 
-                  width={40} 
-                  height={40}
+                  width={32}
+                  height={32}
                   className="object-contain"
                   priority
                 />
@@ -58,15 +59,15 @@ export default function Navbar() {
             />
           </div>
           <div>
-            <div className="text-gold font-extrabold tracking-wider text-2xl">
+            <div className="text-gold font-extrabold tracking-wider text-xl md:text-2xl">
               <span className="text-white">Lo</span>FT<span className="text-gold">3</span>
             </div>
-            <p className="text-xs text-gray-400 tracking-wider">WEB3 EVENTS</p>
+            <p className="text-xs text-gray-400 tracking-wider hidden md:block">WEB3 EVENTS</p>
           </div>
         </div>
 
-        {/* DESKTOP NAV - No CTA buttons here */}
-        <div className="hidden md:flex items-center gap-8">
+        {/* DESKTOP NAV */}
+        <div className="hidden md:flex items-center gap-6">
           {links.map((link, idx) => (
             <a
               key={idx}
@@ -87,7 +88,7 @@ export default function Navbar() {
           onClick={() => setIsOpen(true)}
           className="md:hidden p-2 rounded-lg border border-gold/30 text-gold hover:bg-gold/10 transition"
         >
-          <Menu size={26} />
+          <Menu size={24} />
         </button>
       </div>
 
@@ -95,36 +96,36 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop */}
+            {/* Backdrop - Darker for mobile */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 md:hidden"
             />
 
-            {/* Side Menu */}
+            {/* Side Menu - Solid black on mobile */}
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.35, ease: "easeOut" }}
-              className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-black/95 backdrop-blur-xl border-l border-gold/20 z-50 p-8 flex flex-col shadow-2xl shadow-gold/10"
+              className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-black border-l border-gold/30 z-50 p-6 flex flex-col shadow-2xl shadow-gold/20"
             >
               {/* Close Button */}
               <button
                 onClick={() => setIsOpen(false)}
-                className="self-end p-2 rounded-lg border border-gold/30 text-gold hover:bg-gold/10 transition mb-8"
+                className="self-end p-2 rounded-lg border border-gold/30 text-gold hover:bg-gold/10 transition mb-6"
               >
                 <X size={24} />
               </button>
 
               {/* Logo in Menu */}
-              <div className="mb-10 p-4 border border-gold/20 rounded-xl bg-gradient-to-br from-black to-black/50 flex items-center gap-3">
+              <div className="mb-8 p-4 border border-gold/20 rounded-xl bg-gradient-to-br from-black to-black/80 flex items-center gap-3">
                 <div className="relative w-10 h-10">
                   <Image 
-                    src="/images/logo.png"
+                    src="/images/hbd.png" // Same image as main logo
                     alt="LoFT3 Logo" 
                     width={40} 
                     height={40}
@@ -139,8 +140,8 @@ export default function Navbar() {
                 </div>
               </div>
 
-              {/* Links - No buttons in mobile menu either */}
-              <div className="flex flex-col gap-3">
+              {/* Links */}
+              <div className="flex flex-col gap-2">
                 {links.map((link, idx) => (
                   <motion.a
                     key={idx}
@@ -149,7 +150,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.08 }}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center gap-4 px-4 py-4 rounded-xl text-lg text-gray-300 hover:text-gold hover:bg-gold/5 transition group border border-transparent hover:border-gold/20"
+                    className="flex items-center gap-4 px-4 py-3 rounded-lg text-base text-gray-300 hover:text-gold hover:bg-gold/10 transition group border border-transparent hover:border-gold/20"
                   >
                     <span className="text-gold opacity-80">
                       {link.icon}
@@ -159,10 +160,10 @@ export default function Navbar() {
                 ))}
               </div>
 
-              {/* Mobile Navigation only - No CTA buttons */}
-              <div className="mt-auto pt-8">
+              {/* Footer Note */}
+              <div className="mt-auto pt-6 border-t border-gold/10">
                 <p className="text-center text-sm text-gray-500">
-                  Navigate to sections for waitlist & sponsor info
+                  Navigate to sections for more info
                 </p>
               </div>
             </motion.div>
