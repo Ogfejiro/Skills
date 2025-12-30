@@ -17,9 +17,11 @@ import {
   Zap,
   Coins,
   Ticket,
-  Droplets
+  Droplets,
+  Infinity
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import SplitText from '../components/SplitText'; // Import your SplitText component
 
 export default function HomePage() {
   const xAccountLink = "https://twitter.com/YourTwitterHandle";
@@ -59,53 +61,53 @@ export default function HomePage() {
         </div>
 
         <div className="container mx-auto px-4 relative">
-          {/* HEADING with Staggered Fade-in */}
+          {/* HEADING with Split Text Animation */}
           <div className="text-center mb-16">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="text-5xl md:text-7xl font-bold mb-6"
-              >
-                <span className="block">
-                  <span className="text-white">WELCOME TO</span>
-                </span>
-                <motion.span
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  className="block mt-4 gold-gradient"
+              {/* SplitText for "WELCOME TO LOFTE-3" */}
+              <div className="mb-6">
+                <div className="mb-4">
+                  {/* Using SplitText for the entire phrase */}
+                  <SplitText
+                    text="WELCOME TO LOFTE-3"
+                    tag="h1"
+                    className="text-4xl md:text-7xl font-bold"
+                    splitType="words"
+                    delay={100}
+                    duration={0.8}
+                    from={{ opacity: 0, y: 40 }}
+                    to={{ opacity: 1, y: 0 }}
+                    textAlign="center"
+                  />
+                </div>
+                
+                {/* Fade in for the subtitle */}
+                <motion.h2
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="text-3xl md:text-4xl text-gray-300 mb-8"
                 >
-                  LoFT3
-                </motion.span>
-              </motion.h1>
-              
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-3xl md:text-4xl text-gray-300 mb-8"
-              >
-                Where <span className="text-gold font-bold">Web3</span> Meets Celebration
-              </motion.h2>
+                  Where <span className="text-gold font-bold">Web3</span> Meets Celebration
+                </motion.h2>
+              </motion.div>
             </motion.div>
 
             {/* DESCRIPTION with Fade-up */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
+              transition={{ delay: 0.8, duration: 0.8 }}
               className="max-w-2xl mx-auto"
             >
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 1 }}
+                transition={{ delay: 1, duration: 1 }}
                 className="text-xl text-gray-300 mb-10 leading-relaxed"
               >
                 Africa's premier Web3 event platform. Experience blockchain through 
@@ -117,20 +119,40 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1, duration: 0.6 }}
+                transition={{ delay: 1.2, duration: 0.6 }}
                 className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto"
               >
                 {[
                   { icon: <Users className="w-7 h-7" />, label: "10K+", value: "Attendees" },
                   { icon: <Trophy className="w-7 h-7" />, label: "50+", value: "Events" },
                   { icon: <Sparkles className="w-7 h-7" />, label: "100+", value: "Parties" },
-                  { icon: <Globe className="w-7 h-7" />, label: "5+", value: "Cities" },
+                  { 
+                    icon: <div className="relative">
+                      <Infinity className="w-7 h-7" />
+                      <motion.div
+                        animate={{ 
+                          scale: [1, 1.2, 1],
+                          rotate: [0, 10, -10, 0]
+                        }}
+                        transition={{ 
+                          duration: 3,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                        className="absolute inset-0 text-gold/50"
+                      >
+                        <Infinity className="w-7 h-7 blur-sm" />
+                      </motion.div>
+                    </div>, 
+                    label: "∞", 
+                    value: "All over Africa" 
+                  },
                 ].map((stat, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 1.2 + idx * 0.1, duration: 0.5 }}
+                    transition={{ delay: 1.4 + idx * 0.1, duration: 0.5 }}
                     className="text-center"
                   >
                     <motion.div
@@ -153,7 +175,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 60, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ 
-              delay: 1.4, 
+              delay: 2, 
               duration: 1,
               type: "spring",
               stiffness: 100,
@@ -184,9 +206,9 @@ export default function HomePage() {
               <motion.img
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 1.6, duration: 1.2 }}
+                transition={{ delay: 2.2, duration: 1.2 }}
                 src={eventImages.mainParty}
-                alt="Young adults partying at LoFT3 event"
+                alt="Young adults partying at LOFTE-3 event"
                 className="w-full h-64 md:h-96 object-cover"
               />
               
@@ -194,7 +216,7 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.8, duration: 0.8 }}
+                transition={{ delay: 2.4, duration: 0.8 }}
                 className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"
               />
               
@@ -202,7 +224,7 @@ export default function HomePage() {
               <motion.div
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 2, type: "spring", stiffness: 200 }}
+                transition={{ delay: 2.6, type: "spring", stiffness: 200 }}
                 className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
               >
                 <span className="text-sm font-bold text-gold flex items-center gap-2">
@@ -215,10 +237,10 @@ export default function HomePage() {
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 2.2, duration: 0.6 }}
+                transition={{ delay: 2.8, duration: 0.6 }}
                 className="absolute bottom-6 left-6 text-white"
               >
-                <h3 className="text-2xl md:text-3xl font-bold mb-1">LoFT3 Lagos</h3>
+                <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Lagos</h3>
                 <p className="text-gray-300">500+ People Partying</p>
               </motion.div>
             </motion.div>
@@ -228,7 +250,7 @@ export default function HomePage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.4 }}
+            transition={{ delay: 3 }}
             className="text-center mt-12"
           >
             <motion.a
@@ -250,7 +272,7 @@ export default function HomePage() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 2.6 }}
+              transition={{ delay: 3.2 }}
               className="text-gray-400 mt-4 text-sm"
             >
               Follow our X for event updates
@@ -371,7 +393,7 @@ export default function HomePage() {
                         transition={{ duration: 1.2 }}
                         viewport={{ once: true }}
                         src={eventImages.valentineEvent}
-                        alt="LoFT3 Dinner Night and Pool Party"
+                        alt="LOFTE-3 Dinner Night and Pool Party"
                         className="w-full h-64 md:h-80 object-cover"
                       />
                       
@@ -441,7 +463,7 @@ export default function HomePage() {
                         viewport={{ once: true }}
                         className="text-2xl md:text-3xl font-bold text-white mb-4"
                       >
-                        LoFT3 Dinner Night & Pool Party
+                        LOFTE-3 Dinner Night & Pool Party
                         <span className="block text-lg text-gold mt-2">(Valentine Edition)</span>
                       </motion.h3>
                       
@@ -468,7 +490,7 @@ export default function HomePage() {
                         {[
                           { icon: <Calendar className="w-5 h-5 text-gold" />, label: "Date", value: "February 17, 2026" },
                           { icon: <Clock className="w-5 h-5 text-gold" />, label: "Time", value: "Scheduled on Ticket", subIcon: <Ticket className="w-4 h-4" /> },
-                          { icon: <MapPin className="w-5 h-5 text-gold" />, label: "Location", value: "Eko Hotel Rooftop & Pool, Lagos" },
+                          { icon: <MapPin className="w-5 h-5 text-gold" />, label: "Location", value: "Scheduled on Ticket" },
                         ].map((detail, idx) => (
                           <motion.div
                             key={idx}

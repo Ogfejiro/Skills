@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Zap, Globe } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Loader() {
   const [isLoading, setIsLoading] = useState(true);
@@ -111,12 +112,42 @@ export default function Loader() {
               className="mb-8"
             >
               <div className="flex items-center justify-center gap-3 mb-4">
+                {/* Replace this div with your logo */}
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                   className="p-3 bg-gradient-to-br from-gold to-yellow-700 rounded-xl"
                 >
-                  <Sparkles className="w-8 h-8 text-black" />
+                  {/* PLACEHOLDER: Replace this Image component with your logo */}
+                  <div className="relative w-8 h-8">
+                    {/* 
+                      REPLACE THIS IMAGE WITH YOUR LOGO:
+                      
+                      Option 1: Use your PNG logo (recommended for spinner)
+                      <Image 
+                        src="/images/your-logo.png" 
+                        alt="LOFT3 Logo" 
+                        width={32}
+                        height={32}
+                        className="object-contain"
+                      />
+                      
+                      Option 2: Use your SVG logo
+                      <Image 
+                        src="/images/your-logo.svg" 
+                        alt="LOFT3 Logo" 
+                        width={32}
+                        height={32}
+                        className="object-contain"
+                      />
+                      
+                      Option 3: Keep the sparkles icon as fallback
+                      <Sparkles className="w-8 h-8 text-black" />
+                    */}
+                    
+                    {/* Current fallback - replace with your logo */}
+                    <Sparkles className="w-8 h-8 text-black" />
+                  </div>
                 </motion.div>
                 <h1 className="text-5xl font-bold">
                   <span className="text-white">Lo</span>

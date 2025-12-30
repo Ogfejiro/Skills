@@ -96,13 +96,13 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Backdrop - Darker for mobile */}
+            {/* Backdrop - Changed to solid black for mobile */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 md:hidden"
+              className="fixed inset-0 bg-black z-40 md:hidden"
             />
 
             {/* Side Menu - Solid black on mobile */}
