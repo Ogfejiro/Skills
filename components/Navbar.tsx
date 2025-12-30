@@ -67,7 +67,7 @@ export default function Navbar() {
         </div>
 
         {/* DESKTOP NAV */}
-        <div className="hidden md:flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6 bg-black/30 ">
           {links.map((link, idx) => (
             <a
               key={idx}
@@ -125,7 +125,7 @@ export default function Navbar() {
               <div className="mb-8 p-4 border border-gold/20 rounded-xl bg-gradient-to-br from-black to-black/80 flex items-center gap-3">
                 <div className="relative w-10 h-10">
                   <Image 
-                    src="/images/hbd.png" // Same image as main logo
+                     src="/images/hds.jpg" // Same image as main logo
                     alt="LoFT3 Logo" 
                     width={40} 
                     height={40}
