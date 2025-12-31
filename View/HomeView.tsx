@@ -37,7 +37,7 @@ export default function HomePage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white overflow-hidden">
+    <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <Navbar />
       
       {/* ========== HERO SECTION ========== */}
@@ -358,16 +358,13 @@ export default function HomePage() {
                       whileHover={{ scale: 1.02 }}
                       className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
                     >
-                      {/* Valentine Event Video - FIXED FOR MOBILE */}
+                      {/* Valentine Event Video - SIMPLE WORKING FIX */}
                       <video
                         src={eventImages.valentineEvent}
                         className="w-full h-64 md:h-80 object-cover"
-                        autoPlay
-                        loop
-                        playsInline
-                        muted={false}
                         controls
                         preload="auto"
+                        playsInline
                       />
                       
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
