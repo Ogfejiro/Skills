@@ -60,7 +60,7 @@ export default function Navbar() {
                 <div className="relative w-8 h-8 md:w-10 md:h-10">
                   <Image
                     src="/images/hds.jpg" 
-                    alt="LoFT3 Logo" 
+                    alt="LOFTE-3 Logo" 
                     width={32}
                     height={32}
                     className="object-contain"
@@ -76,7 +76,7 @@ export default function Navbar() {
             </div>
             <div>
               <div className="text-gold font-extrabold tracking-wider text-xl md:text-2xl">
-                <span className="text-white">Lo</span>FT<span className="text-gold">3</span>
+                <span className="text-white">LO</span>FTE<span className="text-gold">-3</span>
               </div>
               <p className="text-xs text-gray-400 tracking-wider">WEB3 EVENTS</p>
             </div>

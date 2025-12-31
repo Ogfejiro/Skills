@@ -13,13 +13,13 @@ import {
   MapPin,
   Heart,
   ChevronRight,
-  Music,
   Zap,
   Coins,
   Ticket,
-  Droplets
+  Droplets,
+  Infinity
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
+import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
   const xAccountLink = "https://twitter.com/YourTwitterHandle";
@@ -27,10 +27,9 @@ export default function HomePage() {
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
     // Valentine event video
-    valentineEvent: "/images/video2.mp4", // Your video path here
+    valentineEvent: "/images/hb.png", // Your video path here
     
     // Other events
-    musicFestival: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2070&auto=format&fit=crop",
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
     hackathon: "https://images.unsplash.com/photo-1492684223066-dd23140edf6d?q=80&w=2070&auto=format&fit=crop",
     mainParty: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop",
@@ -90,7 +89,7 @@ export default function HomePage() {
               <span className="gold-gradient">LOFTE-3</span>
             </motion.div>
             
-            {/* Subtitle sliding from left and right */}
+            {/* Subtitle sliding from left and right - CHANGED TEXT */}
             <div className="overflow-hidden mb-8">
               <motion.h2
                 initial={{ x: -100, opacity: 0 }}
@@ -98,7 +97,7 @@ export default function HomePage() {
                 transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
                 className="text-2xl md:text-3xl text-gray-300 mb-2"
               >
-                Where <span className="text-gold font-bold">Web3</span> Meets
+                Crypto <span className="text-gold font-bold">Beyond</span>
               </motion.h2>
               <motion.h2
                 initial={{ x: 100, opacity: 0 }}
@@ -106,11 +105,11 @@ export default function HomePage() {
                 transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
                 className="text-2xl md:text-3xl text-gray-300"
               >
-                Celebration
+                Screen
               </motion.h2>
             </div>
 
-            {/* DESCRIPTION with faster animation */}
+            {/* DESCRIPTION with faster animation - CHANGED TEXT */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -123,12 +122,11 @@ export default function HomePage() {
                 transition={{ delay: 0.7, duration: 0.5 }}
                 className="text-xl text-gray-300 mb-10 leading-relaxed"
               >
-                Africa's premier Web3 event platform. Experience blockchain through 
-                electrifying parties, exclusive networking, and unforgettable moments 
-                with the crypto community.
+                Africa's premier Web3 event platform. Where blockchain meets real-world celebrations, 
+                exclusive networking, and unforgettable moments with the crypto community.
               </motion.p>
               
-              {/* GOLD STATS with faster staggered animation */}
+              {/* GOLD STATS with faster staggered animation - CHANGED ICON */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -139,7 +137,7 @@ export default function HomePage() {
                   { icon: <Users className="w-7 h-7" />, label: "10K+", value: "Attendees" },
                   { icon: <Trophy className="w-7 h-7" />, label: "50+", value: "Events" },
                   { icon: <Sparkles className="w-7 h-7" />, label: "100+", value: "Parties" },
-                  { icon: <Globe className="w-7 h-7 text-gold" />, label: "Africa", value: "Wide Coverage" },
+                  { icon: <Infinity className="w-7 h-7 text-gold" />, label: "Africa", value: "Wide Coverage" },
                 ].map((stat, idx) => (
                   <motion.div
                     key={idx}
@@ -291,28 +289,6 @@ export default function HomePage() {
             </motion.p>
           </motion.div>
 
-          {/* NEXT EVENTS SECTION (Before blurred events) */}
-          <div className="text-center mb-12">
-            <motion.h3
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-2xl md:text-3xl font-bold text-white mb-4"
-            >
-              <span className="text-gold">Next</span> Events
-            </motion.h3>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-gray-400 max-w-2xl mx-auto"
-            >
-              Stay tuned for these upcoming exclusive events. More details coming soon!
-            </motion.p>
-          </div>
-
           {/* Scroll Stacking Container */}
           <div className="relative">
             {/* Animated Connector Line */}
@@ -463,68 +439,14 @@ export default function HomePage() {
                 </div>
               </motion.div>
 
-              {/* BLURRED EVENTS - REDUCED BLUR */}
-              {/* EVENT 2: Web3 Music Festival */}
-              <motion.div
-                initial={{ opacity: 0, x: 100 }}
-                whileInView={{ opacity: 0.8, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                viewport={{ once: true, margin: "-100px" }}
-                className="relative blur-[2px] hover:blur-0 transition-all duration-500"
-              >
-                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-3 h-3 rounded-full bg-gold/50 border-2 border-black"></div>
-                </div>
-
-                <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  <div className="mb-8 md:mb-0">
-                    <div className="bg-black/70 rounded-2xl border border-gold/20 p-6">
-                      <div className="mb-4">
-                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold/20 mb-3">
-                          <span className="text-gold text-sm font-bold">COMING SOON</span>
-                        </span>
-                        <h3 className="text-xl font-bold text-white mb-3">
-                          Web3 Music Festival
-                        </h3>
-                        <p className="text-gray-300 mb-6">
-                          Africa's first crypto-powered music festival with top DJs, 
-                          NFT ticket system, and blockchain voting for lineup.
-                        </p>
-                      </div>
-
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                          <Calendar className="w-5 h-5 text-gold" />
-                          <p className="text-gray-400">March 15, 2026</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Music className="w-5 h-5 text-gold" />
-                          <p className="text-gray-400">Lagos & Virtual</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="md:order-first">
-                    <div className="relative rounded-2xl overflow-hidden border border-gold/30">
-                      <img
-                        src={eventImages.musicFestival}
-                        alt="Web3 Music Festival"
-                        className="w-full h-64 md:h-80 object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* EVENT 3: NFT Art Gala */}
+              {/* BLURRED EVENTS - INCREASED BLUR */}
+              {/* EVENT 2: NFT Art Gala */}
               <motion.div
                 initial={{ opacity: 0, x: -100 }}
                 whileInView={{ opacity: 0.8, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative blur-[2px] hover:blur-0 transition-all duration-500"
+                className="relative blur-[8px] hover:blur-0 transition-all duration-500"
               >
                 <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                   <div className="w-3 h-3 rounded-full bg-gold/50 border-2 border-black"></div>
@@ -572,13 +494,13 @@ export default function HomePage() {
                 </div>
               </motion.div>
 
-              {/* EVENT 4: DeFi Hackathon */}
+              {/* EVENT 3: DeFi Hackathon */}
               <motion.div
                 initial={{ opacity: 0, x: 100 }}
                 whileInView={{ opacity: 0.8, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative blur-[2px] hover:blur-0 transition-all duration-500"
+                className="relative blur-[8px] hover:blur-0 transition-all duration-500"
               >
                 <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                   <div className="w-3 h-3 rounded-full bg-gold/50 border-2 border-black"></div>
