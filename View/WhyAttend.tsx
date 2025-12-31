@@ -107,7 +107,7 @@ export default function WhyAttendPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main id="why-attend" className="min-h-screen bg-black text-white">
       <Navbar />
       
       {/* HERO SECTION */}

@@ -37,7 +37,7 @@ export default function Navbar() {
   const navItems = [
     { id: "home", label: "Home", icon: <Home className="w-5 h-5" />, href: "#home" },
     { id: "events", label: "Events", icon: <Calendar className="w-5 h-5" />, href: "#events" },
-    { id: "why-attend", label: "Why Attend", icon: <Sparkles className="w-5 h-5" />, href: "/why-attend" },
+    { id: "why-attend", label: "Why Attend", icon: <Sparkles className="w-5 h-5" />, href: "#why-attend" },
     { id: "waitlist", label: "Waitlist", icon: <Users className="w-5 h-5" />, href: "https://forms.gle/gwhB683FptSMNsE39", external: true },
   ];
 

@@ -20,9 +20,11 @@ import {
   Droplets
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { useEffect, useRef } from 'react';
 
 export default function HomePage() {
   const xAccountLink = "https://twitter.com/YourTwitterHandle";
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
@@ -35,6 +37,44 @@ export default function HomePage() {
     hackathon: "https://images.unsplash.com/photo-1492684223066-dd23140edf6d?q=80&w=2070&auto=format&fit=crop",
     mainParty: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop",
   };
+
+  // Handle video autoplay with sound on mobile
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleVideoPlay = () => {
+      // Try to play with sound, if fails, mute and play
+      const playPromise = video.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          // Autoplay with sound failed, mute and try again
+          video.muted = true;
+          video.play();
+        });
+      }
+    };
+
+    // Try to play when component mounts
+    handleVideoPlay();
+
+    // Also try to play when user interacts with page
+    const handleUserInteraction = () => {
+      if (video.paused) {
+        handleVideoPlay();
+      }
+    };
+
+    // Add event listeners for user interaction
+    document.addEventListener('click', handleUserInteraction);
+    document.addEventListener('touchstart', handleUserInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleUserInteraction);
+      document.removeEventListener('touchstart', handleUserInteraction);
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-black text-white overflow-hidden">
@@ -358,15 +398,17 @@ export default function HomePage() {
                       whileHover={{ scale: 1.02 }}
                       className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
                     >
-                      {/* Valentine Event Video - REMOVED MUTED FOR SOUND */}
+                      {/* Valentine Event Video - FIXED FOR MOBILE AUDIO */}
                       <video
+                        ref={videoRef}
                         src={eventImages.valentineEvent}
                         className="w-full h-64 md:h-80 object-cover"
                         autoPlay
                         loop
                         playsInline
-                        muted // Keep muted by default to avoid autoplay issues
-                        controls // Added controls so users can unmute
+                        muted={false}
+                        controls={false}
+                        preload="auto"
                       />
                       
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
