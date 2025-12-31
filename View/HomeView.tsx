@@ -1,4 +1,3 @@
-// app/page.tsx (or View/HomeView.tsx if that's your actual file)
 'use client';
 
 import { motion } from 'framer-motion';
@@ -22,12 +21,12 @@ import {
 import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
-  const xAccountLink = "https://X.com/hidreams__";
+  const xAccountLink = "https://x.com/hidreams__";
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
     // Valentine event image (changed from video)
-    valentineEvent: "/images/hbd.png", // Your image path here
+    valentineEvent: "/images/hde.png", // Your image path here
     
     // Other events
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
@@ -40,7 +39,7 @@ export default function HomePage() {
       <Navbar />
       
       {/* ========== HERO SECTION ========== */}
-      <section id="home" className="relative pt-32 pb-20 md:pt-40 md:pb-32">
+      <section id="home" className="relative pt-20 pb-20 md:pt-40 md:pb-32">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
@@ -67,7 +66,7 @@ export default function HomePage() {
               transition={{ delay: 0.1, duration: 0.4 }}
               className="w-full flex justify-center mb-4"
             >
-              <div className="inline-flex gap-2 md:gap-4 px-10">
+              <div className="inline-flex gap-2 md:gap-4 flex-wrap justify-center px-4">
                 {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
                   <motion.span
                     key={word}
@@ -78,7 +77,7 @@ export default function HomePage() {
                       duration: 0.4,
                       ease: "easeOut"
                     }}
-                    className="text-4xl md:text-5xl font-bold text-white whitespace-nowrap"
+                    className="text-3xl md:text-4xl lg:text-5xl font-bold text-white whitespace-nowrap"
                   >
                     {word}
                   </motion.span>
@@ -107,12 +106,12 @@ export default function HomePage() {
               transition={{ delay: 0.3, duration: 0.5 }}
               className="w-full mb-8"
             >
-              <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 md:gap-4 flex-wrap">
                 <motion.div
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-                  className="text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Crypto
                 </motion.div>
@@ -120,17 +119,41 @@ export default function HomePage() {
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.5, type: "spring" }}
-                  className="text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-3 py-1 rounded-lg"
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-2 sm:px-3 py-1 rounded-lg"
+                >
+                  Coins
+                </motion.div>
+                <motion.div
+                  initial={{ x: -30, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.55, duration: 0.5, ease: "easeOut" }}
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Beyond
                 </motion.div>
                 <motion.div
-                  initial={{ x: 50, opacity: 0 }}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.5, type: "spring" }}
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-2 sm:px-3 py-1 rounded-lg"
+                >
+                  Coins
+                </motion.div>
+                <motion.div
+                  initial={{ x: 30, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
-                  className="text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
+                  transition={{ delay: 0.65, duration: 0.5, ease: "easeOut" }}
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Screen
+                </motion.div>
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.7, duration: 0.5, type: "spring" }}
+                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-2 sm:px-3 py-1 rounded-lg"
+                >
+                  Coins
                 </motion.div>
               </div>
             </motion.div>
@@ -139,13 +162,13 @@ export default function HomePage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="w-full max-w-4xl mx-auto"  // Changed from max-w-2xl to max-w-4xl
+              transition={{ delay: 0.8, duration: 0.5 }}
+              className="w-full max-w-4xl mx-auto"
             >
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
                 className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed text-center px-4"
               >
                 Africa's leading strategic IRL and virtual Web3 
@@ -157,8 +180,8 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.4 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto"  // Changed from max-w-3xl to max-w-5xl
+                transition={{ delay: 1.0, duration: 0.4 }}
+                className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto"
               >
                 {[
                   { icon: <Users className="w-7 h-7" />, label: "10K+", value: "Attendees" },
@@ -170,7 +193,7 @@ export default function HomePage() {
                     key={idx}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 0.9 + idx * 0.05, duration: 0.4 }}
+                    transition={{ delay: 1.1 + idx * 0.05, duration: 0.4 }}
                     className="text-center"
                   >
                     <motion.div
@@ -269,7 +292,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Rest of the code remains exactly the same... */}
       {/* ========== UPCOMING EVENTS SECTION ========== */}
       <section id="events" className="py-20 bg-black relative overflow-hidden">
         {/* Animated Background Elements */}
