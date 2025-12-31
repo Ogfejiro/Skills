@@ -27,7 +27,7 @@ export default function HomePage() {
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
     // Valentine event image (changed from video)
-    valentineEvent: "/images/hb.png", // Your image path here
+    valentineEvent: "/images/hbd.png", // Your image path here
     
     // Other events
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
