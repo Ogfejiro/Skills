@@ -93,7 +93,7 @@ const Footer = () => {
             <ul className="space-y-3">
               <li>
                 <a 
-                  href="https://twitter.com/YOUR_TWITTER_LINK"
+                  href="https://X.com/hidreams__"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-gold-500 transition flex items-center gap-2"
@@ -102,7 +102,7 @@ const Footer = () => {
                   <span>Twitter</span>
                 </a>
               </li>
-              <li>
+              {/* <li>
                 <a 
                   href="https://discord.gg/YOUR_DISCORD_LINK"
                   target="_blank"
@@ -112,10 +112,10 @@ const Footer = () => {
                   <Disc className="w-4 h-4" />
                   <span>Discord</span>
                 </a>
-              </li>
+              </li> */}
               <li>
                 <a 
-                  href="https://t.me/YOUR_TELEGRAM_LINK"
+                  href="https://T.me/lofte_live"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-gold-500 transition flex items-center gap-2"
