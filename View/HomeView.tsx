@@ -27,7 +27,7 @@ export default function HomePage() {
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
     // Valentine event image (changed from video)
-    valentineEvent: "/images/hb.png", // Your image path here
+    valentineEvent: "/images/hde.jpg", // Your image path here
     
     // Other events
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
@@ -59,7 +59,7 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 relative">
           {/* HEADING with Split Text Animation - Faster animations */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 w-full">
             {/* Split text animation for "WELCOME TO" - FIXED WIDTH */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -68,7 +68,7 @@ export default function HomePage() {
               className="w-full flex justify-center mb-4"
             >
               <div className="inline-flex gap-2 md:gap-4">
-                {["WELCOME", "TO"].map((word, index) => (
+                {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
                   <motion.span
                     key={word}
                     initial={{ opacity: 0, y: 20 }}
@@ -93,11 +93,11 @@ export default function HomePage() {
               transition={{ delay: 0.2, duration: 0.4 }}
               className="w-full mb-8"
             >
-              <div className="inline-block">
+              {/* <div className="">
                 <span className="gold-gradient text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
                   LOFTE-3
                 </span>
-              </div>
+              </div> */}
             </motion.div>
             
             {/* Subtitle sliding from left and right - FIXED WIDTH AND STYLING */}
@@ -112,7 +112,7 @@ export default function HomePage() {
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-                  className="text-3xl md:text-4xl lg:text-5xl text-white font-semibold"
+                  className="text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Crypto
                 </motion.div>
@@ -120,7 +120,7 @@ export default function HomePage() {
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.5, type: "spring" }}
-                  className="text-3xl md:text-4xl lg:text-5xl gold-gradient font-bold px-3 py-1 rounded-lg"
+                  className="text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-3 py-1 rounded-lg"
                 >
                   Beyond
                 </motion.div>
@@ -128,7 +128,7 @@ export default function HomePage() {
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
-                  className="text-3xl md:text-4xl lg:text-5xl text-white font-semibold"
+                  className="text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Screen
                 </motion.div>

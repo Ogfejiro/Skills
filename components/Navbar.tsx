@@ -163,7 +163,7 @@ export default function Navbar() {
             </div>
             <div>
               <div className="text-gold font-extrabold tracking-wider text-xl">
-                <span className="text-white">Lo</span>FT<span className="text-gold">3</span>
+                <span className="text-white">LO</span>FTE<span className="text-gold">-</span>
               </div>
               <p className="text-xs text-gray-400 tracking-wider">WEB3 EVENTS</p>
             </div>

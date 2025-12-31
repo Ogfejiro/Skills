@@ -125,17 +125,17 @@ export default function WhyAttendPage() {
             className="text-center mb-12"
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/30 mb-6">
-              <span className="text-gold text-sm font-medium">WHY JOIN LOFT3</span>
+              <span className="text-gold text-sm font-medium">WHY JOIN LOFTE-3</span>
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               <span className="text-white block">Why Attend</span>
-              <span className="gold-gradient block mt-2">LOFT3 Events?</span>
+              <span className="gold-gradient block mt-2">LOFTE-3 Events?</span>
             </h1>
             
             <p className="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto">
-              Discover what makes LOFT3 the most exclusive Web3 event platform in Africa. 
-              More than just parties—it's where opportunities are born.
+              Discover what makes LOFTE-3 the most exclusive Web3 event platform in Africa. 
+              More than just parties it's where opportunities are born.
             </p>
           </motion.div>
 
@@ -379,7 +379,7 @@ export default function WhyAttendPage() {
                 transition={{ delay: 0.4 }}
                 className="text-gray-300 text-lg mb-8"
               >
-                From red carpet moments to global opportunities, LOFT3 offers everything you need 
+                From red carpet moments to global opportunities, LOFTE-3 offers everything you need 
                 to thrive in the blockchain space. Limited spots available.
               </motion.p>
               
