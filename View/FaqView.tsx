@@ -415,38 +415,6 @@ export default function FAQPage() {
               </motion.div>
             ))}
           </div>
-
-          {/* FAQ Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
-            className="mt-16"
-          >
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
-              {[
-                { icon: <Calendar className="w-6 h-6" />, label: "Events Hosted", value: "50+" },
-                { icon: <Users className="w-6 h-6" />, label: "Attendees", value: "10K+" },
-                { icon: <Building className="w-6 h-6" />, label: "Brand Partners", value: "100+" },
-                { icon: <Globe className="w-6 h-6" />, label: "Cities", value: "5+" },
-              ].map((stat, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.9 + idx * 0.1 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="text-center p-4 rounded-xl bg-gradient-to-b from-black to-black/50 border border-gold/10 hover:border-gold/30 transition"
-                >
-                  <div className="p-2 rounded-lg bg-gold/10 inline-block mb-3">
-                    <div className="text-gold">{stat.icon}</div>
-                  </div>
-                  <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-                  <div className="text-sm text-gray-400">{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
         </div>
       </section>
 
@@ -560,26 +528,7 @@ export default function FAQPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <motion.footer
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-        viewport={{ once: true }}
-        className="border-t border-gold/10 py-8"
-      >
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <p className="text-gray-500 text-sm">
-              © {new Date().getFullYear()} LOFTE-3. All rights reserved. 
-              <span className="text-gold ml-2">Strategic Web3 Events Platform</span>
-            </p>
-            <p className="text-gray-600 text-xs mt-2">
-              Turning ideas into memorable experiences • Creating utility with your project
-            </p>
-          </div>
-        </div>
-      </motion.footer>
+      
     </main>
   );
 }

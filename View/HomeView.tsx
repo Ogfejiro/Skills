@@ -17,8 +17,7 @@ import {
   Zap,
   Coins,
   Ticket,
-  Droplets,
-  Infinity
+  Droplets
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 
@@ -27,10 +26,10 @@ export default function HomePage() {
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
-    // CHANGE THIS to your Valentine event video URL or local path
+    // Valentine event video
     valentineEvent: "/images/video2.mp4", // Your video path here
     
-    // Other events (keep as is)
+    // Other events
     musicFestival: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=2070&auto=format&fit=crop",
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
     hackathon: "https://images.unsplash.com/photo-1492684223066-dd23140edf6d?q=80&w=2070&auto=format&fit=crop",
@@ -48,82 +47,80 @@ export default function HomePage() {
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="absolute top-20 left-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl"
           />
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.5, delay: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
             className="absolute bottom-20 right-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl"
           />
         </div>
 
         <div className="container mx-auto px-4 relative">
-          {/* HEADING with Split Text Animation */}
+          {/* HEADING with Split Text Animation - Faster animations */}
           <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                className="mb-6"
-              >
-                {/* Split text animation for "WELCOME TO" */}
-                <div className="flex justify-center gap-2 md:gap-4 flex-wrap mb-4">
-                  {["WELCOME", "TO"].map((word, index) => (
-                    <motion.span
-                      key={word}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ 
-                        delay: index * 0.2, 
-                        duration: 0.6,
-                        ease: "easeOut"
-                      }}
-                      className="text-4xl md:text-5xl font-bold text-white"
-                    >
-                      {word}
-                    </motion.span>
-                  ))}
-                </div>
-                
-                {/* LOFTE-3 with gold gradient */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
-                  className="text-5xl md:text-7xl font-bold"
+            {/* Split text animation for "WELCOME TO" */}
+            <div className="flex justify-center gap-2 md:gap-4 flex-wrap mb-4">
+              {["WELCOME", "TO"].map((word, index) => (
+                <motion.span
+                  key={word}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ 
+                    delay: index * 0.1, 
+                    duration: 0.4,
+                    ease: "easeOut"
+                  }}
+                  className="text-4xl md:text-5xl font-bold text-white"
                 >
-                  <span className="gold-gradient">LOFTE-3</span>
-                </motion.div>
-              </motion.div>
-              
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.6 }}
-                className="text-3xl md:text-4xl text-gray-300 mb-8"
-              >
-                Where <span className="text-gold font-bold">Web3</span> Meets Celebration
-              </motion.h2>
-            </motion.div>
-
-            {/* DESCRIPTION with Fade-up */}
+                  {word}
+                </motion.span>
+              ))}
+            </div>
+            
+            {/* LOFTE-3 with gold gradient */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="text-5xl md:text-7xl font-bold mb-8"
+            >
+              <span className="gold-gradient">LOFTE-3</span>
+            </motion.div>
+            
+            {/* Subtitle sliding from left and right */}
+            <div className="overflow-hidden mb-8">
+              <motion.h2
+                initial={{ x: -100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
+                className="text-2xl md:text-3xl text-gray-300 mb-2"
+              >
+                Where <span className="text-gold font-bold">Web3</span> Meets
+              </motion.h2>
+              <motion.h2
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
+                className="text-2xl md:text-3xl text-gray-300"
+              >
+                Celebration
+              </motion.h2>
+            </div>
+
+            {/* DESCRIPTION with faster animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.8 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
               className="max-w-2xl mx-auto"
             >
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1, duration: 1 }}
+                transition={{ delay: 0.7, duration: 0.5 }}
                 className="text-xl text-gray-300 mb-10 leading-relaxed"
               >
                 Africa's premier Web3 event platform. Experience blockchain through 
@@ -131,44 +128,24 @@ export default function HomePage() {
                 with the crypto community.
               </motion.p>
               
-              {/* GOLD STATS with Staggered Fade-in */}
+              {/* GOLD STATS with faster staggered animation */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.2, duration: 0.6 }}
+                transition={{ delay: 0.8, duration: 0.4 }}
                 className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto"
               >
                 {[
                   { icon: <Users className="w-7 h-7" />, label: "10K+", value: "Attendees" },
                   { icon: <Trophy className="w-7 h-7" />, label: "50+", value: "Events" },
                   { icon: <Sparkles className="w-7 h-7" />, label: "100+", value: "Parties" },
-                  { 
-                    icon: <div className="relative">
-                      <Infinity className="w-7 h-7" />
-                      <motion.div
-                        animate={{ 
-                          scale: [1, 1.2, 1],
-                          rotate: [0, 10, -10, 0]
-                        }}
-                        transition={{ 
-                          duration: 3,
-                      
-                          ease: "easeInOut"
-                        }}
-                        className="absolute inset-0 text-gold/50"
-                      >
-                        <Infinity className="w-7 h-7 blur-sm" />
-                      </motion.div>
-                    </div>, 
-                    label: "∞", 
-                    value: "All over Africa" 
-                  },
+                  { icon: <Globe className="w-7 h-7 text-gold" />, label: "Africa", value: "Wide Coverage" },
                 ].map((stat, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 1.4 + idx * 0.1, duration: 0.5 }}
+                    transition={{ delay: 0.9 + idx * 0.05, duration: 0.4 }}
                     className="text-center"
                   >
                     <motion.div
@@ -186,31 +163,21 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          {/* MAIN PARTY IMAGE with Parallax & Fade-in */}
+          {/* MAIN PARTY IMAGE with faster animation */}
           <motion.div
-            initial={{ opacity: 0, y: 60, scale: 0.95 }}
+            initial={{ opacity: 0, y: 40, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ 
-              delay: 2, 
-              duration: 1,
+              delay: 1.2, 
+              duration: 0.6,
               type: "spring",
-              stiffness: 100,
+              stiffness: 200,
               damping: 15
             }}
             className="mt-16"
           >
-            {/* Gold Glow Effect with Pulse */}
-            <motion.div
-              animate={{ 
-                boxShadow: [
-                  "0 0 60px rgba(212, 175, 55, 0.2)",
-                  "0 0 80px rgba(212, 175, 55, 0.3)",
-                  "0 0 60px rgba(212, 175, 55, 0.2)"
-                ]
-              }}
-              transition={{ duration: 2 }}
-              className="absolute -inset-4 bg-gold/10 rounded-2xl blur-xl"
-            />
+            {/* Gold Glow Effect */}
+            <div className="absolute -inset-4 bg-gold/10 rounded-2xl blur-xl" />
             
             {/* Image Container */}
             <motion.div
@@ -218,55 +185,40 @@ export default function HomePage() {
               transition={{ type: "spring", stiffness: 200 }}
               className="relative rounded-xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
             >
-              {/* Party Image with Fade-in */}
+              {/* Party Image */}
               <motion.img
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 2.2, duration: 1.2 }}
+                transition={{ delay: 1.3, duration: 0.8 }}
                 src={eventImages.mainParty}
                 alt="Young adults partying at LOFTE-3 event"
                 className="w-full h-64 md:h-96 object-cover"
               />
               
-              {/* Overlay Gradient with Fade */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2.4, duration: 0.8 }}
-                className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"
-              />
+              {/* Overlay Gradient */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
               
-              {/* Gold Badge with Bounce */}
-              <motion.div
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 2.6, type: "spring", stiffness: 200 }}
-                className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
-              >
+              {/* Gold Badge */}
+              <div className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold">
                 <span className="text-sm font-bold text-gold flex items-center gap-2">
                   <Sparkles className="w-3 h-3" />
                   LIVE NOW
                 </span>
-              </motion.div>
+              </div>
               
-              {/* Text Overlay with Slide-up */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 2.8, duration: 0.6 }}
-                className="absolute bottom-6 left-6 text-white"
-              >
-                <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Lagos</h3>
+              {/* Text Overlay - Changed to LOFTE-3 Africa */}
+              <div className="absolute bottom-6 left-6 text-white">
+                <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Africa</h3>
                 <p className="text-gray-300">500+ People Partying</p>
-              </motion.div>
+              </div>
             </motion.div>
           </motion.div>
 
-          {/* LEARN MORE BUTTON with Fade-in */}
+          {/* LEARN MORE BUTTON with faster animation */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3 }}
+            transition={{ delay: 1.5 }}
             className="text-center mt-12"
           >
             <motion.a
@@ -278,17 +230,12 @@ export default function HomePage() {
               className="inline-flex items-center gap-3 px-8 py-3 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all"
             >
               <span>Learn More About Us</span>
-              <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5 }}
-              >
-                <ExternalLink className="w-5 h-5" />
-              </motion.div>
+              <ExternalLink className="w-5 h-5" />
             </motion.a>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3.2 }}
+              transition={{ delay: 1.6 }}
               className="text-gray-400 mt-4 text-sm"
             >
               Follow our X for event updates
@@ -304,36 +251,29 @@ export default function HomePage() {
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            transition={{ duration: 1.5 }}
+            transition={{ duration: 0.8 }}
             viewport={{ once: true }}
             className="h-full bg-gradient-to-r from-transparent via-gold to-transparent"
           />
         </div>
         
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, ease: "linear" }}
-          className="absolute -top-40 -right-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 25,  ease: "linear" }}
-          className="absolute -bottom-40 -left-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl"
-        />
+        {/* Static background elements */}
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
 
         <div className="container mx-auto px-4 relative z-10">
-          {/* Section Header with Fade-in */}
+          {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.6 }}
             viewport={{ once: true, amount: 0.5 }}
             className="text-center mb-16"
           >
             <motion.h2
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.4 }}
               viewport={{ once: true }}
               className="text-4xl md:text-5xl font-bold mb-4"
             >
@@ -343,7 +283,7 @@ export default function HomePage() {
             <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
               viewport={{ once: true }}
               className="text-gray-400 text-lg"
             >
@@ -351,25 +291,47 @@ export default function HomePage() {
             </motion.p>
           </motion.div>
 
+          {/* NEXT EVENTS SECTION (Before blurred events) */}
+          <div className="text-center mb-12">
+            <motion.h3
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-2xl md:text-3xl font-bold text-white mb-4"
+            >
+              <span className="text-gold">Next</span> Events
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              viewport={{ once: true }}
+              className="text-gray-400 max-w-2xl mx-auto"
+            >
+              Stay tuned for these upcoming exclusive events. More details coming soon!
+            </motion.p>
+          </div>
+
           {/* Scroll Stacking Container */}
           <div className="relative">
             {/* Animated Connector Line */}
             <motion.div
               initial={{ height: 0 }}
               whileInView={{ height: "100%" }}
-              transition={{ duration: 2, ease: "easeInOut" }}
+              transition={{ duration: 1, ease: "easeInOut" }}
               viewport={{ once: true }}
               className="absolute left-1/2 transform -translate-x-1/2 h-full w-px bg-gradient-to-b from-gold via-gold/50 to-transparent hidden md:block"
             />
 
-            {/* EVENTS STACK with Staggered Animations */}
+            {/* EVENTS STACK with faster animations */}
             <div className="space-y-32 md:space-y-48">
-              {/* EVENT 1: VALENTINE'S DINNER & POOL PARTY */}
+              {/* EVENT 1: VALENTINE'S DINNER & POOL PARTY - MAIN EVENT */}
               <motion.div
                 initial={{ opacity: 0, x: -100 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ 
-                  duration: 0.8,
+                  duration: 0.6,
                   type: "spring",
                   stiffness: 100,
                   damping: 15
@@ -378,15 +340,9 @@ export default function HomePage() {
                 className="relative"
               >
                 {/* Animated Connector Dot */}
-                <motion.div
-                  initial={{ scale: 0 }}
-                  whileInView={{ scale: 1 }}
-                  transition={{ delay: 0.3, type: "spring" }}
-                  viewport={{ once: true }}
-                  className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
-                >
+                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                   <div className="w-4 h-4 rounded-full bg-gold border-4 border-black" />
-                </motion.div>
+                </div>
 
                 {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
@@ -394,7 +350,7 @@ export default function HomePage() {
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2, duration: 0.6 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
                     viewport={{ once: true }}
                     className="md:order-1 mb-8 md:mb-0"
                   >
@@ -402,51 +358,34 @@ export default function HomePage() {
                       whileHover={{ scale: 1.02 }}
                       className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
                     >
-                      {/* Valentine Event Video */}
+                      {/* Valentine Event Video - REMOVED MUTED FOR SOUND */}
                       <video
                         src={eventImages.valentineEvent}
                         className="w-full h-64 md:h-80 object-cover"
                         autoPlay
-                        muted
                         loop
                         playsInline
+                        muted // Keep muted by default to avoid autoplay issues
+                        controls // Added controls so users can unmute
                       />
                       
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 0.5, duration: 0.6 }}
-                        viewport={{ once: true }}
-                        className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"
-                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                       
-                      {/* Valentine Badge with Animation */}
-                      <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.7, type: "spring" }}
-                        viewport={{ once: true }}
-                        className="absolute top-4 left-4 px-4 py-2 rounded-full bg-red-500/90 backdrop-blur-sm border border-gold"
-                      >
+                      {/* Valentine Badge */}
+                      <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-red-500/90 backdrop-blur-sm border border-gold">
                         <span className="text-white font-bold text-sm flex items-center gap-2">
                           <Heart className="w-4 h-4" />
                           VALENTINE EDITION
                         </span>
-                      </motion.div>
+                      </div>
                       
                       {/* Pool Party Badge */}
-                      <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        whileInView={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.8, type: "spring" }}
-                        viewport={{ once: true }}
-                        className="absolute top-16 left-4 px-4 py-2 rounded-full bg-blue-500/90 backdrop-blur-sm border border-gold"
-                      >
+                      <div className="absolute top-16 left-4 px-4 py-2 rounded-full bg-blue-500/90 backdrop-blur-sm border border-gold">
                         <span className="text-white font-bold text-sm flex items-center gap-2">
                           <Droplets className="w-4 h-4" />
                           POOL PARTY
                         </span>
-                      </motion.div>
+                      </div>
                     </motion.div>
                   </motion.div>
 
@@ -454,67 +393,36 @@ export default function HomePage() {
                   <motion.div
                     initial={{ opacity: 0, x: 50 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4, duration: 0.6 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
                     viewport={{ once: true }}
                     className="md:order-2"
                   >
                     <div className="bg-black rounded-2xl border border-gold/30 p-6 md:p-8">
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6 }}
-                        viewport={{ once: true }}
-                        className="mb-2"
-                      >
+                      <div className="mb-2">
                         <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold mb-4">
                           <span className="text-gold font-bold">MAIN EVENT</span>
                         </span>
-                      </motion.div>
+                      </div>
                       
-                      <motion.h3
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.8 }}
-                        viewport={{ once: true }}
-                        className="text-2xl md:text-3xl font-bold text-white mb-4"
-                      >
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
                         LOFTE-3 Dinner Night & Pool Party
                         <span className="block text-lg text-gold mt-2">(Valentine Edition)</span>
-                      </motion.h3>
+                      </h3>
                       
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 1 }}
-                        viewport={{ once: true }}
-                        className="text-gray-300 mb-6 leading-relaxed"
-                      >
+                      <p className="text-gray-300 mb-6 leading-relaxed">
                         An unforgettable evening of fine dining, romantic ambiance, and poolside celebrations. 
                         Join Africa's Web3 elite for an exclusive Valentine's experience featuring gourmet cuisine, 
                         premium cocktails, and blockchain networking under the stars.
-                      </motion.p>
+                      </p>
 
-                      {/* Event Details with Stagger */}
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ delay: 1.2, staggerChildren: 0.1 }}
-                        viewport={{ once: true }}
-                        className="space-y-4 mb-8"
-                      >
+                      {/* Event Details */}
+                      <div className="space-y-4 mb-8">
                         {[
                           { icon: <Calendar className="w-5 h-5 text-gold" />, label: "Date", value: "February 17, 2026" },
                           { icon: <Clock className="w-5 h-5 text-gold" />, label: "Time", value: "Scheduled on Ticket", subIcon: <Ticket className="w-4 h-4" /> },
                           { icon: <MapPin className="w-5 h-5 text-gold" />, label: "Location", value: "Scheduled on Ticket" },
                         ].map((detail, idx) => (
-                          <motion.div
-                            key={idx}
-                            initial={{ x: -20, opacity: 0 }}
-                            whileInView={{ x: 0, opacity: 1 }}
-                            transition={{ delay: 1.2 + idx * 0.1 }}
-                            viewport={{ once: true }}
-                            className="flex items-center gap-3"
-                          >
+                          <div key={idx} className="flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-gold/10 border border-gold/20">
                               {detail.icon}
                             </div>
@@ -525,18 +433,12 @@ export default function HomePage() {
                                 {detail.value}
                               </p>
                             </div>
-                          </motion.div>
+                          </div>
                         ))}
-                      </motion.div>
+                      </div>
 
-                      {/* Buttons with Animation */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 1.5 }}
-                        viewport={{ once: true }}
-                        className="flex flex-col sm:flex-row gap-4"
-                      >
+                      {/* Buttons */}
+                      <div className="flex flex-col sm:flex-row gap-4">
                         <motion.a
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
@@ -557,38 +459,36 @@ export default function HomePage() {
                         >
                           Sponsor Event
                         </motion.a>
-                      </motion.div>
+                      </div>
                     </div>
                   </motion.div>
                 </div>
               </motion.div>
 
-              {/* EVENT 2: BLURRED - Web3 Music Festival */}
+              {/* BLURRED EVENTS - REDUCED BLUR */}
+              {/* EVENT 2: Web3 Music Festival */}
               <motion.div
                 initial={{ opacity: 0, x: 100 }}
-                whileInView={{ opacity: 0.6, x: 0 }}
-                transition={{ duration: 0.7, delay: 0.2 }}
+                whileInView={{ opacity: 0.8, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative blur-sm hover:blur-0 transition-all duration-500"
+                className="relative blur-[2px] hover:blur-0 transition-all duration-500"
               >
-                {/* Desktop: Connector Dot */}
                 <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                   <div className="w-3 h-3 rounded-full bg-gold/50 border-2 border-black"></div>
                 </div>
 
-                {/* Card Container - Reversed on Desktop */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Content Side - Left on Desktop */}
                   <div className="mb-8 md:mb-0">
-                    <div className="bg-black/50 rounded-2xl border border-gold/10 p-6">
+                    <div className="bg-black/70 rounded-2xl border border-gold/20 p-6">
                       <div className="mb-4">
-                        <span className="inline-block px-4 py-1 rounded-full bg-gold/5 border border-gold/10 mb-3">
-                          <span className="text-gold/70 text-sm font-bold">COMING SOON</span>
+                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold/20 mb-3">
+                          <span className="text-gold text-sm font-bold">COMING SOON</span>
                         </span>
-                        <h3 className="text-xl font-bold text-white/80 mb-3">
+                        <h3 className="text-xl font-bold text-white mb-3">
                           Web3 Music Festival
                         </h3>
-                        <p className="text-gray-400/80 mb-6">
+                        <p className="text-gray-300 mb-6">
                           Africa's first crypto-powered music festival with top DJs, 
                           NFT ticket system, and blockchain voting for lineup.
                         </p>
@@ -596,69 +496,64 @@ export default function HomePage() {
 
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <Calendar className="w-5 h-5 text-gold/60" />
-                          <p className="text-gray-500">March 15, 2026</p>
+                          <Calendar className="w-5 h-5 text-gold" />
+                          <p className="text-gray-400">March 15, 2026</p>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Music className="w-5 h-5 text-gold/60" />
-                          <p className="text-gray-500">Lagos & Virtual</p>
+                          <Music className="w-5 h-5 text-gold" />
+                          <p className="text-gray-400">Lagos & Virtual</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Image Side - Right on Desktop */}
                   <div className="md:order-first">
-                    <div className="relative rounded-2xl overflow-hidden border border-gold/20">
+                    <div className="relative rounded-2xl overflow-hidden border border-gold/30">
                       <img
                         src={eventImages.musicFestival}
                         alt="Web3 Music Festival"
                         className="w-full h-64 md:h-80 object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                     </div>
                   </div>
                 </div>
               </motion.div>
 
-              {/* EVENT 3: BLURRED - NFT Art Gala */}
+              {/* EVENT 3: NFT Art Gala */}
               <motion.div
                 initial={{ opacity: 0, x: -100 }}
-                whileInView={{ opacity: 0.6, x: 0 }}
-                transition={{ duration: 0.7, delay: 0.4 }}
+                whileInView={{ opacity: 0.8, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative blur-sm hover:blur-0 transition-all duration-500"
+                className="relative blur-[2px] hover:blur-0 transition-all duration-500"
               >
-                {/* Desktop: Connector Dot */}
                 <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                   <div className="w-3 h-3 rounded-full bg-gold/50 border-2 border-black"></div>
                 </div>
 
-                {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Image Side - Left on Desktop */}
                   <div className="md:order-1 mb-8 md:mb-0">
-                    <div className="relative rounded-2xl overflow-hidden border border-gold/20">
+                    <div className="relative rounded-2xl overflow-hidden border border-gold/30">
                       <img
                         src={eventImages.nftGala}
                         alt="NFT Art Gala"
                         className="w-full h-64 md:h-80 object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                     </div>
                   </div>
 
-                  {/* Content Side - Right on Desktop */}
                   <div className="md:order-2">
-                    <div className="bg-black/50 rounded-2xl border border-gold/10 p-6">
+                    <div className="bg-black/70 rounded-2xl border border-gold/20 p-6">
                       <div className="mb-4">
-                        <span className="inline-block px-4 py-1 rounded-full bg-gold/5 border border-gold/10 mb-3">
-                          <span className="text-gold/70 text-sm font-bold">COMING SOON</span>
+                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold/20 mb-3">
+                          <span className="text-gold text-sm font-bold">COMING SOON</span>
                         </span>
-                        <h3 className="text-xl font-bold text-white/80 mb-3">
+                        <h3 className="text-xl font-bold text-white mb-3">
                           NFT Art Gala Night
                         </h3>
-                        <p className="text-gray-400/80 mb-6">
+                        <p className="text-gray-300 mb-6">
                           Exclusive digital art exhibition featuring Africa's top NFT artists, 
                           live minting, and collector networking.
                         </p>
@@ -666,12 +561,12 @@ export default function HomePage() {
 
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <Calendar className="w-5 h-5 text-gold/60" />
-                          <p className="text-gray-500">April 5, 2026</p>
+                          <Calendar className="w-5 h-5 text-gold" />
+                          <p className="text-gray-400">April 5, 2026</p>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Coins className="w-5 h-5 text-gold/60" />
-                          <p className="text-gray-500">Digital Gallery</p>
+                          <Coins className="w-5 h-5 text-gold" />
+                          <p className="text-gray-400">Digital Gallery</p>
                         </div>
                       </div>
                     </div>
@@ -679,32 +574,29 @@ export default function HomePage() {
                 </div>
               </motion.div>
 
-              {/* EVENT 4: BLURRED - DeFi Hackathon */}
+              {/* EVENT 4: DeFi Hackathon */}
               <motion.div
                 initial={{ opacity: 0, x: 100 }}
-                whileInView={{ opacity: 0.6, x: 0 }}
-                transition={{ duration: 0.7, delay: 0.6 }}
+                whileInView={{ opacity: 0.8, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative blur-sm hover:blur-0 transition-all duration-500"
+                className="relative blur-[2px] hover:blur-0 transition-all duration-500"
               >
-                {/* Desktop: Connector Dot */}
                 <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                   <div className="w-3 h-3 rounded-full bg-gold/50 border-2 border-black"></div>
                 </div>
 
-                {/* Card Container - Reversed on Desktop */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Content Side - Left on Desktop */}
                   <div className="mb-8 md:mb-0">
-                    <div className="bg-black/50 rounded-2xl border border-gold/10 p-6">
+                    <div className="bg-black/70 rounded-2xl border border-gold/20 p-6">
                       <div className="mb-4">
-                        <span className="inline-block px-4 py-1 rounded-full bg-gold/5 border border-gold/10 mb-3">
-                          <span className="text-gold/70 text-sm font-bold">COMING SOON</span>
+                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold/20 mb-3">
+                          <span className="text-gold text-sm font-bold">COMING SOON</span>
                         </span>
-                        <h3 className="text-xl font-bold text-white/80 mb-3">
+                        <h3 className="text-xl font-bold text-white mb-3">
                           DeFi Hackathon Finals
                         </h3>
-                        <p className="text-gray-400/80 mb-6">
+                        <p className="text-gray-300 mb-6">
                           Africa's biggest DeFi competition with $100K prizes, 
                           VC pitching, and live coding battles.
                         </p>
@@ -712,26 +604,25 @@ export default function HomePage() {
 
                       <div className="space-y-3">
                         <div className="flex items-center gap-3">
-                          <Calendar className="w-5 h-5 text-gold/60" />
-                          <p className="text-gray-500">May 20, 2026</p>
+                          <Calendar className="w-5 h-5 text-gold" />
+                          <p className="text-gray-400">May 20, 2026</p>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Zap className="w-5 h-5 text-gold/60" />
-                          <p className="text-gray-500">Tech Hub, Abuja</p>
+                          <Zap className="w-5 h-5 text-gold" />
+                          <p className="text-gray-400">Tech Hub, Abuja</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Image Side - Right on Desktop */}
                   <div className="md:order-first">
-                    <div className="relative rounded-2xl overflow-hidden border border-gold/20">
+                    <div className="relative rounded-2xl overflow-hidden border border-gold/30">
                       <img
                         src={eventImages.hackathon}
                         alt="DeFi Hackathon"
                         className="w-full h-64 md:h-80 object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
                     </div>
                   </div>
                 </div>
@@ -739,20 +630,20 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* View All Events */}
+          {/* View All Events - Scrolls to top of events section */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
+            transition={{ delay: 0.5 }}
             viewport={{ once: true }}
             className="text-center mt-20"
           >
             <motion.a
               whileHover={{ scale: 1.05 }}
-              href="#"
+              href="#events"
               className="inline-flex items-center gap-2 text-gold font-medium hover:text-gold/80 transition"
             >
-              <span>View All Events</span>
+              <span>Back to Top</span>
               <ChevronRight className="w-4 h-4" />
             </motion.a>
           </motion.div>
