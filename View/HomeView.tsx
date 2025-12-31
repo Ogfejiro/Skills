@@ -26,8 +26,8 @@ export default function HomePage() {
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
-    // Valentine event video
-    valentineEvent: "/images/hb.png", // Your video path here
+    // Valentine event image (changed from video)
+    valentineEvent: "/images/hb.png", // Your image path here
     
     // Other events
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
@@ -60,67 +60,93 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative">
           {/* HEADING with Split Text Animation - Faster animations */}
           <div className="text-center mb-16">
-            {/* Split text animation for "WELCOME TO" */}
-            <div className="flex justify-center gap-2 md:gap-4 flex-wrap mb-4">
-              {["WELCOME", "TO"].map((word, index) => (
-                <motion.span
-                  key={word}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ 
-                    delay: index * 0.1, 
-                    duration: 0.4,
-                    ease: "easeOut"
-                  }}
-                  className="text-4xl md:text-5xl font-bold text-white"
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </div>
+            {/* Split text animation for "WELCOME TO" - FIXED WIDTH */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1, duration: 0.4 }}
+              className="w-full flex justify-center mb-4"
+            >
+              <div className="inline-flex gap-2 md:gap-4">
+                {["WELCOME", "TO"].map((word, index) => (
+                  <motion.span
+                    key={word}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      delay: index * 0.1, 
+                      duration: 0.4,
+                      ease: "easeOut"
+                    }}
+                    className="text-4xl md:text-5xl font-bold text-white whitespace-nowrap"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+              </div>
+            </motion.div>
             
-            {/* LOFTE-3 with gold gradient */}
+            {/* LOFTE-3 with gold gradient - FIXED WIDTH */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2, duration: 0.4 }}
-              className="text-5xl md:text-7xl font-bold mb-8"
+              className="w-full mb-8"
             >
-              <span className="gold-gradient">LOFTE-3</span>
+              <div className="inline-block">
+                <span className="gold-gradient text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
+                  LOFTE-3
+                </span>
+              </div>
             </motion.div>
             
-            {/* Subtitle sliding from left and right - CHANGED TEXT */}
-            <div className="overflow-hidden mb-8">
-              <motion.h2
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
-                className="text-2xl md:text-3xl text-gray-300 mb-2"
-              >
-                Crypto <span className="text-gold font-bold">Beyond</span>
-              </motion.h2>
-              <motion.h2
-                initial={{ x: 100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-                className="text-2xl md:text-3xl text-gray-300"
-              >
-                Screen
-              </motion.h2>
-            </div>
+            {/* Subtitle sliding from left and right - FIXED WIDTH AND STYLING */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="w-full mb-8"
+            >
+              <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4">
+                <motion.div
+                  initial={{ x: -50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
+                  className="text-3xl md:text-4xl lg:text-5xl text-white font-semibold"
+                >
+                  Crypto
+                </motion.div>
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.5, type: "spring" }}
+                  className="text-3xl md:text-4xl lg:text-5xl gold-gradient font-bold px-3 py-1 rounded-lg"
+                >
+                  Beyond
+                </motion.div>
+                <motion.div
+                  initial={{ x: 50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
+                  className="text-3xl md:text-4xl lg:text-5xl text-white font-semibold"
+                >
+                  Screen
+                </motion.div>
+              </div>
+            </motion.div>
 
-            {/* DESCRIPTION with faster animation - CHANGED TEXT */}
+            {/* DESCRIPTION with faster animation - WIDER TEXT */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="max-w-2xl mx-auto"
+              className="w-full max-w-4xl mx-auto"  // Changed from max-w-2xl to max-w-4xl
             >
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7, duration: 0.5 }}
-                className="text-xl text-gray-300 mb-10 leading-relaxed"
+                className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed text-center px-4"
               >
                 Africa's premier Web3 event platform. Where blockchain meets real-world celebrations, 
                 exclusive networking, and unforgettable moments with the crypto community.
@@ -131,7 +157,7 @@ export default function HomePage() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8, duration: 0.4 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto"
+                className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto"  // Changed from max-w-3xl to max-w-5xl
               >
                 {[
                   { icon: <Users className="w-7 h-7" />, label: "10K+", value: "Attendees" },
@@ -153,7 +179,7 @@ export default function HomePage() {
                     >
                       <div className="text-gold">{stat.icon}</div>
                     </motion.div>
-                    <div className="text-2xl font-bold text-white">{stat.label}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-white">{stat.label}</div>
                     <div className="text-sm text-gray-400">{stat.value}</div>
                   </motion.div>
                 ))}
@@ -242,6 +268,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Rest of the code remains exactly the same... */}
       {/* ========== UPCOMING EVENTS SECTION ========== */}
       <section id="events" className="py-20 bg-black relative overflow-hidden">
         {/* Animated Background Elements */}
@@ -322,7 +349,7 @@ export default function HomePage() {
 
                 {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Video Side */}
+                  {/* Image Side (changed from video) */}
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -334,13 +361,11 @@ export default function HomePage() {
                       whileHover={{ scale: 1.02 }}
                       className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
                     >
-                      {/* Valentine Event Video - SIMPLE WORKING FIX */}
-                      <video
+                      {/* Valentine Event Image (changed from video) */}
+                      <img
                         src={eventImages.valentineEvent}
+                        alt="LOFTE-3 Valentine's Dinner & Pool Party"
                         className="w-full h-64 md:h-80 object-cover"
-                        controls
-                        preload="auto"
-                        playsInline
                       />
                       
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
