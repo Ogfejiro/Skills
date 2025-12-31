@@ -22,7 +22,7 @@ import {
 import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
-  const xAccountLink = "https://twitter.com/YourTwitterHandle";
+  const xAccountLink = "https://X.com/hidreams__";
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
@@ -59,7 +59,7 @@ export default function HomePage() {
 
         <div className="container mx-auto px-4 relative">
           {/* HEADING with Split Text Animation - Faster animations */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 w-full">
             {/* Split text animation for "WELCOME TO" - FIXED WIDTH */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -67,8 +67,8 @@ export default function HomePage() {
               transition={{ delay: 0.1, duration: 0.4 }}
               className="w-full flex justify-center mb-4"
             >
-              <div className="inline-flex gap-2 md:gap-4">
-                {["WELCOME", "TO"].map((word, index) => (
+              <div className="inline-flex gap-2 md:gap-4 px-10">
+                {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
                   <motion.span
                     key={word}
                     initial={{ opacity: 0, y: 20 }}
@@ -93,11 +93,11 @@ export default function HomePage() {
               transition={{ delay: 0.2, duration: 0.4 }}
               className="w-full mb-8"
             >
-              <div className="inline-block">
+              {/* <div className="">
                 <span className="gold-gradient text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
                   LOFTE-3
                 </span>
-              </div>
+              </div> */}
             </motion.div>
             
             {/* Subtitle sliding from left and right - FIXED WIDTH AND STYLING */}
@@ -112,7 +112,7 @@ export default function HomePage() {
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-                  className="text-3xl md:text-4xl lg:text-5xl text-white font-semibold"
+                  className="text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Crypto
                 </motion.div>
@@ -120,7 +120,7 @@ export default function HomePage() {
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.5, duration: 0.5, type: "spring" }}
-                  className="text-3xl md:text-4xl lg:text-5xl gold-gradient font-bold px-3 py-1 rounded-lg"
+                  className="text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-3 py-1 rounded-lg"
                 >
                   Beyond
                 </motion.div>
@@ -128,7 +128,7 @@ export default function HomePage() {
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
-                  className="text-3xl md:text-4xl lg:text-5xl text-white font-semibold"
+                  className="text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Screen
                 </motion.div>
@@ -148,7 +148,8 @@ export default function HomePage() {
                 transition={{ delay: 0.7, duration: 0.5 }}
                 className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed text-center px-4"
               >
-                Africa's premier Web3 event platform. Where blockchain meets real-world celebrations, 
+                Africa's leading strategic IRL and virtual Web3 
+                event platform; Driving growth, culture, KPIs and lifestyle. Where blockchain meets real-world celebrations, 
                 exclusive networking, and unforgettable moments with the crypto community.
               </motion.p>
               
@@ -251,7 +252,7 @@ export default function HomePage() {
               href={xAccountLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-3 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all"
+              className="inline-flex items-center gap-3 px-8 py-3 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all cursor-pointer"
             >
               <span>Learn More About Us</span>
               <ExternalLink className="w-5 h-5" />
