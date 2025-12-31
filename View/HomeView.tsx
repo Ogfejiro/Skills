@@ -5,7 +5,6 @@ import {
   Sparkles, 
   Users, 
   Trophy, 
-  Globe, 
   ExternalLink,
   Calendar,
   Clock,
@@ -44,28 +43,23 @@ export default function HomePage() {
         <div className="absolute inset-0 overflow-hidden">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={{ scale: 1, opacity: 0.2 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             className="absolute top-20 left-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl"
           />
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={{ scale: 1, opacity: 0.2 }}
             transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
             className="absolute bottom-20 right-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl"
           />
         </div>
 
         <div className="container mx-auto px-4 relative">
-          {/* HEADING with Split Text Animation - Faster animations */}
+          {/* HEADING with Split Text Animation */}
           <div className="text-center mb-16 w-full">
-            {/* Split text animation for "WELCOME TO" - FIXED WIDTH */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.4 }}
-              className="w-full flex justify-center mb-4"
-            >
+            {/* WELCOME TO LOFTE-3 with staggered animation - FIXED */}
+            <div className="w-full flex justify-center mb-6">
               <div className="inline-flex gap-2 md:gap-4 flex-wrap justify-center px-4">
                 {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
                   <motion.span
@@ -73,8 +67,8 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ 
-                      delay: index * 0.1, 
-                      duration: 0.4,
+                      delay: index * 0.2, 
+                      duration: 0.5,
                       ease: "easeOut"
                     }}
                     className="text-3xl md:text-4xl lg:text-5xl font-bold text-white whitespace-nowrap"
@@ -83,106 +77,83 @@ export default function HomePage() {
                   </motion.span>
                 ))}
               </div>
-            </motion.div>
+            </div>
             
-            {/* LOFTE-3 with gold gradient - FIXED WIDTH */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.4 }}
-              className="w-full mb-8"
-            >
-              {/* <div className="">
-                <span className="gold-gradient text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
-                  LOFTE-3
-                </span>
-              </div> */}
-            </motion.div>
-            
-            {/* Subtitle sliding from left and right - FIXED WIDTH AND STYLING */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="w-full mb-8"
-            >
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 md:gap-4 flex-wrap">
-                <motion.div
+            {/* Crypto Coin Beyond Coin Screen with animations */}
+            <div className="w-full mb-8">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap">
+                {/* Crypto */}
+                <motion.span
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Crypto
-                </motion.div>
+                </motion.span>
+                
+                {/* Coin Icon 1 */}
                 <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.5, type: "spring" }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-2 sm:px-3 py-1 rounded-lg"
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
+                  className="flex items-center"
                 >
-                  Coins
+                  <Coins className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gold mx-2" />
                 </motion.div>
-                <motion.div
+                
+                {/* Beyond */}
+                <motion.span
                   initial={{ x: -30, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.55, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Beyond
-                </motion.div>
+                </motion.span>
+                
+                {/* Coin Icon 2 */}
                 <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.5, type: "spring" }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-2 sm:px-3 py-1 rounded-lg"
+                  initial={{ scale: 0, rotate: -180 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.9, type: "spring", stiffness: 200 }}
+                  className="flex items-center"
                 >
-                  Coins
+                  <Coins className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gold mx-2" />
                 </motion.div>
-                <motion.div
+                
+                {/* Screen */}
+                <motion.span
                   initial={{ x: 30, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.65, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 1.0, duration: 0.5, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Screen
-                </motion.div>
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.7, duration: 0.5, type: "spring" }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold gold-gradient font-bold px-2 sm:px-3 py-1 rounded-lg"
-                >
-                  Coins
-                </motion.div>
+                </motion.span>
               </div>
-            </motion.div>
+            </div>
 
-            {/* DESCRIPTION with faster animation - WIDER TEXT */}
+            {/* DESCRIPTION with animation */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
+              transition={{ delay: 1.1, duration: 0.7 }}
               className="w-full max-w-4xl mx-auto"
             >
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.9, duration: 0.5 }}
-                className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed text-center px-4"
+                transition={{ delay: 1.2, duration: 0.7 }}
+                className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-10 leading-relaxed text-center px-4"
               >
                 Africa's leading strategic IRL and virtual Web3 
                 event platform; Driving growth, culture, KPIs and lifestyle. Where blockchain meets real-world celebrations, 
                 exclusive networking, and unforgettable moments with the crypto community.
               </motion.p>
               
-              {/* GOLD STATS with faster staggered animation - CHANGED ICON */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.0, duration: 0.4 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto"
-              >
+              {/* GOLD STATS with staggered animation */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
                 {[
                   { icon: <Users className="w-7 h-7" />, label: "10K+", value: "Attendees" },
                   { icon: <Trophy className="w-7 h-7" />, label: "50+", value: "Events" },
@@ -193,7 +164,7 @@ export default function HomePage() {
                     key={idx}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 1.1 + idx * 0.05, duration: 0.4 }}
+                    transition={{ delay: 1.3 + idx * 0.1, duration: 0.5, type: "spring" }}
                     className="text-center"
                   >
                     <motion.div
@@ -207,19 +178,19 @@ export default function HomePage() {
                     <div className="text-sm text-gray-400">{stat.value}</div>
                   </motion.div>
                 ))}
-              </motion.div>
+              </div>
             </motion.div>
           </div>
 
-          {/* MAIN PARTY IMAGE with faster animation */}
+          {/* MAIN PARTY IMAGE with animation */}
           <motion.div
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ 
-              delay: 1.2, 
-              duration: 0.6,
+              delay: 1.7, 
+              duration: 0.8,
               type: "spring",
-              stiffness: 200,
+              stiffness: 100,
               damping: 15
             }}
             className="mt-16"
@@ -235,9 +206,9 @@ export default function HomePage() {
             >
               {/* Party Image */}
               <motion.img
-                initial={{ scale: 1.1 }}
+                initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 1.3, duration: 0.8 }}
+                transition={{ delay: 1.8, duration: 1, ease: "easeOut" }}
                 src={eventImages.mainParty}
                 alt="Young adults partying at LOFTE-3 event"
                 className="w-full h-64 md:h-96 object-cover"
@@ -247,26 +218,36 @@ export default function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
               
               {/* Gold Badge */}
-              <div className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 1.9, duration: 0.5 }}
+                className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
+              >
                 <span className="text-sm font-bold text-gold flex items-center gap-2">
                   <Sparkles className="w-3 h-3" />
                   LIVE NOW
                 </span>
-              </div>
+              </motion.div>
               
-              {/* Text Overlay - Changed to LOFTE-3 Africa */}
-              <div className="absolute bottom-6 left-6 text-white">
+              {/* Text Overlay */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 2.0, duration: 0.5 }}
+                className="absolute bottom-6 left-6 text-white"
+              >
                 <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Africa</h3>
                 <p className="text-gray-300">500+ People Partying</p>
-              </div>
+              </motion.div>
             </motion.div>
           </motion.div>
 
-          {/* LEARN MORE BUTTON with faster animation */}
+          {/* LEARN MORE BUTTON with animation */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.5 }}
+            transition={{ delay: 2.2 }}
             className="text-center mt-12"
           >
             <motion.a
@@ -283,7 +264,7 @@ export default function HomePage() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.6 }}
+              transition={{ delay: 2.3 }}
               className="text-gray-400 mt-4 text-sm"
             >
               Follow our X for event updates
