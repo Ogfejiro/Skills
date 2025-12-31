@@ -15,7 +15,7 @@ const Footer = () => {
             </p>
             <div className="flex gap-4 pt-2">
               <a
-                href="https://twitter.com/YOUR_TWITTER_LINK"
+                href="https://x.com/hidreams__"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-gold-500 transition transform hover:-translate-y-1"
@@ -23,7 +23,7 @@ const Footer = () => {
               >
                 <Twitter className="w-5 h-5" />
               </a>
-              <a
+              {/* <a
                 href="https://discord.gg/YOUR_DISCORD_LINK"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -31,9 +31,9 @@ const Footer = () => {
                 aria-label="Discord"
               >
                 <Disc className="w-5 h-5" />
-              </a>
+              </a> */}
               <a
-                href="https://t.me/YOUR_TELEGRAM_LINK"
+                href="https://T.me/lofte_live"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-gold-500 transition transform hover:-translate-y-1"

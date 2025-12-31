@@ -22,7 +22,7 @@ import {
 import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
-  const xAccountLink = "https://twitter.com/YourTwitterHandle";
+  const xAccountLink = "https://X.com/hidreams__";
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
@@ -67,7 +67,7 @@ export default function HomePage() {
               transition={{ delay: 0.1, duration: 0.4 }}
               className="w-full flex justify-center mb-4"
             >
-              <div className="inline-flex gap-2 md:gap-4">
+              <div className="inline-flex gap-2 md:gap-4 px-10">
                 {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
                   <motion.span
                     key={word}
@@ -148,7 +148,8 @@ export default function HomePage() {
                 transition={{ delay: 0.7, duration: 0.5 }}
                 className="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed text-center px-4"
               >
-                Africa's premier Web3 event platform. Where blockchain meets real-world celebrations, 
+                Africa's leading strategic IRL and virtual Web3 
+                event platform; Driving growth, culture, KPIs and lifestyle. Where blockchain meets real-world celebrations, 
                 exclusive networking, and unforgettable moments with the crypto community.
               </motion.p>
               
@@ -251,7 +252,7 @@ export default function HomePage() {
               href={xAccountLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-3 px-8 py-3 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all"
+              className="inline-flex items-center gap-3 px-8 py-3 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all cursor-pointer"
             >
               <span>Learn More About Us</span>
               <ExternalLink className="w-5 h-5" />

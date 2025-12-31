@@ -15,7 +15,7 @@ export default function WhyAttendPage() {
       id: 1,
       title: "Red Carpet Experience",
       description: "Walk the red carpet like a Web3 celebrity. Professional photography, media coverage, and star treatment from arrival to departure.",
-      image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2069&auto=format&fit=crop",
+      image: "/images/hbd.jpg",
       stats: "VIP Treatment",
       features: ["Professional Photos", "Media Coverage", "Celebrity Treatment", "Exclusive Entry"]
     },
@@ -23,7 +23,7 @@ export default function WhyAttendPage() {
       id: 2,
       title: "Find Your Web3 Soulmate",
       description: "Connect with like-minded individuals in the blockchain space. Our matchmaking sessions help you find partners, co-founders, and lifelong friends.",
-      image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=2094&auto=format&fit=crop",
+      image: "https://plus.unsplash.com/premium_photo-1658506739004-703dabce5ebe?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTN8fGNvdXBsZSUyMHNoYWRvd3xlbnwwfHwwfHx8MA%3D%3D",
       stats: "Quality Connections",
       features: ["Matchmaking Sessions", "Founder Dating", "Team Building", "Community Bonding"]
     },
@@ -47,7 +47,7 @@ export default function WhyAttendPage() {
       id: 5,
       title: "Culture Meets Tech",
       description: "Experience the perfect fusion of African culture with cutting-edge technology. Art, music, fashion, and blockchain in one unforgettable experience.",
-      image: "https://images.unsplash.com/photo-1571622840901-92ae138bd36e?q=80&w=2070&auto=format&fit=crop",
+      image: "https://images.unsplash.com/photo-1647511256098-75416d6500d8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGNyeXB0byUyMGNoYXJ0fGVufDB8fDB8fHww",
       stats: "African Innovation Showcase",
       features: ["Cultural Performances", "Tech Art Exhibits", "Fashion Tech", "Music Innovation"]
     },
@@ -55,7 +55,7 @@ export default function WhyAttendPage() {
       id: 6,
       title: "Win Amazing Prizes",
       description: "Compete for exclusive rewards including NFTs, token airdrops, luxury gifts, and investment opportunities worth thousands of dollars.",
-      image: "https://images.unsplash.com/photo-1604591259955-5c4db0eacb44?q=80&w=2070&auto=format&fit=crop",
+      image: "https://plus.unsplash.com/premium_photo-1744679847695-6e36a8f6956c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJpemUlMjB3aGVlbHxlbnwwfHwwfHx8MA%3D%3D",
       stats: "$100K+ in Prizes",
       features: ["NFT Airdrops", "Token Rewards", "Luxury Gifts", "Investment Access"]
     },
