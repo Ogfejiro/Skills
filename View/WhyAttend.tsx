@@ -55,7 +55,7 @@ export default function WhyAttendPage() {
       id: 6,
       title: "Win Amazing Prizes",
       description: "Compete for exclusive rewards including NFTs, token airdrops, luxury gifts, and investment opportunities worth thousands of dollars.",
-      image: "https://www.freepik.com/premium-psd/wheel-fortune-spin-fortune-wheel-3d-rendering-isolated-transparent-background_317518327.htm#fromView=keyword&page=1&position=19&uuid=66bb10de-cb71-4d12-b0dc-a333ab6cbf96&query=Prize+wheel", // Prize wheel image
+      image: "https://plus.unsplash.com/premium_photo-1744679847695-6e36a8f6956c?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D", // Prize wheel image
       stats: "$100K+ in Prizes",
       features: ["NFT Airdrops", "Token Rewards", "Luxury Gifts", "Investment Access"]
     },
