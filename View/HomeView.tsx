@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { 
   Sparkles, 
   Users, 
-  Trophy, 
   Globe,
   ExternalLink,
   Calendar,
@@ -59,23 +58,25 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative">
           {/* HEADING with Split Text Animation */}
           <div className="text-center mb-16 w-full">
-            {/* WELCOME TO LOFTE-3 with SPLIT ANIMATION and VISIBLE GLOW */}
-            <div className="relative w-full flex justify-center mb-10">
-              {/* VISIBLE GOLD GLOW BACKGROUND */}
-              <div className="absolute inset-0 flex justify-center">
-                <div className="absolute w-[800px] h-48 bg-gradient-to-r from-gold/50 via-gold/30 to-gold/50 blur-3xl rounded-full opacity-60"></div>
+            {/* WELCOME TO LOFTE-3 with SPLIT ANIMATION and CENTERED GOLD SHADOW */}
+            <div className="relative w-full flex justify-center mb-12">
+              {/* CENTERED GOLD SHADOW - VERY VISIBLE */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <div className="w-[800px] h-48 bg-gold/40 blur-3xl rounded-full"></div>
+                <div className="w-[600px] h-32 bg-gold/50 blur-2xl rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+                <div className="w-[400px] h-24 bg-gold/60 blur-xl rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
               </div>
               
               <div className="relative z-10">
-                <div className="flex flex-wrap justify-center gap-3 md:gap-6">
+                <div className="flex flex-wrap justify-center gap-4 md:gap-6">
                   {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
                     <motion.div
                       key={word}
-                      initial={{ opacity: 0, y: 30 }}
+                      initial={{ opacity: 0, y: 40 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ 
-                        delay: 0.2 + (index * 0.3),
-                        duration: 0.6,
+                        delay: 0.1 + (index * 0.3),
+                        duration: 0.7,
                         ease: "easeOut"
                       }}
                       className="inline-block"
@@ -90,18 +91,13 @@ export default function HomePage() {
             </div>
             
             {/* Crypto Coin Beyond Coin Screen with WORKING animations */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.1 }}
-              className="w-full mb-10"
-            >
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap">
+            <div className="w-full mb-12">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-5 flex-wrap">
                 {/* Crypto */}
                 <motion.div
                   initial={{ x: -100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
+                  transition={{ delay: 1.0, duration: 0.6, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Crypto
@@ -111,17 +107,17 @@ export default function HomePage() {
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 1.1, type: "spring", stiffness: 200 }}
                   className="flex items-center"
                 >
-                  <Coins className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold mx-2 sm:mx-3" />
+                  <Coins className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold mx-3" />
                 </motion.div>
                 
                 {/* Beyond */}
                 <motion.div
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 1.4, duration: 0.6, ease: "easeOut" }}
+                  transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Beyond
@@ -131,35 +127,35 @@ export default function HomePage() {
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
                   className="flex items-center"
                 >
-                  <Coins className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold mx-2 sm:mx-3" />
+                  <Coins className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold mx-3" />
                 </motion.div>
                 
                 {/* Screen */}
                 <motion.div
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 1.6, duration: 0.6, ease: "easeOut" }}
+                  transition={{ delay: 1.4, duration: 0.6, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Screen
                 </motion.div>
               </div>
-            </motion.div>
+            </div>
 
             {/* DESCRIPTION with WORKING animation */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.8, duration: 0.7 }}
+              transition={{ delay: 1.6, duration: 0.7 }}
               className="w-full max-w-4xl mx-auto"
             >
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 2.0, duration: 0.7 }}
+                transition={{ delay: 1.8, duration: 0.7 }}
                 className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed text-center px-4"
               >
                 Africa's leading strategic IRL and virtual Web3 
@@ -167,19 +163,19 @@ export default function HomePage() {
                 exclusive networking, and unforgettable moments with the crypto community.
               </motion.p>
               
-              {/* GOLD STATS with UPDATED ICONS */}
+              {/* GOLD STATS with UPDATED ICONS - Infinity icon for 50+ Events */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 max-w-5xl mx-auto">
                 {[
                   { icon: <Users className="w-8 h-8" />, label: "10K+", value: "Attendees" },
-                  { icon: <Infinity className="w-8 h-8 text-gold" />, label: "50+", value: "Events" }, // Changed to Infinity
+                  { icon: <Infinity className="w-8 h-8 text-gold" />, label: "50+", value: "Events" }, // Infinity icon here
                   { icon: <Sparkles className="w-8 h-8" />, label: "100+", value: "Parties" },
-                  { icon: <Globe className="w-8 h-8 text-gold" />, label: "Africa", value: "Wide Coverage" }, // Changed to Globe
+                  { icon: <Globe className="w-8 h-8 text-gold" />, label: "Africa", value: "Wide Coverage" }, // Globe icon here
                 ].map((stat, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 2.2 + idx * 0.15, duration: 0.5, type: "spring" }}
+                    transition={{ delay: 2.0 + idx * 0.15, duration: 0.5, type: "spring" }}
                     className="text-center"
                   >
                     <motion.div
@@ -202,7 +198,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
-              delay: 2.6, 
+              delay: 2.5, 
               duration: 0.8,
               type: "spring",
               stiffness: 100,
@@ -223,7 +219,7 @@ export default function HomePage() {
               <motion.img
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 2.7, duration: 1, ease: "easeOut" }}
+                transition={{ delay: 2.6, duration: 1, ease: "easeOut" }}
                 src={eventImages.mainParty}
                 alt="Young adults partying at LOFTE-3 event"
                 className="w-full h-64 md:h-96 object-cover"
@@ -236,7 +232,7 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 2.8, duration: 0.5 }}
+                transition={{ delay: 2.7, duration: 0.5 }}
                 className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
               >
                 <span className="text-sm font-bold text-gold flex items-center gap-2">
@@ -249,7 +245,7 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.9, duration: 0.5 }}
+                transition={{ delay: 2.8, duration: 0.5 }}
                 className="absolute bottom-6 left-6 text-white"
               >
                 <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Africa</h3>
@@ -262,7 +258,7 @@ export default function HomePage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.1 }}
+            transition={{ delay: 3.0 }}
             className="text-center mt-16"
           >
             <motion.button
@@ -277,7 +273,7 @@ export default function HomePage() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3.2 }}
+              transition={{ delay: 3.1 }}
               className="text-gray-400 mt-4 text-sm"
             >
               Follow our X for event updates
