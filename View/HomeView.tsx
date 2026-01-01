@@ -58,17 +58,16 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative">
           {/* HEADING with Split Text Animation */}
           <div className="text-center mb-16 w-full">
-            {/* WELCOME TO LOFTE-3 with background glow */}
+            {/* WELCOME TO LOFTE-3 with VISIBLE gold glow */}
             <div className="relative w-full flex justify-center mb-8">
-              {/* Glowing background BEHIND the text */}
+              {/* SOLID VISIBLE GOLD GLOW */}
               <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 0.3 }}
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1, opacity: 0.4 }}
                 transition={{ delay: 0.3, duration: 1 }}
-                className="absolute w-full max-w-3xl h-32 bg-gradient-to-r from-gold/20 via-gold/10 to-gold/20 blur-3xl rounded-full"
+                className="absolute w-full max-w-3xl h-32 bg-gold/30 blur-3xl rounded-full"
               />
               
-              {/* The text itself */}
               <div className="relative z-10 inline-flex gap-2 md:gap-4 flex-wrap justify-center px-4">
                 {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
                   <motion.span
@@ -76,7 +75,7 @@ export default function HomePage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ 
-                      delay: index * 0.2, 
+                      delay: 0.1 + (index * 0.2), 
                       duration: 0.5,
                       ease: "easeOut"
                     }}
@@ -88,14 +87,14 @@ export default function HomePage() {
               </div>
             </div>
             
-            {/* Crypto Coin Beyond Coin Screen with animations */}
+            {/* Crypto Coin Beyond Coin Screen with WORKING animations */}
             <div className="w-full mb-8">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap">
                 {/* Crypto */}
                 <motion.span
                   initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 0.7, duration: 0.5, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Crypto
@@ -105,7 +104,7 @@ export default function HomePage() {
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.7, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
                   className="flex items-center"
                 >
                   <Coins className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gold mx-2" />
@@ -115,7 +114,7 @@ export default function HomePage() {
                 <motion.span
                   initial={{ x: -30, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 0.9, duration: 0.5, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Beyond
@@ -125,7 +124,7 @@ export default function HomePage() {
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.9, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 1.0, type: "spring", stiffness: 200 }}
                   className="flex items-center"
                 >
                   <Coins className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gold mx-2" />
@@ -135,7 +134,7 @@ export default function HomePage() {
                 <motion.span
                   initial={{ x: 30, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 1.0, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 1.1, duration: 0.5, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Screen
@@ -143,17 +142,17 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* DESCRIPTION with animation */}
+            {/* DESCRIPTION with WORKING animation */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1, duration: 0.7 }}
+              transition={{ delay: 1.2, duration: 0.7 }}
               className="w-full max-w-4xl mx-auto"
             >
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.2, duration: 0.7 }}
+                transition={{ delay: 1.3, duration: 0.7 }}
                 className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-10 leading-relaxed text-center px-4"
               >
                 Africa's leading strategic IRL and virtual Web3 
@@ -161,7 +160,7 @@ export default function HomePage() {
                 exclusive networking, and unforgettable moments with the crypto community.
               </motion.p>
               
-              {/* GOLD STATS with staggered animation */}
+              {/* GOLD STATS with WORKING staggered animation */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
                 {[
                   { icon: <Users className="w-7 h-7" />, label: "10K+", value: "Attendees" },
@@ -173,7 +172,7 @@ export default function HomePage() {
                     key={idx}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 1.3 + idx * 0.1, duration: 0.5, type: "spring" }}
+                    transition={{ delay: 1.4 + idx * 0.1, duration: 0.5, type: "spring" }}
                     className="text-center"
                   >
                     <motion.div
@@ -191,12 +190,12 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          {/* MAIN PARTY IMAGE with animation */}
+          {/* MAIN PARTY IMAGE with WORKING animation */}
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
-              delay: 1.7, 
+              delay: 1.8, 
               duration: 0.8,
               type: "spring",
               stiffness: 100,
@@ -217,7 +216,7 @@ export default function HomePage() {
               <motion.img
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 1.8, duration: 1, ease: "easeOut" }}
+                transition={{ delay: 1.9, duration: 1, ease: "easeOut" }}
                 src={eventImages.mainParty}
                 alt="Young adults partying at LOFTE-3 event"
                 className="w-full h-64 md:h-96 object-cover"
@@ -230,7 +229,7 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.9, duration: 0.5 }}
+                transition={{ delay: 2.0, duration: 0.5 }}
                 className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
               >
                 <span className="text-sm font-bold text-gold flex items-center gap-2">
@@ -243,7 +242,7 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.0, duration: 0.5 }}
+                transition={{ delay: 2.1, duration: 0.5 }}
                 className="absolute bottom-6 left-6 text-white"
               >
                 <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Africa</h3>
@@ -252,28 +251,26 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
 
-          {/* LEARN MORE BUTTON with animation */}
+          {/* LEARN MORE BUTTON - FIXED CLICKABLE */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.2 }}
+            transition={{ delay: 2.3 }}
             className="text-center mt-12"
           >
-            <motion.a
+            <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(212, 175, 55, 0.4)" }}
               whileTap={{ scale: 0.95 }}
-              href={xAccountLink}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={() => window.open(xAccountLink, '_blank', 'noopener,noreferrer')}
               className="inline-flex items-center gap-3 px-8 py-3 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all cursor-pointer"
             >
               <span>Learn More About Us</span>
               <ExternalLink className="w-5 h-5" />
-            </motion.a>
+            </motion.button>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 2.3 }}
+              transition={{ delay: 2.4 }}
               className="text-gray-400 mt-4 text-sm"
             >
               Follow our X for event updates
@@ -451,26 +448,22 @@ export default function HomePage() {
 
                       {/* Buttons */}
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <motion.a
+                        <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          href="https://forms.gle/gwhB683FptSMNsE39"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20"
+                          onClick={() => window.open("https://forms.gle/gwhB683FptSMNsE39", '_blank', 'noopener,noreferrer')}
+                          className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20 cursor-pointer"
                         >
                           Join Waitlist
-                        </motion.a>
-                        <motion.a
+                        </motion.button>
+                        <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          href="https://calendly.com/hidreamsofweb3/30min"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition"
+                          onClick={() => window.open("https://calendly.com/hidreamsofweb3/30min", '_blank', 'noopener,noreferrer')}
+                          className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition cursor-pointer"
                         >
                           Sponsor Event
-                        </motion.a>
+                        </motion.button>
                       </div>
                     </div>
                   </motion.div>
@@ -596,14 +589,14 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mt-20"
           >
-            <motion.a
+            <motion.button
               whileHover={{ scale: 1.05 }}
-              href="#events"
-              className="inline-flex items-center gap-2 text-gold font-medium hover:text-gold/80 transition"
+              onClick={() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })}
+              className="inline-flex items-center gap-2 text-gold font-medium hover:text-gold/80 transition cursor-pointer"
             >
               <span>Back to Top</span>
               <ChevronRight className="w-4 h-4" />
-            </motion.a>
+            </motion.button>
           </motion.div>
         </div>
       </section>
