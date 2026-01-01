@@ -58,9 +58,18 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative">
           {/* HEADING with Split Text Animation */}
           <div className="text-center mb-16 w-full">
-            {/* WELCOME TO LOFTE-3 with staggered animation - FIXED */}
-            <div className="w-full flex justify-center mb-6">
-              <div className="inline-flex gap-2 md:gap-4 flex-wrap justify-center px-4">
+            {/* WELCOME TO LOFTE-3 with background glow */}
+            <div className="relative w-full flex justify-center mb-8">
+              {/* Glowing background BEHIND the text */}
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 0.3 }}
+                transition={{ delay: 0.3, duration: 1 }}
+                className="absolute w-full max-w-3xl h-32 bg-gradient-to-r from-gold/20 via-gold/10 to-gold/20 blur-3xl rounded-full"
+              />
+              
+              {/* The text itself */}
+              <div className="relative z-10 inline-flex gap-2 md:gap-4 flex-wrap justify-center px-4">
                 {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
                   <motion.span
                     key={word}
