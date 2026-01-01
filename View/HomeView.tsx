@@ -5,6 +5,7 @@ import {
   Sparkles, 
   Users, 
   Trophy, 
+  Globe,
   ExternalLink,
   Calendar,
   Clock,
@@ -58,131 +59,137 @@ export default function HomePage() {
         <div className="container mx-auto px-4 relative">
           {/* HEADING with Split Text Animation */}
           <div className="text-center mb-16 w-full">
-            {/* WELCOME TO LOFTE-3 with VISIBLE gold glow */}
-            <div className="relative w-full flex justify-center mb-8">
-              {/* SOLID VISIBLE GOLD GLOW */}
-              <motion.div
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 0.4 }}
-                transition={{ delay: 0.3, duration: 1 }}
-                className="absolute w-full max-w-3xl h-32 bg-gold/30 blur-3xl rounded-full"
-              />
+            {/* WELCOME TO LOFTE-3 with SPLIT ANIMATION and VISIBLE GLOW */}
+            <div className="relative w-full flex justify-center mb-10">
+              {/* VISIBLE GOLD GLOW BACKGROUND */}
+              <div className="absolute inset-0 flex justify-center">
+                <div className="absolute w-[800px] h-48 bg-gradient-to-r from-gold/50 via-gold/30 to-gold/50 blur-3xl rounded-full opacity-60"></div>
+              </div>
               
-              <div className="relative z-10 inline-flex gap-2 md:gap-4 flex-wrap justify-center px-4">
-                {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
-                  <motion.span
-                    key={word}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ 
-                      delay: 0.1 + (index * 0.2), 
-                      duration: 0.5,
-                      ease: "easeOut"
-                    }}
-                    className="text-3xl md:text-4xl lg:text-5xl font-bold text-white whitespace-nowrap"
-                  >
-                    {word}
-                  </motion.span>
-                ))}
+              <div className="relative z-10">
+                <div className="flex flex-wrap justify-center gap-3 md:gap-6">
+                  {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
+                    <motion.div
+                      key={word}
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ 
+                        delay: 0.2 + (index * 0.3),
+                        duration: 0.6,
+                        ease: "easeOut"
+                      }}
+                      className="inline-block"
+                    >
+                      <span className="text-4xl md:text-5xl lg:text-6xl font-bold text-white whitespace-nowrap">
+                        {word}
+                      </span>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </div>
             
             {/* Crypto Coin Beyond Coin Screen with WORKING animations */}
-            <div className="w-full mb-8">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.1 }}
+              className="w-full mb-10"
+            >
               <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 md:gap-4 flex-wrap">
                 {/* Crypto */}
-                <motion.span
-                  initial={{ x: -50, opacity: 0 }}
+                <motion.div
+                  initial={{ x: -100, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.7, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Crypto
-                </motion.span>
+                </motion.div>
                 
                 {/* Coin Icon 1 */}
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.8, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
                   className="flex items-center"
                 >
-                  <Coins className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gold mx-2" />
+                  <Coins className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold mx-2 sm:mx-3" />
                 </motion.div>
                 
                 {/* Beyond */}
-                <motion.span
-                  initial={{ x: -30, opacity: 0 }}
+                <motion.div
+                  initial={{ x: -50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.9, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 1.4, duration: 0.6, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Beyond
-                </motion.span>
+                </motion.div>
                 
                 {/* Coin Icon 2 */}
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 1.0, type: "spring", stiffness: 200 }}
+                  transition={{ delay: 1.5, type: "spring", stiffness: 200 }}
                   className="flex items-center"
                 >
-                  <Coins className="w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 text-gold mx-2" />
+                  <Coins className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold mx-2 sm:mx-3" />
                 </motion.div>
                 
                 {/* Screen */}
-                <motion.span
-                  initial={{ x: 30, opacity: 0 }}
+                <motion.div
+                  initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 1.1, duration: 0.5, ease: "easeOut" }}
+                  transition={{ delay: 1.6, duration: 0.6, ease: "easeOut" }}
                   className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
                 >
                   Screen
-                </motion.span>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
 
             {/* DESCRIPTION with WORKING animation */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.7 }}
+              transition={{ delay: 1.8, duration: 0.7 }}
               className="w-full max-w-4xl mx-auto"
             >
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 1.3, duration: 0.7 }}
-                className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-10 leading-relaxed text-center px-4"
+                transition={{ delay: 2.0, duration: 0.7 }}
+                className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed text-center px-4"
               >
                 Africa's leading strategic IRL and virtual Web3 
                 event platform; Driving growth, culture, KPIs and lifestyle. Where blockchain meets real-world celebrations, 
                 exclusive networking, and unforgettable moments with the crypto community.
               </motion.p>
               
-              {/* GOLD STATS with WORKING staggered animation */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
+              {/* GOLD STATS with UPDATED ICONS */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 max-w-5xl mx-auto">
                 {[
-                  { icon: <Users className="w-7 h-7" />, label: "10K+", value: "Attendees" },
-                  { icon: <Trophy className="w-7 h-7" />, label: "50+", value: "Events" },
-                  { icon: <Sparkles className="w-7 h-7" />, label: "100+", value: "Parties" },
-                  { icon: <Infinity className="w-7 h-7 text-gold" />, label: "Africa", value: "Wide Coverage" },
+                  { icon: <Users className="w-8 h-8" />, label: "10K+", value: "Attendees" },
+                  { icon: <Infinity className="w-8 h-8 text-gold" />, label: "50+", value: "Events" }, // Changed to Infinity
+                  { icon: <Sparkles className="w-8 h-8" />, label: "100+", value: "Parties" },
+                  { icon: <Globe className="w-8 h-8 text-gold" />, label: "Africa", value: "Wide Coverage" }, // Changed to Globe
                 ].map((stat, idx) => (
                   <motion.div
                     key={idx}
                     initial={{ opacity: 0, scale: 0.8, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 1.4 + idx * 0.1, duration: 0.5, type: "spring" }}
+                    transition={{ delay: 2.2 + idx * 0.15, duration: 0.5, type: "spring" }}
                     className="text-center"
                   >
                     <motion.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
-                      className="p-3 rounded-xl bg-gold/10 inline-block mb-3 border border-gold/20"
+                      className="p-4 rounded-xl bg-gold/10 inline-block mb-4 border border-gold/20"
                     >
                       <div className="text-gold">{stat.icon}</div>
                     </motion.div>
-                    <div className="text-2xl md:text-3xl font-bold text-white">{stat.label}</div>
+                    <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.label}</div>
                     <div className="text-sm text-gray-400">{stat.value}</div>
                   </motion.div>
                 ))}
@@ -195,13 +202,13 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ 
-              delay: 1.8, 
+              delay: 2.6, 
               duration: 0.8,
               type: "spring",
               stiffness: 100,
               damping: 15
             }}
-            className="mt-16"
+            className="mt-20"
           >
             {/* Gold Glow Effect */}
             <div className="absolute -inset-4 bg-gold/10 rounded-2xl blur-xl" />
@@ -216,7 +223,7 @@ export default function HomePage() {
               <motion.img
                 initial={{ scale: 1.2 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 1.9, duration: 1, ease: "easeOut" }}
+                transition={{ delay: 2.7, duration: 1, ease: "easeOut" }}
                 src={eventImages.mainParty}
                 alt="Young adults partying at LOFTE-3 event"
                 className="w-full h-64 md:h-96 object-cover"
@@ -229,7 +236,7 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 2.0, duration: 0.5 }}
+                transition={{ delay: 2.8, duration: 0.5 }}
                 className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
               >
                 <span className="text-sm font-bold text-gold flex items-center gap-2">
@@ -242,7 +249,7 @@ export default function HomePage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.1, duration: 0.5 }}
+                transition={{ delay: 2.9, duration: 0.5 }}
                 className="absolute bottom-6 left-6 text-white"
               >
                 <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Africa</h3>
@@ -255,22 +262,22 @@ export default function HomePage() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2.3 }}
-            className="text-center mt-12"
+            transition={{ delay: 3.1 }}
+            className="text-center mt-16"
           >
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(212, 175, 55, 0.4)" }}
               whileTap={{ scale: 0.95 }}
               onClick={() => window.open(xAccountLink, '_blank', 'noopener,noreferrer')}
-              className="inline-flex items-center gap-3 px-8 py-3 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all cursor-pointer"
+              className="inline-flex items-center gap-3 px-10 py-4 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all cursor-pointer text-lg"
             >
               <span>Learn More About Us</span>
-              <ExternalLink className="w-5 h-5" />
+              <ExternalLink className="w-6 h-6" />
             </motion.button>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 2.4 }}
+              transition={{ delay: 3.2 }}
               className="text-gray-400 mt-4 text-sm"
             >
               Follow our X for event updates
@@ -337,7 +344,7 @@ export default function HomePage() {
               className="absolute left-1/2 transform -translate-x-1/2 h-full w-px bg-gradient-to-b from-gold via-gold/50 to-transparent hidden md:block"
             />
 
-            {/* EVENTS STACK with faster animations */}
+            {/* EVENTS STACK */}
             <div className="space-y-32 md:space-y-48">
               {/* EVENT 1: VALENTINE'S DINNER & POOL PARTY - MAIN EVENT */}
               <motion.div
@@ -359,7 +366,7 @@ export default function HomePage() {
 
                 {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Image Side (changed from video) */}
+                  {/* Image Side */}
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -371,7 +378,7 @@ export default function HomePage() {
                       whileHover={{ scale: 1.02 }}
                       className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
                     >
-                      {/* Valentine Event Image (changed from video) */}
+                      {/* Valentine Event Image */}
                       <img
                         src={eventImages.valentineEvent}
                         alt="LOFTE-3 Valentine's Dinner & Pool Party"
@@ -470,7 +477,6 @@ export default function HomePage() {
                 </div>
               </motion.div>
 
-              {/* BLURRED EVENTS - INCREASED BLUR */}
               {/* EVENT 2: NFT Art Gala */}
               <motion.div
                 initial={{ opacity: 0, x: -100 }}
@@ -581,7 +587,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* View All Events - Scrolls to top of events section */}
+          {/* View All Events */}
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
