@@ -6,7 +6,7 @@ import FooterView from '@/View/FooterView';
 
 const page = () => {
   return (
-    <div>
+    <div className="overflow-hidden">
       <HomeView/>   
       <WhyAttendPage/>
       <FaqView/>

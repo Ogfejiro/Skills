@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   Sparkles, 
   Users, 
-  Globe,
+  Home,
   ExternalLink,
   Calendar,
   Clock,
@@ -15,12 +15,14 @@ import {
   Coins,
   Ticket,
   Droplets,
-  Infinity
+  Infinity,
+  History
 } from 'lucide-react';
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
-  const xAccountLink = "https://x.com/hidreams__";
+  const xAccountLink = "https://x.com/hidreams__/status/2006591300829639020?s=46";
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
@@ -31,6 +33,11 @@ export default function HomePage() {
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
     hackathon: "https://images.unsplash.com/photo-1492684223066-dd23140edf6d?q=80&w=2070&auto=format&fit=crop",
     mainParty: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop",
+  };
+
+  // Function to open link
+  const openLink = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -163,13 +170,13 @@ export default function HomePage() {
                 exclusive networking, and unforgettable moments with the crypto community.
               </motion.p>
               
-              {/* GOLD STATS with UPDATED ICONS - Infinity icon for 50+ Events */}
+              {/* GOLD STATS - INFINITY REPLACES 50+, HALL IN BOX */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 max-w-5xl mx-auto">
                 {[
                   { icon: <Users className="w-8 h-8" />, label: "10K+", value: "Attendees" },
-                  { icon: <Infinity className="w-8 h-8 text-gold" />, label: "50+", value: "Events" }, // Infinity icon here
+                  { icon: <Home className="w-8 h-8 text-gold" />, label: "♾️", value: "Events" },
                   { icon: <Sparkles className="w-8 h-8" />, label: "100+", value: "Parties" },
-                  { icon: <Globe className="w-8 h-8 text-gold" />, label: "Africa", value: "Wide Coverage" }, // Globe icon here
+                  { icon: <Home className="w-8 h-8 text-gold" />, label: "Africa", value: "Wide Coverage" },
                 ].map((stat, idx) => (
                   <motion.div
                     key={idx}
@@ -183,7 +190,9 @@ export default function HomePage() {
                       transition={{ type: "spring", stiffness: 300 }}
                       className="p-4 rounded-xl bg-gold/10 inline-block mb-4 border border-gold/20"
                     >
-                      <div className="text-gold">{stat.icon}</div>
+                      <div className="text-gold flex justify-center items-center">
+                        {stat.icon}
+                      </div>
                     </motion.div>
                     <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.label}</div>
                     <div className="text-sm text-gray-400">{stat.value}</div>
@@ -193,7 +202,7 @@ export default function HomePage() {
             </motion.div>
           </div>
 
-          {/* MAIN PARTY IMAGE with WORKING animation */}
+          {/* MAIN PARTY IMAGE with WORKING animation - MADE CLICKABLE */}
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
@@ -209,52 +218,59 @@ export default function HomePage() {
             {/* Gold Glow Effect */}
             <div className="absolute -inset-4 bg-gold/10 rounded-2xl blur-xl" />
             
-            {/* Image Container */}
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 200 }}
-              className="relative rounded-xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
+            {/* Image Container - CLICKABLE */}
+            <motion.a
+              href={xAccountLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
             >
-              {/* Party Image */}
-              <motion.img
-                initial={{ scale: 1.2 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 2.6, duration: 1, ease: "easeOut" }}
-                src={eventImages.mainParty}
-                alt="Young adults partying at LOFTE-3 event"
-                className="w-full h-64 md:h-96 object-cover"
-              />
-              
-              {/* Overlay Gradient */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-              
-              {/* Gold Badge */}
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 2.7, duration: 0.5 }}
-                className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 200 }}
+                className="relative rounded-xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20 cursor-pointer"
               >
-                <span className="text-sm font-bold text-gold flex items-center gap-2">
-                  <Sparkles className="w-3 h-3" />
-                  LIVE NOW
-                </span>
+                {/* Party Image */}
+                <motion.img
+                  initial={{ scale: 1.2 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 2.6, duration: 1, ease: "easeOut" }}
+                  src={eventImages.mainParty}
+                  alt="Young adults partying at LOFTE-3 event"
+                  className="w-full h-64 md:h-96 object-cover"
+                />
+                
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+                
+                {/* Gold Badge */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 2.7, duration: 0.5 }}
+                  className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
+                >
+                  <span className="text-sm font-bold text-gold flex items-center gap-2">
+                    <Sparkles className="w-3 h-3" />
+                    LIVE NOW
+                  </span>
+                </motion.div>
+                
+                {/* Text Overlay */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 2.8, duration: 0.5 }}
+                  className="absolute bottom-6 left-6 text-white"
+                >
+                  <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Africa</h3>
+                  <p className="text-gray-300">500+ People Partying</p>
+                </motion.div>
               </motion.div>
-              
-              {/* Text Overlay */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 2.8, duration: 0.5 }}
-                className="absolute bottom-6 left-6 text-white"
-              >
-                <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Africa</h3>
-                <p className="text-gray-300">500+ People Partying</p>
-              </motion.div>
-            </motion.div>
+            </motion.a>
           </motion.div>
 
-          {/* LEARN MORE BUTTON - FIXED CLICKABLE */}
+          {/* LEARN MORE BUTTON - FIXED CLICKABLE LINK */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -264,7 +280,7 @@ export default function HomePage() {
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(212, 175, 55, 0.4)" }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => window.open(xAccountLink, '_blank', 'noopener,noreferrer')}
+              onClick={() => openLink(xAccountLink)}
               className="inline-flex items-center gap-3 px-10 py-4 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all cursor-pointer text-lg"
             >
               <span>Learn More About Us</span>
@@ -362,7 +378,7 @@ export default function HomePage() {
 
                 {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Image Side */}
+                  {/* Image Side - MADE CLICKABLE */}
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -370,35 +386,42 @@ export default function HomePage() {
                     viewport={{ once: true }}
                     className="md:order-1 mb-8 md:mb-0"
                   >
-                    <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
+                    <motion.a
+                      href={xAccountLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
                     >
-                      {/* Valentine Event Image */}
-                      <img
-                        src={eventImages.valentineEvent}
-                        alt="LOFTE-3 Valentine's Dinner & Pool Party"
-                        className="w-full h-64 md:h-80 object-cover"
-                      />
-                      
-                      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                      
-                      {/* Valentine Badge */}
-                      <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-red-500/90 backdrop-blur-sm border border-gold">
-                        <span className="text-white font-bold text-sm flex items-center gap-2">
-                          <Heart className="w-4 h-4" />
-                          VALENTINE EDITION
-                        </span>
-                      </div>
-                      
-                      {/* Pool Party Badge */}
-                      <div className="absolute top-16 left-4 px-4 py-2 rounded-full bg-blue-500/90 backdrop-blur-sm border border-gold">
-                        <span className="text-white font-bold text-sm flex items-center gap-2">
-                          <Droplets className="w-4 h-4" />
-                          POOL PARTY
-                        </span>
-                      </div>
-                    </motion.div>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20 cursor-pointer"
+                      >
+                        {/* Valentine Event Image */}
+                        <img
+                          src={eventImages.valentineEvent}
+                          alt="LOFTE-3 Valentine's Dinner & Pool Party"
+                          className="w-full h-64 md:h-80 object-cover"
+                        />
+                        
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                        
+                        {/* Valentine Badge */}
+                        <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-red-500/90 backdrop-blur-sm border border-gold">
+                          <span className="text-white font-bold text-sm flex items-center gap-2">
+                            <Heart className="w-4 h-4" />
+                            VALENTINE EDITION
+                          </span>
+                        </div>
+                        
+                        {/* Pool Party Badge */}
+                        <div className="absolute top-16 left-4 px-4 py-2 rounded-full bg-blue-500/90 backdrop-blur-sm border border-gold">
+                          <span className="text-white font-bold text-sm flex items-center gap-2">
+                            <Droplets className="w-4 h-4" />
+                            POOL PARTY
+                          </span>
+                        </div>
+                      </motion.div>
+                    </motion.a>
                   </motion.div>
 
                   {/* Content Side */}
@@ -454,7 +477,7 @@ export default function HomePage() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => window.open("https://forms.gle/gwhB683FptSMNsE39", '_blank', 'noopener,noreferrer')}
+                          onClick={() => openLink("https://forms.gle/gwhB683FptSMNsE39")}
                           className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20 cursor-pointer"
                         >
                           Join Waitlist
@@ -462,7 +485,7 @@ export default function HomePage() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => window.open("https://calendly.com/hidreamsofweb3/30min", '_blank', 'noopener,noreferrer')}
+                          onClick={() => openLink("https://calendly.com/hidreamsofweb3/30min")}
                           className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition cursor-pointer"
                         >
                           Sponsor Event
@@ -583,23 +606,57 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* View All Events */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            viewport={{ once: true }}
-            className="text-center mt-20"
-          >
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              onClick={() => document.getElementById('events')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 text-gold font-medium hover:text-gold/80 transition cursor-pointer"
-            >
-              <span>Back to Top</span>
-              <ChevronRight className="w-4 h-4" />
-            </motion.button>
-          </motion.div>
+         {/* Animated View Previous Events Button */}
+<motion.div
+  initial={{ opacity: 0 }}
+  whileInView={{ opacity: 1 }}
+  transition={{ delay: 0.5 }}
+  viewport={{ once: true }}
+  className="text-center mt-20"
+>
+  <Link href="/previous-events">
+    <motion.button
+      initial={{ scale: 1 }}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      animate={{
+        boxShadow: [
+          "0 0 0px rgba(212, 175, 55, 0)",
+          "0 0 20px rgba(212, 175, 55, 0.5)",
+          "0 0 0px rgba(212, 175, 55, 0)"
+        ]
+      }}
+      transition={{
+        boxShadow: {
+          duration: 2,
+          repeatType: "loop"
+        }
+      }}
+      className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-gold/20 to-gold/10 border-2 border-gold text-gold font-bold hover:bg-gold/20 transition-all cursor-pointer group relative overflow-hidden"
+    >
+      {/* Animated background effect */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0"
+        initial={{ x: "-100%" }}
+        whileHover={{ x: "100%" }}
+        transition={{ duration: 0.6 }}
+      />
+      
+      {/* Button content */}
+      <span className="relative z-10 flex items-center gap-3">
+        <History className="w-5 h-5" />
+        View Previous Events
+        <motion.div
+          initial={{ x: 0 }}
+          whileHover={{ x: 5 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronRight className="w-5 h-5" />
+        </motion.div>
+      </span>
+    </motion.button>
+  </Link>
+</motion.div>
         </div>
       </section>
     </main>
