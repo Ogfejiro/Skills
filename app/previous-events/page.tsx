@@ -250,7 +250,7 @@ export default function PreviousEventsPage() {
                         onClick={() => openLink(event.link)}
                         className="w-full mt-6 px-4 py-2 rounded-lg border border-gold text-gold text-sm font-medium hover:bg-gold/10 transition flex items-center justify-center gap-2 cursor-pointer"
                       >
-                        <span>View Event Photos</span>
+                        <span>View Video Highlight</span>
                         <ExternalLink className="w-3 h-3" />
                       </motion.button>
                     )}

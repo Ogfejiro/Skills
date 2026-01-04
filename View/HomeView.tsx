@@ -23,6 +23,7 @@ import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
   const xAccountLink = "https://x.com/hidreams__/status/2006591300829639020?s=46";
+  const learnMoreLink = "https://x.com/hidreams__"; // DIFFERENT LINK FOR "LEARN MORE ABOUT US"
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
@@ -175,7 +176,7 @@ export default function HomePage() {
                 {[
                   { icon: <Users className="w-8 h-8" />, label: "10K+", value: "Attendees" },
                   { icon: <Home className="w-8 h-8 text-gold" />, label: "♾️", value: "Events" },
-                  { icon: <Sparkles className="w-8 h-8" />, label: "100+", value: "Parties" },
+                  { icon: <Sparkles className="w-8 h-8" />, label: "♾️", value: "Results" },
                   { icon: <Home className="w-8 h-8 text-gold" />, label: "Africa", value: "Wide Coverage" },
                 ].map((stat, idx) => (
                   <motion.div
@@ -219,16 +220,14 @@ export default function HomePage() {
             <div className="absolute -inset-4 bg-gold/10 rounded-2xl blur-xl" />
             
             {/* Image Container - CLICKABLE */}
-            <motion.a
-              href={xAccountLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block"
+            <motion.div
+              onClick={() => openLink(xAccountLink)}
+              className="block cursor-pointer"
             >
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 200 }}
-                className="relative rounded-xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20 cursor-pointer"
+                className="relative rounded-xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
               >
                 {/* Party Image */}
                 <motion.img
@@ -267,10 +266,10 @@ export default function HomePage() {
                   <p className="text-gray-300">500+ People Partying</p>
                 </motion.div>
               </motion.div>
-            </motion.a>
+            </motion.div>
           </motion.div>
 
-          {/* LEARN MORE BUTTON - FIXED CLICKABLE LINK */}
+          {/* LEARN MORE BUTTON - FIXED WITH DIFFERENT LINK */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -280,7 +279,7 @@ export default function HomePage() {
             <motion.button
               whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(212, 175, 55, 0.4)" }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => openLink(xAccountLink)}
+              onClick={() => openLink(learnMoreLink)}
               className="inline-flex items-center gap-3 px-10 py-4 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all cursor-pointer text-lg"
             >
               <span>Learn More About Us</span>
@@ -386,15 +385,13 @@ export default function HomePage() {
                     viewport={{ once: true }}
                     className="md:order-1 mb-8 md:mb-0"
                   >
-                    <motion.a
-                      href={xAccountLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block"
+                    <motion.div
+                      onClick={() => openLink(xAccountLink)}
+                      className="block cursor-pointer"
                     >
                       <motion.div
                         whileHover={{ scale: 1.02 }}
-                        className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20 cursor-pointer"
+                        className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
                       >
                         {/* Valentine Event Image */}
                         <img
@@ -421,7 +418,7 @@ export default function HomePage() {
                           </span>
                         </div>
                       </motion.div>
-                    </motion.a>
+                    </motion.div>
                   </motion.div>
 
                   {/* Content Side */}
@@ -510,7 +507,10 @@ export default function HomePage() {
 
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
                   <div className="md:order-1 mb-8 md:mb-0">
-                    <div className="relative rounded-2xl overflow-hidden border border-gold/30">
+                    <div 
+                      onClick={() => openLink(xAccountLink)}
+                      className="relative rounded-2xl overflow-hidden border border-gold/30 cursor-pointer"
+                    >
                       <img
                         src={eventImages.nftGala}
                         alt="NFT Art Gala"
@@ -592,7 +592,10 @@ export default function HomePage() {
                   </div>
 
                   <div className="md:order-first">
-                    <div className="relative rounded-2xl overflow-hidden border border-gold/30">
+                    <div 
+                      onClick={() => openLink(xAccountLink)}
+                      className="relative rounded-2xl overflow-hidden border border-gold/30 cursor-pointer"
+                    >
                       <img
                         src={eventImages.hackathon}
                         alt="DeFi Hackathon"
@@ -606,57 +609,57 @@ export default function HomePage() {
             </div>
           </div>
 
-         {/* Animated View Previous Events Button */}
-<motion.div
-  initial={{ opacity: 0 }}
-  whileInView={{ opacity: 1 }}
-  transition={{ delay: 0.5 }}
-  viewport={{ once: true }}
-  className="text-center mt-20"
->
-  <Link href="/previous-events">
-    <motion.button
-      initial={{ scale: 1 }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      animate={{
-        boxShadow: [
-          "0 0 0px rgba(212, 175, 55, 0)",
-          "0 0 20px rgba(212, 175, 55, 0.5)",
-          "0 0 0px rgba(212, 175, 55, 0)"
-        ]
-      }}
-      transition={{
-        boxShadow: {
-          duration: 2,
-          repeatType: "loop"
-        }
-      }}
-      className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-gold/20 to-gold/10 border-2 border-gold text-gold font-bold hover:bg-gold/20 transition-all cursor-pointer group relative overflow-hidden"
-    >
-      {/* Animated background effect */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0"
-        initial={{ x: "-100%" }}
-        whileHover={{ x: "100%" }}
-        transition={{ duration: 0.6 }}
-      />
-      
-      {/* Button content */}
-      <span className="relative z-10 flex items-center gap-3">
-        <History className="w-5 h-5" />
-        View Previous Events
-        <motion.div
-          initial={{ x: 0 }}
-          whileHover={{ x: 5 }}
-          transition={{ duration: 0.2 }}
-        >
-          <ChevronRight className="w-5 h-5" />
-        </motion.div>
-      </span>
-    </motion.button>
-  </Link>
-</motion.div>
+          {/* Animated View Previous Events Button */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center mt-20"
+          >
+            <Link href="/previous-events">
+              <motion.button
+                initial={{ scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                animate={{
+                  boxShadow: [
+                    "0 0 0px rgba(212, 175, 55, 0)",
+                    "0 0 20px rgba(212, 175, 55, 0.5)",
+                    "0 0 0px rgba(212, 175, 55, 0)"
+                  ]
+                }}
+                transition={{
+                  boxShadow: {
+                    duration: 2,
+                    repeatType: "loop"
+                  }
+                }}
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-gold/20 to-gold/10 border-2 border-gold text-gold font-bold hover:bg-gold/20 transition-all cursor-pointer group relative overflow-hidden"
+              >
+                {/* Animated background effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0"
+                  initial={{ x: "-100%" }}
+                  whileHover={{ x: "100%" }}
+                  transition={{ duration: 0.6 }}
+                />
+                
+                {/* Button content */}
+                <span className="relative z-10 flex items-center gap-3">
+                  <History className="w-5 h-5" />
+                  View Previous Events
+                  <motion.div
+                    initial={{ x: 0 }}
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </motion.div>
+                </span>
+              </motion.button>
+            </Link>
+          </motion.div>
         </div>
       </section>
     </main>
