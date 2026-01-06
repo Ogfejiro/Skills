@@ -19,8 +19,8 @@ export default function PreviousEventsPage() {
   const previousEvents = [
     {
       id: 1,
-      title: "Afriverse CCFTC",
-      description: "Hosted the groundbreaking Afriverse CCFTC (Crypto & Commodity Futures Trading Conference) event in Jos, Plateau State. This pioneering event brought together traders, investors, and crypto enthusiasts to explore the future of digital assets and commodity trading in Africa.",
+      title: "Afriverse CTFFCT",
+      description: "Hosted the groundbreaking Afriverse CTFFCT (Code The Future - Finance The Change Together) event in Jos, Plateau State. This pioneering event brought together traders, investors, and crypto enthusiasts to explore the future of digital assets and commodity trading in Africa.",
       date: "November, 2025",
       location: "Jos, Nigeria",
       attendees: "300+",
