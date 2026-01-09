@@ -39,6 +39,30 @@ export default function PreviousEventsPage() {
       link: "https://x.com/i/status/2007340472709296637", // Replace with your actual NFT Games link
       highlights: ["Gaming Tournaments", "Premium Catering", "Exclusive House Party", "NFT Holder Networking", "Prize Pool Events"]
     },
+
+    {
+      id: 3,
+      title: "Community Impact Activation-Founder-Led Initiative",
+      description: "A grassroots Web3 community activation where the LOFTE-3 founder as a birthday outreach, alongside ecosystem collaborators, coordinated the distribution of essential supplies to 100+ young girls, reinforcing our commitment to impact-driven community building beyound technology.",
+      date: "November, 2025",
+      location: "Zang, Nigeria",
+      attendees: "500+",
+      image: "/images/pad.jpg",
+      link: "https://x.com/hidreams__/status/1993212190061408515", // Replace with your actual NFT Games link
+      highlights: ["Purpose Beyound Tech", "200+ Direct Beneficaries", "CSR Execution", "Inclusion and Utility"]
+    },
+
+    {
+      id: 4,
+      title: "Tech-Sphere International GLOBAL SUMMIT",
+      description: "Massive Impact across 40+ Nations Raising Global Tech.",
+      date: "June, 2025",
+      location: "Window on America, Nigeria",
+      attendees: "1000+",
+      image: "/images/jerry.jpg",
+      link: "https://www.facebook.com/share/IGnwTHqjuu/", // Replace with your actual NFT Games link
+      highlights: ["Tech Lectures", "Networking", "Games"]
+    },
   ];
 
   // Function to open external link

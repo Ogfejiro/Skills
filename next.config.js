@@ -1,1 +1,4 @@
-module.exports = { experimental: { turbo: false } }
+/** @type {import('next').NextConfig} */
+const nextConfig = {}
+
+module.exports = nextConfig
