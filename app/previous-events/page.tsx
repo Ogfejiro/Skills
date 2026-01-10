@@ -22,8 +22,8 @@ export default function PreviousEventsPage() {
       title: "Afriverse CTFFCT",
       description: "Hosted the groundbreaking Afriverse CTFFCT (Code The Future - Finance The Change Together) event in Jos, Plateau State. This pioneering event brought together traders, investors, and crypto enthusiasts to explore the future of digital assets and commodity trading in Africa.",
       date: "November, 2025",
-      location: "Jos, Nigeria",
-      attendees: "300+",
+      location: "Jos",
+      attendees: "1000+",
       image: "/images/ctffct.jpg",
       link: "https://x.com/i/status/1993282618797048112", // Replace with your actual CCFTC link
       highlights: ["Trading Workshops", "Merch Giveaways", "Networking Sessions", "Market Analysis", "Commodity Trading Demos"]
@@ -33,7 +33,7 @@ export default function PreviousEventsPage() {
       title: "NFT Holders Games Weekend by THE Boiz",
       description: "An exclusive gaming extravaganza for NFT holders featuring competitive tournaments, strategic gameplay sessions, and premium networking opportunities. This event celebrated the intersection of gaming culture and blockchain technology.",
       date: "August, 2025",
-      location: "Port Harcourt, Nigeria",
+      location: "Port Harcourt",
       attendees: "100+",
       image: "/images/dboys.jpg",
       link: "https://x.com/i/status/2007340472709296637", // Replace with your actual NFT Games link
@@ -45,7 +45,7 @@ export default function PreviousEventsPage() {
       title: "Community Impact Activation-Founder-Led Initiative",
       description: "A grassroots Web3 community activation where the LOFTE-3 founder as a birthday outreach, alongside ecosystem collaborators, coordinated the distribution of essential supplies to 100+ young girls, reinforcing our commitment to impact-driven community building beyound technology.",
       date: "November, 2025",
-      location: "Zang, Nigeria",
+      location: "Zang",
       attendees: "500+",
       image: "/images/pad.jpg",
       link: "https://x.com/hidreams__/status/1993212190061408515", // Replace with your actual NFT Games link
@@ -57,7 +57,7 @@ export default function PreviousEventsPage() {
       title: "Tech-Sphere International GLOBAL SUMMIT",
       description: "Massive Impact across 40+ Nations Raising Global Tech.",
       date: "June, 2025",
-      location: "Window on America, Nigeria",
+      location: "Window on America",
       attendees: "1000+",
       image: "/images/jerry.jpg",
       link: "https://www.facebook.com/share/IGnwTHqjuu/", // Replace with your actual NFT Games link
@@ -153,9 +153,9 @@ export default function PreviousEventsPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-20"
           >
             {[
-              { icon: <History className="w-6 h-6" />, value: "2", label: "Past Events" },
-              { icon: <Users className="w-6 h-6" />, value: "500+", label: "Total Attendees" },
-              { icon: <MapPin className="w-6 h-6" />, value: "2", label: "States" },
+              { icon: <History className="w-6 h-6" />, value: "4", label: "Past Events" },
+              { icon: <Users className="w-6 h-6" />, value: "2500+", label: "Total Attendees" },
+              { icon: <MapPin className="w-6 h-6" />, value: "4", label: "States" },
               { icon: <Sparkles className="w-6 h-6" />, value: "100%", label: "Success Rate" },
             ].map((stat, idx) => (
               <motion.div

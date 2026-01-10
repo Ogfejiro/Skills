@@ -403,20 +403,9 @@ export default function HomePage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                         
                         {/* Valentine Badge */}
-                        <div className="absolute top-4 left-4 px-4 py-2 rounded-full bg-red-500/90 backdrop-blur-sm border border-gold">
-                          <span className="text-white font-bold text-sm flex items-center gap-2">
-                            <Heart className="w-4 h-4" />
-                            VALENTINE EDITION
-                          </span>
-                        </div>
                         
                         {/* Pool Party Badge */}
-                        <div className="absolute top-16 left-4 px-4 py-2 rounded-full bg-blue-500/90 backdrop-blur-sm border border-gold">
-                          <span className="text-white font-bold text-sm flex items-center gap-2">
-                            <Droplets className="w-4 h-4" />
-                            POOL PARTY
-                          </span>
-                        </div>
+                       
                       </motion.div>
                     </motion.div>
                   </motion.div>
