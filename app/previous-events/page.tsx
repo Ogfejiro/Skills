@@ -60,7 +60,7 @@ export default function PreviousEventsPage() {
       location: "Window on America",
       attendees: "1000+",
       image: "/images/jerry.jpg",
-      link: "https://www.facebook.com/share/IGnwTHqjuu/", // Replace with your actual NFT Games link
+      link: "https://www.facebook.com/share/p/17V3KRYxNw/", // Replace with your actual NFT Games link
       highlights: ["Tech Lectures", "Networking", "Games"]
     },
   ];

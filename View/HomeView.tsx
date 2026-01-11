@@ -32,7 +32,6 @@ export default function HomePage() {
     
     // Other events
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
-    hackathon: "https://images.unsplash.com/photo-1492684223066-dd23140edf6d?q=80&w=2070&auto=format&fit=crop",
     mainParty: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop",
   };
 
@@ -540,61 +539,7 @@ export default function HomePage() {
               </motion.div>
 
               {/* EVENT 3: DeFi Hackathon */}
-              <motion.div
-                initial={{ opacity: 0, x: 100 }}
-                whileInView={{ opacity: 0.8, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                viewport={{ once: true, margin: "-100px" }}
-                className="relative blur-[8px] hover:blur-0 transition-all duration-500"
-              >
-                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-3 h-3 rounded-full bg-gold/50 border-2 border-black"></div>
-                </div>
-
-                <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  <div className="mb-8 md:mb-0">
-                    <div className="bg-black/70 rounded-2xl border border-gold/20 p-6">
-                      <div className="mb-4">
-                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold/20 mb-3">
-                          <span className="text-gold text-sm font-bold">COMING SOON</span>
-                        </span>
-                        <h3 className="text-xl font-bold text-white mb-3">
-                          DeFi Hackathon Finals
-                        </h3>
-                        <p className="text-gray-300 mb-6">
-                          Africa's biggest DeFi competition with $100K prizes, 
-                          VC pitching, and live coding battles.
-                        </p>
-                      </div>
-
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-3">
-                          <Calendar className="w-5 h-5 text-gold" />
-                          <p className="text-gray-400">May 20, 2026</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <Zap className="w-5 h-5 text-gold" />
-                          <p className="text-gray-400">Tech Hub, Abuja</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="md:order-first">
-                    <div 
-                      onClick={() => openLink(xAccountLink)}
-                      className="relative rounded-2xl overflow-hidden border border-gold/30 cursor-pointer"
-                    >
-                      <img
-                        src={eventImages.hackathon}
-                        alt="DeFi Hackathon"
-                        className="w-full h-64 md:h-80 object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+             
             </div>
           </div>
 
