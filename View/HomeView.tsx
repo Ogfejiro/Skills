@@ -425,14 +425,13 @@ export default function HomePage() {
                       </div>
                       
                       <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                        LOFTE-3 Dinner Night & Pool Party
-                        <span className="block text-lg text-gold mt-2">(Valentine Edition)</span>
+                        LOFTE-3 Dinner Night 
+                        
                       </h3>
                       
                       <p className="text-gray-300 mb-6 leading-relaxed">
-                        An unforgettable evening of fine dining, romantic ambiance, and poolside celebrations. 
-                        Join Africa's Web3 elite for an exclusive Valentine's experience featuring gourmet cuisine, 
-                        premium cocktails, and blockchain networking under the stars.
+                        An unforgettable evening of fine dining and celebrations with web3 elites of crypto twitter Africa. 
+                        Join us for an exclusive Red Carpet experience featuring gourmet cuisine,premium cocktails, and blockchain networking.
                       </p>
 
                       {/* Event Details */}
