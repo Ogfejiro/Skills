@@ -437,7 +437,7 @@ export default function HomePage() {
                       {/* Event Details */}
                       <div className="space-y-4 mb-8">
                         {[
-                          { icon: <Calendar className="w-5 h-5 text-gold" />, label: "Date", value: "February 17, 2026" },
+                          { icon: <Calendar className="w-5 h-5 text-gold" />, label: "Date", value: "March 27, 2026" },
                           { icon: <Clock className="w-5 h-5 text-gold" />, label: "Time", value: "Scheduled on Ticket", subIcon: <Ticket className="w-4 h-4" /> },
                           { icon: <MapPin className="w-5 h-5 text-gold" />, label: "Location", value: "Scheduled on Ticket" },
                         ].map((detail, idx) => (
