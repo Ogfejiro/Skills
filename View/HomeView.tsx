@@ -456,25 +456,29 @@ export default function HomePage() {
                         ))}
                       </div>
 
-                      {/* Buttons */}
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => openLink("https://forms.gle/gwhB683FptSMNsE39")}
-                          className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20 cursor-pointer"
-                        >
-                          Join Waitlist
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => openLink("https://calendly.com/hidreamsofweb3/30min")}
-                          className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition cursor-pointer"
-                        >
-                          Sponsor Event
-                        </motion.button>
-                      </div>
+                      
+                      
+
+{/* Buttons */}
+<div className="flex flex-col sm:flex-row gap-4">
+  <Link href="/payment">
+    <motion.button
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20 cursor-pointer"
+    >
+      Get Tickets
+    </motion.button>
+  </Link>
+  <motion.button
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.95 }}
+    onClick={() => openLink("https://calendly.com/hidreamsofweb3/30min")}
+    className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition cursor-pointer"
+  >
+    Sponsor Event
+  </motion.button>
+</div>
                     </div>
                   </motion.div>
                 </div>

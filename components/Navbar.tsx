@@ -1,33 +1,18 @@
-// components/Navbar.tsx
+// components/Navbar.tsx - SIMPLIFIED WORKING VERSION
 "use client";
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Calendar, Users, Home, Gift } from "lucide-react";
+import { Sparkles, Calendar, Users, Home, Ticket } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [activeNav, setActiveNav] = useState("home");
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
-      
-      // Update active nav based on scroll position
-      const sections = ['home', 'events'];
-      const currentSection = sections.find(section => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
-        }
-        return false;
-      });
-      
-      if (currentSection) {
-        setActiveNav(currentSection);
-      }
     };
     
     window.addEventListener("scroll", handleScroll);
@@ -45,44 +30,37 @@ export default function Navbar() {
     <>
       {/* DESKTOP NAVBAR */}
       <nav
-        className={`hidden md:block fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl px-6 py-3 transition-all duration-300
+        className={`hidden md:flex fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-6xl px-6 py-3 transition-all duration-300
         ${
           scrolled
             ? "bg-black backdrop-blur-xl border border-gold/20 shadow-2xl shadow-gold/5"
             : "bg-black/40 backdrop-blur-lg border border-gold/10"
         } rounded-2xl`}
       >
-        <div className="container mx-auto flex items-center justify-between">
+        <div className="container mx-auto flex items-center justify-between w-full">
           {/* LOGO */}
           <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="relative w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden">
-                <div className="relative w-8 h-8 md:w-10 md:h-10">
-                  <Image
-                    src="/images/hds.jpg" 
-                    alt="LOFTE-3 Logo" 
-                    width={32}
-                    height={32}
-                    className="object-contain"
-                    priority
-                  />
-                </div>
+            <div className="relative w-10 h-10 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden">
+              <div className="relative w-8 h-8">
+                <Image
+                  src="/images/hds.jpg" 
+                  alt="LOFTE-3 Logo" 
+                  width={32}
+                  height={32}
+                  className="object-contain"
+                  priority
+                />
               </div>
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                className="absolute -inset-2 border border-gold/30 rounded-full"
-              />
             </div>
             <div>
-              <div className="text-gold font-extrabold tracking-wider text-xl md:text-2xl">
+              <div className="text-gold font-extrabold tracking-wider text-xl">
                 <span className="text-white">LO</span>FTE<span className="text-gold">-3</span>
               </div>
               <p className="text-xs text-gray-400 tracking-wider">WEB3 EVENTS</p>
             </div>
           </div>
 
-          {/* DESKTOP NAV */}
+          {/* NAV ITEMS & GET TICKETS BUTTON */}
           <div className="flex items-center gap-6">
             {navItems.map((item) => (
               <a
@@ -96,9 +74,33 @@ export default function Navbar() {
                   {item.icon}
                 </span>
                 {item.label}
-                <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gold group-hover:w-8 group-hover:left-1/4 transition-all duration-300" />
               </a>
             ))}
+
+            {/* GET TICKETS BUTTON - HIGHLY VISIBLE */}
+            <Link href="/payment">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-gold via-gold/90 to-gold/80 text-black font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all duration-300 relative overflow-hidden min-w-[140px] justify-center"
+              >
+                {/* Animated background effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] hover:translate-x-[100%] transition-transform duration-1000" />
+                
+                <Ticket className="w-5 h-5" />
+                <span className="tracking-wider">GET TICKETS</span>
+                
+                {/* Live indicator */}
+                <div className="absolute -right-1 -top-1 flex items-center gap-1">
+                  <motion.div
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="w-2 h-2 bg-red-500 rounded-full"
+                  />
+                  <span className="text-[10px] text-red-500 font-bold">LIVE</span>
+                </div>
+              </motion.button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -112,48 +114,50 @@ export default function Navbar() {
               href={item.href}
               target={item.external ? "_blank" : undefined}
               rel={item.external ? "noopener noreferrer" : undefined}
-              onClick={() => !item.external && setActiveNav(item.id)}
               className="flex flex-col items-center justify-center px-3 py-2 rounded-lg transition-all"
             >
-              <div className={`p-2 rounded-full transition-all ${
-                activeNav === item.id 
-                  ? "bg-gold/20 border border-gold/30" 
-                  : "border border-transparent"
-              }`}>
-                <div className={`transition-all ${
-                  activeNav === item.id ? "text-gold" : "text-gray-400"
-                }`}>
+              <div className="p-2 rounded-full">
+                <div className="text-gray-400">
                   {item.icon}
                 </div>
               </div>
-              <span className={`text-xs mt-1 transition-all ${
-                activeNav === item.id ? "text-gold font-medium" : "text-gray-400"
-              }`}>
+              <span className="text-xs mt-1 text-gray-400">
                 {item.label}
               </span>
-              
-              {/* Active indicator */}
-              {activeNav === item.id && (
-                <motion.div
-                  layoutId="activeIndicator"
-                  className="w-1 h-1 bg-gold rounded-full mt-1"
-                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                />
-              )}
             </a>
           ))}
+          
+          {/* MOBILE GET TICKETS BUTTON */}
+          <Link href="/payment">
+            <button className="flex flex-col items-center justify-center px-3 py-2 relative">
+              <div className="p-2 rounded-full bg-gradient-to-r from-gold to-gold/80 border border-gold/30">
+                <Ticket className="w-5 h-5 text-black" />
+              </div>
+              <span className="text-xs mt-1 text-gold font-medium">Tickets</span>
+              
+              {/* Live indicator */}
+              <div className="absolute top-0 right-2">
+                <motion.div
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-1.5 h-1.5 bg-red-500 rounded-full"
+                />
+              </div>
+            </button>
+          </Link>
         </div>
       </nav>
 
-      {/* MOBILE TOP LOGO BAR */}
+      {/* MOBILE TOP BAR */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-lg border-b border-gold/10 py-3 px-4">
         <div className="flex items-center justify-between">
+          {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="relative w-10 h-10 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden">
               <div className="relative w-8 h-8">
                 <Image
                   src="/images/hds.jpg" 
-                  alt="LoFT3 Logo" 
+                  alt="LOFTE-3 Logo" 
                   width={32}
                   height={32}
                   className="object-contain"
@@ -169,15 +173,20 @@ export default function Navbar() {
             </div>
           </div>
           
-          {/* Status Badge */}
-          <div className="px-3 py-1 rounded-full bg-gold/10 border border-gold/20">
-            <span className="text-xs text-gold font-medium">LIVE</span>
+          {/* Status */}
+          <div className="flex items-center gap-2">
+            <div className="px-2 py-1 rounded-full bg-red-500/20 border border-red-500/30">
+              <span className="text-xs text-red-400 font-bold">LIVE</span>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Spacer for mobile bottom nav */}
       <div className="md:hidden h-20" />
+      
+      {/* Spacer for desktop nav */}
+      <div className="hidden md:block h-24" />
     </>
   );
 }
