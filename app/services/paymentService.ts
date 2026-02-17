@@ -1,26 +1,28 @@
 // services/paymentService.ts
 export interface InitiatePaymentRequest {
-  amount: number;
-  email: string;
-  userId?: string;
-  ticketId: string;
-  ticketName: string;
-  quantity: number;
+  amount: number
+  email: string
+  userId?: string
+  ticketId: string
+  ticketName: string
+  quantity: number
 }
 
 export interface InitiatePaymentResponse {
-  paymentLink: string;
+  paymentLink: string
 }
 
 export interface VerifyPaymentRequest {
-  transaction_id: string;
-  tx_ref: string;
+  transaction_id: string
+  tx_ref: string
 }
 
 class PaymentService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+  private baseUrl = process.env.NEXT_PUBLIC_API_URL || ''
 
-  async initiatePayment(data: InitiatePaymentRequest): Promise<InitiatePaymentResponse> {
+  async initiatePayment(
+    data: InitiatePaymentRequest,
+  ): Promise<InitiatePaymentResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/api/payments/initiate`, {
         method: 'POST',
@@ -32,17 +34,17 @@ class PaymentService {
           email: data.email,
           userId: data.userId,
         }),
-      });
+      })
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Payment initialization failed');
+        const error = await response.json()
+        throw new Error(error.error || 'Payment initialization failed')
       }
 
-      return await response.json();
+      return await response.json()
     } catch (error) {
-      console.error('Payment initiation error:', error);
-      throw error;
+      console.error('Payment initiation error:', error)
+      throw error
     }
   }
 
@@ -54,17 +56,17 @@ class PaymentService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-      });
+      })
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Payment verification failed');
+        const error = await response.json()
+        throw new Error(error.error || 'Payment verification failed')
       }
     } catch (error) {
-      console.error('Payment verification error:', error);
-      throw error;
+      console.error('Payment verification error:', error)
+      throw error
     }
   }
 }
 
-export const paymentService = new PaymentService();
+export const paymentService = new PaymentService()
