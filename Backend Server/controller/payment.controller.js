@@ -79,6 +79,8 @@ export const flutterwaveWebhook = async (req, res) => {
       }
     }
 
+    await generateTicket(tx_ref)
+
     return res.sendStatus(200);
   } catch (error) {
     console.error("Webhook error:", error);
