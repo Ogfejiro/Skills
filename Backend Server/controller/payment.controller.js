@@ -53,14 +53,16 @@ export const paymentRedirect = async (req, res) => {
 
 export const flutterwaveWebhook = async (req, res) => {
   try {
+    console.log("🔥 WEBHOOK HIT");
     const signature = req.headers['verif-hash']
+    console.log(req.headers)
 
     if (!signature || signature !== process.env.FLW_WEBHOOK_SECRET) {
       return res.sendStatus(401)
     }
 
     const payload = req.body
-
+    console.log("BODY:", req.body);
     if (payload.event === 'charge.completed') {
       const paymentData = payload.data
 
