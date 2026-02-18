@@ -53,43 +53,39 @@ export const paymentRedirect = async (req, res) => {
 
 export const flutterwaveWebhook = async (req, res) => {
   try {
-    console.log("🔥 WEBHOOK HIT");
-    const signature = req.headers['verif-hash']
-    console.log(req.headers)
+    const signature = req.headers['verif-hash'];
 
     if (!signature || signature !== process.env.FLW_WEBHOOK_SECRET) {
-      return res.sendStatus(401)
+      return res.sendStatus(401);
     }
 
-    const payload = req.body
-    console.log("BODY:", req.body);
-    if (payload.event === 'charge.completed') {
-      const paymentData = payload.data
+    const paymentData = req.body;
 
-      if (paymentData.status === 'successful') {
-        const updatedPayment = await Payment.findOneAndUpdate(
-          { tx_ref: paymentData.tx_ref },
-          {
-            status: 'successful',
-            transactionId: paymentData.id,
-          },
-          { new: true },
-        )
+    // Check successful payment
+    if (paymentData.status === 'successful') {
+      const updatedPayment = await Payment.findOneAndUpdate(
+        { tx_ref: paymentData.txRef }, 
+        {
+          status: 'successful',
+          transactionId: paymentData.id,
+        },
+        { new: true }
+      );
 
-        if (!updatedPayment) {
-          console.log('Payment not found for:', paymentData.tx_ref)
-        } else {
-          await generateTicket(paymentData.tx_ref)
-        }
+      if (!updatedPayment) {
+        console.log("Payment not found:", paymentData.txRef);
+      } else {
+        console.log("Payment updated:", updatedPayment);
       }
     }
 
-    return res.sendStatus(200)
+    return res.sendStatus(200);
   } catch (error) {
-    console.error('Webhook error:', error)
-    return res.status(500).json({ error: 'Webhook processing failed' })
+    console.error("Webhook error:", error);
+    return res.status(500).json({ error: "Webhook processing failed" });
   }
-}
+};
+
 
 export const getAllPayments = async (req, res) => {
   try {
