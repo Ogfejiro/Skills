@@ -79,7 +79,7 @@ export const flutterwaveWebhook = async (req, res) => {
       }
     }
 
-    await generateTicket(tx_ref)
+    await generateTicket(paymentData.txRef)
 
     return res.sendStatus(200);
   } catch (error) {
