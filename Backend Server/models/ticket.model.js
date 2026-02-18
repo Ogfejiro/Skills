@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 
 const ticketSchema = new mongoose.Schema(
   {
-    userId: {
+    paymentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Payment',
       required: true,
@@ -16,3 +16,7 @@ const ticketSchema = new mongoose.Schema(
   },
   { timestamps: true },
 )
+
+const Ticket = mongoose.model('Ticket', ticketSchema)
+
+export default Ticket
