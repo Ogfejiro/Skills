@@ -5,7 +5,7 @@ import { generateTicket } from '../services/ticket.service.js'
 
 export const initiatePayment = async (req, res) => {
   try {
-    const { amount, email, userId } = req.body
+    const { amount, email, userId, ticketType } = req.body
 
     const tx_ref = 'tx-' + Date.now()
 
@@ -16,6 +16,7 @@ export const initiatePayment = async (req, res) => {
       currency: 'NGN',
       status: 'pending',
       customerEmail: email,
+      ticketType,
     })
 
     const response = await flwClient.post('/payments', {
@@ -25,8 +26,8 @@ export const initiatePayment = async (req, res) => {
       redirect_url: `https://www.lofte.live/payment/confirm?ticket=${tx_ref}&currency=NGN&method=naira`,
       customer: { email },
       customizations: {
-        title: 'Checkout Payment',
-        description: 'Payment for order',
+        title: `${ticketType} Ticket Payment`,
+        description: 'Payment for ticket purchase',
       },
     })
 
@@ -53,68 +54,50 @@ export const paymentRedirect = async (req, res) => {
 
 export const flutterwaveWebhook = async (req, res) => {
   try {
-    const signature = req.headers['verif-hash'];
+    const signature = req.headers['verif-hash']
 
     if (!signature || signature !== process.env.FLW_WEBHOOK_SECRET) {
-      return res.sendStatus(401);
+      return res.sendStatus(401)
     }
 
-    const paymentData = req.body;
+    const paymentData = req.body
 
     // Check successful payment
     if (paymentData.status === 'successful') {
       const updatedPayment = await Payment.findOneAndUpdate(
-        { tx_ref: paymentData.txRef }, 
+        { tx_ref: paymentData.txRef },
         {
           status: 'successful',
           transactionId: paymentData.id,
         },
-        { new: true }
-      );
+        { new: true },
+      )
 
       if (!updatedPayment) {
-        console.log("Payment not found:", paymentData.txRef);
+        console.log('Payment not found:', paymentData.txRef)
       } else {
-        console.log("Payment updated:", updatedPayment);
+        console.log('Payment updated:', updatedPayment)
       }
     }
 
     await generateTicket(paymentData.txRef)
 
-    return res.sendStatus(200);
+    return res.sendStatus(200)
   } catch (error) {
-    console.error("Webhook error:", error);
-    return res.status(500).json({ error: "Webhook processing failed" });
-  }
-};
-
-
-export const getAllPayments = async (req, res) => {
-  try {
-    const payments = await Payment.find().sort({ createdAt: -1 })
-    res.json(payments)
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch payments' })
+    console.error('Webhook error:', error)
+    return res.status(500).json({ error: 'Webhook processing failed' })
   }
 }
 
-export const getAllTickets = async (req, res) => {
+export const getTicketByTxRef = async (req, res) => {
   try {
-    const tickets = await Ticket.find().sort({ createdAt: -1 })
-    res.json(tickets)
+    const { tx_ref } = req.params
+    const ticket = await Ticket.findOne({ tx_ref })
+    if (!ticket) {
+      return res.status(404).json({ error: 'Ticket not found' })
+    }
+    res.json(ticket)
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch tickets' })
-  }
-}
-
-export const ticket = async (req, res) => {
-  try {
-    const { tx_ref } = req.body
-    await generateTicket(tx_ref)
-    res.json({ message: 'Ticket generated successfully' })
-  } catch (err) {
-    res
-      .status(500)
-      .json({ error: 'Failed to generate ticket', message: err.message })
+    res.status(500).json({ error: 'Failed to retrieve ticket' })
   }
 }
