@@ -13,6 +13,9 @@ app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
 
+app.use('/', async (req, res) => {
+  res.send('<h1> Welcome </h1>')
+})
 app.use('/api/payments', paymentRoutes)
 
 const PORT = process.env.PORT

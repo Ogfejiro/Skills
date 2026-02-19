@@ -13,6 +13,10 @@ const ticketSchema = new mongoose.Schema(
     currency: { type: String, required: true },
     status: { type: String, required: true },
     customerEmail: { type: String, required: true },
+    ticketName: { type: String, required: true },
+    eventDate: { type: Date },
+    eventName: { type: String },
+    location: { type: String },
   },
   { timestamps: true },
 )
