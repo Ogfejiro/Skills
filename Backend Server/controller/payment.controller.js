@@ -16,7 +16,7 @@ export const initiatePayment = async (req, res) => {
       currency: 'NGN',
       status: 'pending',
       customerEmail: email,
-      ticketType,
+      ticketName,
     })
 
     const response = await flwClient.post('/payments', {
@@ -26,7 +26,7 @@ export const initiatePayment = async (req, res) => {
       redirect_url: `https://www.lofte.live/payment/confirm?ticket=${tx_ref}&currency=NGN&method=naira`,
       customer: { email },
       customizations: {
-        title: `${ticketType} Ticket Payment`,
+        title: `${ticketName} Ticket Payment`,
         description: 'Payment for ticket purchase',
       },
     })
