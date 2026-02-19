@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { paymentService } from "@/app/services/paymentService";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { CheckCircle, XCircle, Loader } from "lucide-react";
+import { CheckCircle, XCircle, Loader, Ticket, Home } from "lucide-react";
 
 export default function PaymentStatusPage() {
   const searchParams = useSearchParams();
@@ -25,7 +25,7 @@ export default function PaymentStatusPage() {
       }
 
       try {
-        // Step 3: Verify payment with backend
+        // Step 3: Verify payment with backend (using mock for now)
         await paymentService.verifyPayment({
           transaction_id,
           tx_ref
@@ -66,23 +66,36 @@ export default function PaymentStatusPage() {
             </div>
             <h1 className="text-3xl font-bold text-green-500 mb-4">Payment Successful!</h1>
             <p className="text-gray-300 mb-8">{message}</p>
-            <p className="text-sm text-gray-400 mb-8">
-              Transaction Reference: {tx_ref}
-            </p>
+            
+            {/* Transaction Reference */}
+            <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-4 mb-8">
+              <p className="text-sm text-gray-400 mb-2">Transaction Reference</p>
+              <p className="text-gold font-mono text-sm break-all">{tx_ref}</p>
+            </div>
+
+            {/* Action Buttons */}
             <div className="space-y-3">
               <Link
                 href="/tickets"
-                className="block w-full py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition-opacity"
+                className="block w-full py-4 bg-gradient-to-r from-gold to-gold/80 text-black font-bold rounded-xl hover:shadow-lg hover:shadow-gold/30 transition-all flex items-center justify-center gap-2"
               >
+                <Ticket className="w-5 h-5" />
                 View My Tickets
               </Link>
+              
               <Link
-                href="/events"
-                className="block w-full py-3 border border-gold text-gold rounded-lg hover:bg-gold/10 transition-colors"
+                href="/#events"
+                className="block w-full py-4 border-2 border-gold text-gold font-bold rounded-xl hover:bg-gold/10 transition-all flex items-center justify-center gap-2"
               >
+                <Home className="w-5 h-5" />
                 Browse More Events
               </Link>
             </div>
+
+            {/* Email Confirmation Message */}
+            <p className="text-sm text-gray-500 mt-6">
+              ✉️ A confirmation email has been sent to your inbox
+            </p>
           </>
         )}
 
@@ -93,21 +106,38 @@ export default function PaymentStatusPage() {
             </div>
             <h1 className="text-3xl font-bold text-red-500 mb-4">Payment Failed</h1>
             <p className="text-gray-300 mb-8">{message}</p>
+            
+            {/* Error Details */}
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 mb-8">
+              <p className="text-sm text-red-400">
+                Your payment could not be processed. Please try again or contact support.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
             <div className="space-y-3">
               <button
                 onClick={() => window.history.back()}
-                className="block w-full py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition-opacity"
+                className="block w-full py-4 bg-gold text-black font-bold rounded-xl hover:opacity-90 transition-all"
               >
                 Try Again
               </button>
+              
               <a
                 href="https://t.me/Lofte3"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full py-3 border border-gold text-gold rounded-lg hover:bg-gold/10 transition-colors"
+                className="block w-full py-4 border-2 border-gold text-gold font-bold rounded-xl hover:bg-gold/10 transition-all"
               >
                 Contact Support
               </a>
+              
+              <Link
+                href="/#events"
+                className="block w-full py-4 text-gray-400 hover:text-white transition-colors"
+              >
+                ← Back to Events
+              </Link>
             </div>
           </>
         )}

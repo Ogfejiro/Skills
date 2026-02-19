@@ -1,6 +1,8 @@
+// app/page.tsx - COMPLETE VERSION WITH ALL YOUR CONTENT
 'use client';
 
 import { motion } from 'framer-motion';
+import { useState } from 'react';
 import { 
   Sparkles, 
   Users, 
@@ -20,8 +22,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import TicketModal from '@/components/TicketModal';
 
 export default function HomePage() {
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  
   const xAccountLink = "https://x.com/hidreams__/status/2006591300829639020?s=46";
   const learnMoreLink = "https://x.com/hidreams__"; // DIFFERENT LINK FOR "LEARN MORE ABOUT US"
   
@@ -43,6 +48,12 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <Navbar />
+      
+      {/* Ticket Modal */}
+      <TicketModal 
+        isOpen={isTicketModalOpen} 
+        onClose={() => setIsTicketModalOpen(false)} 
+      />
       
       {/* ========== HERO SECTION ========== */}
       <section id="home" className="relative pt-20 pb-20 md:pt-40 md:pb-32">
@@ -400,11 +411,6 @@ export default function HomePage() {
                         />
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                        
-                        {/* Valentine Badge */}
-                        
-                        {/* Pool Party Badge */}
-                       
                       </motion.div>
                     </motion.div>
                   </motion.div>
@@ -426,7 +432,6 @@ export default function HomePage() {
                       
                       <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
                         LOFTE-3 Dinner Night 
-                        
                       </h3>
                       
                       <p className="text-gray-300 mb-6 leading-relaxed">
@@ -456,29 +461,25 @@ export default function HomePage() {
                         ))}
                       </div>
 
-                      
-                      
-
-{/* Buttons */}
-<div className="flex flex-col sm:flex-row gap-4">
-  <Link href="/payment">
-    <motion.button
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20 cursor-pointer"
-    >
-      Get Tickets
-    </motion.button>
-  </Link>
-  <motion.button
-    whileHover={{ scale: 1.05 }}
-    whileTap={{ scale: 0.95 }}
-    onClick={() => openLink("https://calendly.com/hidreamsofweb3/30min")}
-    className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition cursor-pointer"
-  >
-    Sponsor Event
-  </motion.button>
-</div>
+                      {/* Buttons - UPDATED: Get Tickets button now opens modal */}
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => setIsTicketModalOpen(true)}
+                          className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20 cursor-pointer"
+                        >
+                          Get Tickets
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => openLink("https://calendly.com/hidreamsofweb3/30min")}
+                          className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition cursor-pointer"
+                        >
+                          Sponsor Event
+                        </motion.button>
+                      </div>
                     </div>
                   </motion.div>
                 </div>
@@ -541,8 +542,7 @@ export default function HomePage() {
                 </div>
               </motion.div>
 
-              {/* EVENT 3: DeFi Hackathon */}
-             
+              {/* EVENT 3: DeFi Hackathon - You had this commented out, but I'll leave it as is */}
             </div>
           </div>
 
