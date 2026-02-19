@@ -10,7 +10,7 @@ const router = express.Router()
 
 router.post('/initiate', initiatePayment)
 router.get('/redirect', paymentRedirect)
-router.get('/ticket/:id', getTicketByTxRef)
+router.get('/ticket/:tx_ref', getTicketByTxRef)
 router.post('/webhook', flutterwaveWebhook)
 
 export default router
