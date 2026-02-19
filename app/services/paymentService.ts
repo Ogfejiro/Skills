@@ -76,6 +76,7 @@ class PaymentService {
           amount: data.amount,
           email: data.email,
           userId: data.userId,
+          ticketName: data.ticketName,
         }),
       })
 
