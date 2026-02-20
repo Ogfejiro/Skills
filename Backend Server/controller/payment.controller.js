@@ -5,7 +5,7 @@ import { generateTicket } from '../services/ticket.service.js'
 
 export const initiatePayment = async (req, res) => {
   try {
-    const { amount, email, userId, ticketType } = req.body
+    const { amount, email, userId, ticketName } = req.body
 
     const tx_ref = 'tx-' + Date.now()
 
