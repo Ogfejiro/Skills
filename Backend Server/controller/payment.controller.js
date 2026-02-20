@@ -100,8 +100,6 @@ export const flutterwaveWebhook = async (req, res) => {
 
     await generateTicket(paymentData.txRef)
 
-    res.sendStatus(200)
-
     sendVerificationEmail(
       updatedPayment.customerEmail,
       updatedPayment.amount,
@@ -109,6 +107,8 @@ export const flutterwaveWebhook = async (req, res) => {
       updatedPayment.ticketName,
       updatedPayment.tx_ref,
     )
+
+    return res.sendStatus(200)
   } catch (error) {
     console.error('Webhook error:', error)
     return res.status(500).json({ error: 'Webhook processing failed' })
