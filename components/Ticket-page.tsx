@@ -51,9 +51,7 @@ export default function TicketsPage() {
       }
 
       try {
-        const response = await fetch(
-          `${baseUrl}/api/payments/tickets/${tx_ref}`,
-        )
+        const response = await fetch(`${baseUrl}/api/payments/ticket/${tx_ref}`)
         if (!response.ok) {
           const errData = await response.json()
           throw new Error(errData.error || 'Ticket not found')
