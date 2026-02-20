@@ -171,7 +171,7 @@ export default function TicketsPage() {
         // If no payment data, try the user tickets endpoint
         try {
           const response = await fetch(
-            `${baseUrl}/api/payments/tickets/:tr_ref`,
+            `${baseUrl}/api/payments/tickets/:tx_ref`,
           )
 
           if (response.ok) {
