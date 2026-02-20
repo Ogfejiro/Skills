@@ -27,13 +27,18 @@ export default function PaymentStatusPage() {
 
       try {
         // Step 3: Verify payment with backend
-        await paymentService.verifyPayment({
+        const verified = await paymentService.verifyPayment({
           transaction_id,
           tx_ref,
         })
 
-        setStatus('success')
-        setMessage('Payment successful! Your tickets have been confirmed.')
+        if (verified?.success) {
+          setStatus('success')
+          setMessage('Payment successful! Your tickets have been confirmed.')
+        } else {
+          setStatus('failed')
+          setMessage('Payment verification failed')
+        }
       } catch (error: any) {
         setStatus('failed')
         setMessage(error.message || 'Payment verification failed')
