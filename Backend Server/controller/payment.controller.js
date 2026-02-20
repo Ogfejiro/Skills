@@ -127,5 +127,3 @@ export const getTicketByTxRef = async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve ticket' })
   }
 }
-
-]
