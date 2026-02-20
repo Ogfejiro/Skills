@@ -26,7 +26,7 @@ export default function PaymentStatusPage() {
       }
 
       try {
-        // Step 3: Verify payment with backend
+        // Verify payment with backend
         const verified = await paymentService.verifyPayment({
           transaction_id,
           tx_ref,
@@ -34,7 +34,7 @@ export default function PaymentStatusPage() {
 
         if (verified?.success) {
           setStatus('success')
-          setMessage('Payment successful! Your tickets have been confirmed.')
+          setMessage('Payment successful! Your ticket is now available.')
         } else {
           setStatus('failed')
           setMessage('Payment verification failed')
@@ -80,11 +80,12 @@ export default function PaymentStatusPage() {
               Transaction Reference: {tx_ref}
             </p>
             <div className='space-y-3'>
+              {/* Pass tx_ref in the URL so ticket page can fetch the correct ticket */}
               <Link
-                href='/tickets'
+                href={`/tickets?tx_ref=${tx_ref}`}
                 className='block w-full py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition-opacity'
               >
-                View My Tickets
+                View My Ticket
               </Link>
               <Link
                 href='/events'
