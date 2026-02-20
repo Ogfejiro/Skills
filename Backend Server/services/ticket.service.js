@@ -30,7 +30,7 @@ export async function generateTicket(tx_ref) {
     paymentId: payment._id,
     ticketId,
     tx_ref: payment.tx_ref,
-    ticketType: payment.ticketType,
+    ticketName: payment.ticketName,
     amount: payment.amount,
     currency: payment.currency,
     status: 'active',
