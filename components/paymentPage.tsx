@@ -81,7 +81,7 @@ export default function PaymentStatusPage() {
             </p>
             <div className='space-y-3'>
               <Link
-                href='/tickets'
+                href={`/tickets/${tx_ref}`}
                 className='block w-full py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition-opacity'
               >
                 View My Tickets
