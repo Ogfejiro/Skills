@@ -24,7 +24,7 @@ export const initiatePayment = async (req, res) => {
       tx_ref,
       amount,
       currency: 'NGN',
-      redirect_url: `https://www.lofte.live/payment-status/confirm?tx_ref=${tx_ref}`,
+      redirect_url: `https://www.lofte.live/payment-status?tx_ref=${tx_ref}`,
       customer: { email },
       customizations: {
         title: `${ticketName} Ticket Payment`,
