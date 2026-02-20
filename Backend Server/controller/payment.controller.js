@@ -41,15 +41,31 @@ export const initiatePayment = async (req, res) => {
   }
 }
 
-export const paymentRedirect = async (req, res) => {
+export const verifyPayment = async (req, res) => {
   try {
-    const { transaction_id, tx_ref } = req.query
+    const { transaction_id, tx_ref } = req.body
 
-    return res.redirect(
-      `${process.env.FRONTEND_URL}/payment-status?transaction_id=${transaction_id}&tx_ref=${tx_ref}`,
-    )
+    const payment = await Payment.findOne({
+      tx_ref,
+      transactionId: transaction_id,
+    })
+
+    if (!payment) {
+      return res
+        .status(404)
+        .json({ success: false, error: 'Payment not found' })
+    }
+
+    if (payment.status === 'successful') {
+      return res.status(200).json({ success: true })
+    } else {
+      return res
+        .status(200)
+        .json({ success: false, error: 'Payment not successful' })
+    }
   } catch (err) {
-    res.status(500).json({ error: 'Redirect error' })
+    console.error(err)
+    res.status(500).json({ success: false, error: 'Verification failed' })
   }
 }
 
