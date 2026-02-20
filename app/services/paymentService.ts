@@ -66,29 +66,38 @@ class PaymentService {
   }
 
   // 🟢 REAL VERSION - CONNECTED TO BACKEND
-  async verifyPayment(data: VerifyPaymentRequest): Promise<void> {
+  async verifyPayment(
+    data: VerifyPaymentRequest,
+  ): Promise<{ success: boolean }> {
     try {
       console.log(
         '📡 Verifying with backend:',
-        `${this.baseUrl}/api/payments/redirect`,
+        `${this.baseUrl}/api/payments/verify`,
       )
       console.log('📡 Verification data:', data)
 
-      const response = await fetch(`${this.baseUrl}/api/payments/redirect`, {
+      const response = await fetch(`${this.baseUrl}/api/payments/verify`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })
 
-      if (!response.ok) {
-        const error = await response.json()
-        console.error('❌ Verification error:', error)
-        throw new Error(error.error || 'Payment verification failed')
+      const text = await response.text()
+
+      // Safely parse JSON, fallback to error if HTML returned
+      let json
+      try {
+        json = JSON.parse(text)
+      } catch {
+        console.error('Non-JSON response from backend:', text)
+        throw new Error('Backend did not return JSON')
       }
 
-      console.log('✅ Payment verified by backend')
+      if (!response.ok) {
+        throw new Error(json.error || 'Payment verification failed')
+      }
+
+      return json
     } catch (error) {
       console.error('❌ Payment verification error:', error)
       throw error
