@@ -77,7 +77,7 @@ class PaymentService {
       console.log('📡 Verification data:', data)
 
       const response = await fetch(`${this.baseUrl}/api/payments/verify`, {
-        method: 'GET',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       })

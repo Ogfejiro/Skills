@@ -2,7 +2,7 @@
 import express from 'express'
 import {
   initiatePayment,
-  paymentRedirect,
+  verifyPayment,
   flutterwaveWebhook,
   getTicketByTxRef,
   getUserTickets, // ✅ Import the new function
@@ -12,7 +12,7 @@ const router = express.Router()
 
 // Payment routes
 router.post('/initiate', initiatePayment)
-router.get('/redirect', paymentRedirect)
+router.post('/verify', verifyPayment)
 router.post('/webhook', flutterwaveWebhook)
 router.get('/ticket/:tx_ref', getTicketByTxRef)
 
