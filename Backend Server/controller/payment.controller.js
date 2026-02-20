@@ -24,7 +24,7 @@ export const initiatePayment = async (req, res) => {
       tx_ref,
       amount,
       currency: 'NGN',
-      redirect_url: `https://www.lofte.live/payment/confirm?ticket=${tx_ref}&currency=NGN&method=naira`,
+      redirect_url: `https://www.lofte.live/payment-status/confirm?tx_ref=${tx_ref}`,
       customer: { email },
       customizations: {
         title: `${ticketName} Ticket Payment`,
@@ -107,13 +107,13 @@ export const getTicketByTxRef = async (req, res) => {
 export const getUserTickets = async (req, res) => {
   try {
     const { userId } = req.params
-    
+
     // Find all payments for this user that are successful
-    const payments = await Payment.find({ 
-      userId, 
-      status: 'successful' 
+    const payments = await Payment.find({
+      userId,
+      status: 'successful',
     })
-    
+
     // Get tickets for each payment
     const tickets = await Promise.all(
       payments.map(async (payment) => {
@@ -129,11 +129,11 @@ export const getUserTickets = async (req, res) => {
           eventName: 'LOFTE-3 Dinner Night',
           eventLocation: 'Eko Hotels & Suites, Lagos',
           purchaseDate: payment.createdAt,
-          tx_ref: payment.tx_ref
+          tx_ref: payment.tx_ref,
         }
-      })
+      }),
     )
-    
+
     res.json(tickets)
   } catch (err) {
     console.error('Error fetching user tickets:', err)
