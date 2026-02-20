@@ -5,7 +5,7 @@ import {
   paymentRedirect,
   flutterwaveWebhook,
   getTicketByTxRef,
-  getUserTickets,  // ✅ Import the new function
+  getUserTickets, // ✅ Import the new function
 } from '../controller/payment.controller.js'
 
 const router = express.Router()
@@ -14,9 +14,9 @@ const router = express.Router()
 router.post('/initiate', initiatePayment)
 router.get('/redirect', paymentRedirect)
 router.post('/webhook', flutterwaveWebhook)
+router.get('/ticket/:tx_ref', getTicketByTxRef)
 
 // Ticket routes
-router.get('/ticket/:tx_ref', getTicketByTxRef)
-router.get('/api/tickets/user/:userId', getUserTickets)  // ✅ New user tickets endpoint
+router.get('/api/tickets/user/:userId', getUserTickets) // ✅ New user tickets endpoint
 
 export default router

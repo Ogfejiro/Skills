@@ -13,7 +13,6 @@ app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())
 
-
 app.use('/api/payments', paymentRoutes)
 
 const PORT = process.env.PORT
