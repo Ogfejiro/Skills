@@ -70,11 +70,11 @@ class PaymentService {
     try {
       console.log(
         '📡 Verifying with backend:',
-        `${this.baseUrl}/api/payments/verify`,
+        `${this.baseUrl}/api/payments/redirect`,
       )
       console.log('📡 Verification data:', data)
 
-      const response = await fetch(`${this.baseUrl}/api/payments/verify`, {
+      const response = await fetch(`${this.baseUrl}/api/payments/redirect`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
