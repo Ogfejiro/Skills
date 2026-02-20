@@ -1,4 +1,4 @@
-// app/services/paymentService.ts - COMPLETE WORKING VERSION
+// app/services/paymentService.ts - LIVE BACKEND VERSION
 export interface InitiatePaymentRequest {
   amount: number
   email: string
@@ -18,54 +18,20 @@ export interface VerifyPaymentRequest {
 }
 
 class PaymentService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || ''
+  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com'
 
-  // ✅ MOCK VERSION - Simulates Flutterwave redirect
-  async initiatePayment(
-    data: InitiatePaymentRequest,
-  ): Promise<InitiatePaymentResponse> {
-    console.log('🔵 MOCK: Initiating Flutterwave payment for', data.ticketName)
-    console.log('💰 Amount:', data.amount)
-    console.log('📧 Email:', data.email)
-    console.log('🎫 Ticket:', data.ticketId, data.ticketName)
-    console.log('🔢 Quantity:', data.quantity)
-    
-    // Simulate network delay (shows loading state)
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    // Create mock Flutterwave checkout URL
-    const mockFlutterwaveUrl = `/checkout/flutterwave/mock?amount=${data.amount}&email=${encodeURIComponent(data.email)}&tx_ref=mock_${Date.now()}&ticket=${encodeURIComponent(data.ticketName)}`;
-    
-    console.log('🔄 Redirecting to mock Flutterwave:', mockFlutterwaveUrl)
-    
-    return {
-      paymentLink: mockFlutterwaveUrl
-    }
-  }
-
-  // ✅ MOCK VERSION - Simulates payment verification
-  async verifyPayment(data: VerifyPaymentRequest): Promise<void> {
-    console.log('✅ MOCK: Verifying payment with Flutterwave', {
-      transaction_id: data.transaction_id,
-      tx_ref: data.tx_ref
-    })
-    
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    console.log('✅ MOCK: Payment verified successfully')
-    
-    // Mock successful verification
-    return Promise.resolve()
-  }
-
-  /* 
-  // 🟢 REAL VERSION - Uncomment when backend is ready
+  // 🟢 REAL VERSION - CONNECTED TO BACKEND
   async initiatePayment(
     data: InitiatePaymentRequest,
   ): Promise<InitiatePaymentResponse> {
     try {
       console.log('📡 Sending to backend:', `${this.baseUrl}/api/payments/initiate`)
+      console.log('📡 Request data:', {
+        amount: data.amount,
+        email: data.email,
+        userId: data.userId,
+        ticketName: data.ticketName,
+      })
       
       const response = await fetch(`${this.baseUrl}/api/payments/initiate`, {
         method: 'POST',
@@ -82,6 +48,7 @@ class PaymentService {
 
       if (!response.ok) {
         const error = await response.json()
+        console.error('❌ Backend error:', error)
         throw new Error(error.error || 'Payment initialization failed')
       }
 
@@ -95,9 +62,11 @@ class PaymentService {
     }
   }
 
+  // 🟢 REAL VERSION - CONNECTED TO BACKEND
   async verifyPayment(data: VerifyPaymentRequest): Promise<void> {
     try {
       console.log('📡 Verifying with backend:', `${this.baseUrl}/api/payments/verify`)
+      console.log('📡 Verification data:', data)
       
       const response = await fetch(`${this.baseUrl}/api/payments/verify`, {
         method: 'POST',
@@ -109,6 +78,7 @@ class PaymentService {
 
       if (!response.ok) {
         const error = await response.json()
+        console.error('❌ Verification error:', error)
         throw new Error(error.error || 'Payment verification failed')
       }
       
@@ -118,7 +88,6 @@ class PaymentService {
       throw error
     }
   }
-  */
 }
 
 export const paymentService = new PaymentService()

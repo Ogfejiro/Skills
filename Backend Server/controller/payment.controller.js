@@ -1,3 +1,4 @@
+// payment.controller.js - COMPLETE WITH ALL FUNCTIONS
 import { flwClient } from '../config/flutterwave.js'
 import Payment from '../models/payment.model.js'
 import Ticket from '../models/ticket.model.js'
@@ -5,7 +6,7 @@ import { generateTicket } from '../services/ticket.service.js'
 
 export const initiatePayment = async (req, res) => {
   try {
-    const { amount, email, userId, ticketType } = req.body
+    const { amount, email, userId, ticketName } = req.body
 
     const tx_ref = 'tx-' + Date.now()
 
@@ -99,5 +100,43 @@ export const getTicketByTxRef = async (req, res) => {
     res.json(ticket)
   } catch (err) {
     res.status(500).json({ error: 'Failed to retrieve ticket' })
+  }
+}
+
+// ✅ NEW FUNCTION: Get all tickets for a user
+export const getUserTickets = async (req, res) => {
+  try {
+    const { userId } = req.params
+    
+    // Find all payments for this user that are successful
+    const payments = await Payment.find({ 
+      userId, 
+      status: 'successful' 
+    })
+    
+    // Get tickets for each payment
+    const tickets = await Promise.all(
+      payments.map(async (payment) => {
+        const ticket = await Ticket.findOne({ tx_ref: payment.tx_ref })
+        return {
+          ticketId: ticket?._id || payment.tx_ref,
+          amount: payment.amount,
+          currency: payment.currency,
+          status: 'active',
+          customerEmail: payment.customerEmail,
+          ticketName: payment.ticketName,
+          eventDate: 'March 27, 2026', // You can make this dynamic later
+          eventName: 'LOFTE-3 Dinner Night',
+          eventLocation: 'Eko Hotels & Suites, Lagos',
+          purchaseDate: payment.createdAt,
+          tx_ref: payment.tx_ref
+        }
+      })
+    )
+    
+    res.json(tickets)
+  } catch (err) {
+    console.error('Error fetching user tickets:', err)
+    res.status(500).json({ error: 'Failed to fetch tickets' })
   }
 }

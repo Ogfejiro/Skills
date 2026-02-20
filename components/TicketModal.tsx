@@ -1,9 +1,9 @@
-// components/TicketModal.tsx - FIXED IMPORTS
+// components/TicketModal.tsx - COMPLETE WORKING VERSION
 'use client'
 
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'  // ← Make sure AnimatePresence is imported here
-import { Ticket, Loader, ExternalLink, ChevronDown, X, Coins } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Ticket, Loader, X } from 'lucide-react'
 import { paymentService } from '@/app/services/paymentService'
 
 type CurrencyType = 'NGN' | 'USD'
@@ -112,6 +112,14 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
     try {
       const amount = currency === 'NGN' ? selectedTicket.priceNGN : selectedTicket.priceUSD
 
+      console.log('🎫 Processing payment for:', {
+        ticket: selectedTicket.name,
+        amount,
+        currency,
+        email: userEmail
+      })
+
+      // This will get the REAL Flutterwave URL from backend
       const { paymentLink } = await paymentService.initiatePayment({
         amount,
         email: userEmail,
@@ -121,14 +129,17 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
         quantity: 1,
       })
 
+      console.log('🔄 Redirecting to Flutterwave:', paymentLink)
+
+      // Redirect to Flutterwave checkout page
       window.location.href = paymentLink
+      
     } catch (error: any) {
+      console.error('❌ Payment error:', error)
       alert(error.message || 'Payment failed. Please try again.')
-    } finally {
       setLoading(null)
       setShowEmailModal(false)
       setUserEmail('')
-      onClose()
     }
   }
 
@@ -360,7 +371,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 {/* Pay Now Button */}
                 <button
                   onClick={handlePayment}
-                  disabled={!userEmail || !userEmail.includes('@') || !userEmail.includes('.')}
+                  disabled={!userEmail || !userEmail.includes('@') || !userEmail.includes('.') || loading === selectedTicket.id}
                   className="flex-1 py-4 bg-gradient-to-r from-gold to-yellow-500 text-black font-extrabold rounded-xl hover:shadow-xl hover:shadow-gold/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
                 >
                   {loading === selectedTicket.id ? (
