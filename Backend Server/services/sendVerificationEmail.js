@@ -1,45 +1,42 @@
-// import dotenv from 'dotenv'
-// dotenv.config()
-// import Sib from 'sib-api-v3-sdk'
-// import VerificationCode from '../models/Verify-user.js'
+export async function sendVerificationEmail(
+  customerEmail,
+  amount,
+  link,
+  ticketName,
+  tx_ref,
+) {
+  try {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'api-key': process.env.BREVO_API_KEY,
+      },
+      body: JSON.stringify({
+        sender: {
+          email: process.env.EMAIL_FROM,
+          name: 'Skill App',
+        },
+        to: [{ email: customerEmail }],
+        templateId: Number(process.env.BREVO_TEMPLATE_ID),
+        params: {
+          EMAIL: customerEmail,
+          amount,
+          link,
+          ticketName,
+          tx_ref,
+        },
+      }),
+    })
 
-// const client = Sib.ApiClient.instance
-// const apiKey = client.authentications['api-key']
-// apiKey.apiKey = process.env.SENDINBLUE_API_KEY
+    if (!response.ok) {
+      const err = await response.text()
+      throw new Error(err)
+    }
 
-// const tranEmailApi = new Sib.TransactionalEmailsApi()
-
-// function generateCode() {
-//   return Math.floor(100000 + Math.random() * 900000).toString() // 6-digit code
-// }
-
-// export async function sendVerificationEmail(email, fullName) {
-//   try {
-//     await VerificationCode.findOneAndDelete({ email })
-
-//     const code = generateCode()
-
-//     const expiresAt = new Date(Date.now() + 10 * 60 * 1000)
-
-//     await VerificationCode.create({
-//       email,
-//       code,
-//       expiresAt,
-//     })
-
-//     await tranEmailApi.sendTransacEmail({
-//       sender: { email: process.env.EMAIL_FROM, name: 'Skill App' },
-//       to: [{ email, name: fullName }],
-//       templateId: parseInt(process.env.SENDINBLUE_TEMPLATE_ID),
-//       params: {
-//         FIRSTNAME: fullName,
-//         CODE: code,
-//       },
-//     })
-
-//     return { success: true }
-//   } catch (error) {
-//     console.error('Error sending verification email:', error)
-//     return { success: false, error: error.message }
-//   }
-// }
+    return { success: true }
+  } catch (error) {
+    console.error('Brevo API Error:', error.message)
+    return { success: false, error: error.message }
+  }
+}
