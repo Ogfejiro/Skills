@@ -101,11 +101,11 @@ export const flutterwaveWebhook = async (req, res) => {
     await generateTicket(paymentData.txRef)
 
     sendVerificationEmail(
-      updatedPayment.customerEmail,
-      updatedPayment.amount,
-      `${process.env.FRONTEND_URL}/tickets/${updatedPayment.tx_ref}`,
-      updatedPayment.ticketName,
-      updatedPayment.tx_ref,
+      paymentData.customer.email,
+      paymentData.amount,
+      `https://www.lofte.live/ticket/${paymentData.txRef}`,
+      paymentData.customizations.title,
+      paymentData.txRef,
     )
 
     return res.sendStatus(200)
