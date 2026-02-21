@@ -1,4 +1,4 @@
-// components/TicketModal.tsx - COMPLETE WORKING VERSION
+// components/TicketModal.tsx - FIXED TYPE ERROR
 'use client'
 
 import React, { useState } from 'react'
@@ -7,6 +7,7 @@ import { Ticket, Loader, X } from 'lucide-react'
 import { paymentService } from '@/app/services/paymentService'
 
 type CurrencyType = 'NGN' | 'USD'
+type TicketType = 'paid'  // Only 'paid' now since we removed free tickets
 
 interface TicketModalProps {
   isOpen: boolean
@@ -20,86 +21,85 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [selectedTicket, setSelectedTicket] = useState<any>(null)
 
-  // Ticket options as per client requirements
+  // Exchange rate
+  const exchangeRate = 1430
+
+  // Updated ticket options as per new requirements
   const ticketOptions = [
     {
       id: 'regular',
       name: 'Regular Ticket',
-      priceUSD: 0,
-      priceNGN: 0,
-      features: ['Event Access', 'Basic Swag'],
-      type: 'free' as const,
-      description: 'Free admission to the main event',
-    },
-    {
-      id: 'regular-shared',
-      name: 'Regular + Shared Accommodation',
-      priceUSD: 5,
-      priceNGN: 5 * 1430,
+      priceUSD: 0.9,
+      priceNGN: Math.round(0.9 * exchangeRate), // ₦1,287
       features: [
         'Event Access',
-        'Shared Accommodation (1 night)',
-        'Basic Swag',
-        'Breakfast',
+        'Basic Seating',
+        'Networking',
+        'Complimentary Refreshments and Merch',
+        'Red Carpet Access'
       ],
       type: 'paid' as const,
-      description: 'Includes shared accommodation for one night',
+      description: 'Main event access with premium features',
     },
     {
-      id: 'regular-single',
-      name: 'Regular + Single Budget Accommodation',
-      priceUSD: 9,
-      priceNGN: 9 * 1430,
+      id: 'regular-accommodation',
+      name: 'Regular + Accommodation',
+      priceUSD: 9.99,
+      priceNGN: Math.round(9.99 * exchangeRate), // ₦14,286
       features: [
         'Event Access',
-        'Single Budget Accommodation (1 night)',
-        'Basic Swag',
-        'Breakfast',
+        'Basic Seating',
+        'Networking',
+        'Complimentary Refreshments and Merch',
+        'Red Carpet Access',
+        'Private Room Accommodation (1 night)',
+        'Breakfast Included'
       ],
       type: 'paid' as const,
-      description: 'Private budget room for one night',
+      description: 'Includes private room accommodation for one night',
     },
     {
       id: 'vip',
       name: 'VIP Ticket',
-      priceUSD: 6,
-      priceNGN: 6 * 1430,
+      priceUSD: 6.99,
+      priceNGN: Math.round(6.99 * exchangeRate), // ₦9,996
       features: [
         'VIP Access',
         'Priority Seating',
         'VIP Swag Pack',
         'Networking Session',
+        'Complimentary Refreshments and Merch',
+        'Red Carpet Access',
+        'Backstage Access'
       ],
       type: 'paid' as const,
-      description: 'Premium experience with exclusive access',
+      description: 'Premium VIP experience with exclusive access',
     },
     {
       id: 'vip-luxury',
       name: 'VIP + Luxury Accommodation',
-      priceUSD: 29,
-      priceNGN: 29 * 1430,
+      priceUSD: 29.99,
+      priceNGN: Math.round(29.99 * exchangeRate), // ₦42,886
       features: [
         'VIP Access',
-        'Luxury Accommodation (2 nights)',
-        'All Meals',
-        'Private Transport',
-        'Premium Swag',
+        'Priority Seating',
+        'VIP Swag Pack',
+        'Networking Session',
+        'Complimentary Refreshments and Merch',
+        'Red Carpet Access',
         'Backstage Access',
+        'Luxury Hotel Stay (2 nights)',
+        'Concierge Services',
+        'All Meals Included',
+        'Private Transport'
       ],
       type: 'paid' as const,
-      description: 'Ultimate luxury experience',
+      description: 'Ultimate luxury experience with concierge services',
     },
   ]
 
   const handleTicketSelect = (ticket: any) => {
-    if (ticket.type === 'free') {
-      alert(
-        `You've selected: ${ticket.name}\n\nFree tickets will be sent to your email.`,
-      )
-      onClose()
-      return
-    }
-
+    // All tickets are paid now, so no free ticket check needed
     setSelectedTicket(ticket)
     setShowEmailModal(true)
   }
@@ -214,7 +214,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                     </div>
                   </div>
                   <div className="text-sm text-gray-400">
-                    1 USD = ₦1,430
+                    1 USD = ₦{exchangeRate.toLocaleString()}
                   </div>
                 </div>
               </div>
@@ -229,15 +229,10 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                       className="p-5 border border-gold/20 rounded-xl bg-gray-900/30 cursor-pointer hover:border-gold/40 transition-all"
                       onClick={() => handleTicketSelect(ticket)}
                     >
-                      <div className="flex justify-between items-start">
+                      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
                             <h3 className="text-lg font-bold text-white">{ticket.name}</h3>
-                            {ticket.type === 'free' && (
-                              <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded-full">
-                                FREE
-                              </span>
-                            )}
                           </div>
                           <p className="text-sm text-gray-400 mb-3">{ticket.description}</p>
                           <div className="space-y-1">
@@ -249,18 +244,18 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                             ))}
                           </div>
                         </div>
-                        <div className="ml-4 text-right">
-                          <div className={`text-2xl font-bold ${ticket.type === 'free' ? 'text-green-400' : 'text-gold'}`}>
+                        <div className="text-right md:ml-4">
+                          <div className="text-2xl font-bold text-gold">
                             {currency === 'NGN' ? '₦' : '$'}
                             {currency === 'NGN'
-                              ? ticket.priceNGN === 0 ? '0' : ticket.priceNGN.toLocaleString()
-                              : ticket.priceUSD === 0 ? '0' : ticket.priceUSD.toLocaleString()}
+                              ? ticket.priceNGN.toLocaleString()
+                              : ticket.priceUSD.toFixed(2)}
                           </div>
-                          {ticket.type !== 'free' && (
-                            <div className="text-sm text-gray-400">
-                              {currency === 'NGN' ? `$${ticket.priceUSD}` : `₦${(ticket.priceUSD * 1430).toLocaleString()}`}
-                            </div>
-                          )}
+                          <div className="text-sm text-gray-400">
+                            {currency === 'NGN' 
+                              ? `~$${ticket.priceUSD.toFixed(2)}` 
+                              : `~₦${ticket.priceNGN.toLocaleString()}`}
+                          </div>
                         </div>
                       </div>
                     </motion.div>
@@ -332,7 +327,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                     {currency === 'NGN' ? '₦' : '$'}
                     {currency === 'NGN'
                       ? selectedTicket.priceNGN.toLocaleString()
-                      : selectedTicket.priceUSD.toLocaleString()}
+                      : selectedTicket.priceUSD.toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -386,7 +381,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                         {currency === 'NGN' ? '₦' : '$'}
                         {currency === 'NGN'
                           ? selectedTicket.priceNGN.toLocaleString()
-                          : selectedTicket.priceUSD.toLocaleString()}
+                          : selectedTicket.priceUSD.toFixed(2)}
                       </span>
                     </>
                   )}
