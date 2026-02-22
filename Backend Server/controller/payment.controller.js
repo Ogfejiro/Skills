@@ -86,7 +86,7 @@ export const flutterwaveWebhook = async (req, res) => {
       return res.sendStatus(200)
     }
 
-    if (payload.status === 'successful') {
+    if (payload.status === 'completed') {
       const updatedPayment = await Payment.findOneAndUpdate(
         { tx_ref: payload.tx_ref },
         {
