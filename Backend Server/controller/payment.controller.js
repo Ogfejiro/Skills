@@ -78,36 +78,42 @@ export const flutterwaveWebhook = async (req, res) => {
       return res.sendStatus(401)
     }
 
-    const paymentData = req.body
+    console.log('Webhook payload:', JSON.stringify(req.body, null, 2))
 
-    if (paymentData.status === 'successful') {
+    const payload = req.body.data
+
+    if (!payload) {
+      return res.sendStatus(200)
+    }
+
+    if (payload.status === 'successful') {
       const updatedPayment = await Payment.findOneAndUpdate(
-        { tx_ref: paymentData.txRef },
+        { tx_ref: payload.tx_ref },
         {
           status: 'successful',
-          transactionId: paymentData.id,
+          transactionId: payload.id,
         },
         { new: true },
       )
 
       if (!updatedPayment) {
-        console.log('Payment not found:', paymentData.txRef)
+        console.log('Payment not found:', payload.tx_ref)
         return res.sendStatus(200)
       }
 
-      console.log('Payment updated:', updatedPayment)
-
-      await generateTicket(updatedPayment.tx_ref)
+      await generateTicket(payload.tx_ref)
 
       await sendVerificationEmail(
         updatedPayment.customerEmail,
         updatedPayment.amount,
-        `https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
+        `https://www.lofte.live/tickets?tx_ref=${payload.tx_ref}`,
         updatedPayment.ticketName,
-        updatedPayment.tx_ref,
+        payload.tx_ref,
       )
     }
 
+    console.log(req.body)
+    console.log('Headers:', req.headers)
     return res.sendStatus(200)
   } catch (error) {
     console.error('Webhook error:', error)
