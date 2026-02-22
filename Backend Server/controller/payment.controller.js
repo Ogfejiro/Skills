@@ -86,20 +86,35 @@ export const flutterwaveWebhook = async (req, res) => {
       return res.sendStatus(200)
     }
 
-    if (payload.status === 'completed') {
+    const status = payload.status?.toLowerCase()
+
+    // Accept possible success values
+    if (['successful', 'completed', 'success'].includes(status)) {
+      
+      // OPTIONAL BUT RECOMMENDED: find existing payment first
+      const existingPayment = await Payment.findOne({
+        tx_ref: payload.tx_ref,
+      })
+
+      if (!existingPayment) {
+        console.log('Payment not found:', payload.tx_ref)
+        return res.sendStatus(200)
+      }
+
+      // Prevent double-processing (webhooks can fire multiple times)
+      if (existingPayment.status === 'successful') {
+        console.log('Payment already processed:', payload.tx_ref)
+        return res.sendStatus(200)
+      }
+
       const updatedPayment = await Payment.findOneAndUpdate(
         { tx_ref: payload.tx_ref },
         {
           status: 'successful',
           transactionId: payload.id,
         },
-        { new: true },
+        { returnDocument: 'after' } // fixed deprecation warning
       )
-
-      if (!updatedPayment) {
-        console.log('Payment not found:', payload.tx_ref)
-        return res.sendStatus(200)
-      }
 
       await generateTicket(payload.tx_ref)
 
@@ -110,10 +125,10 @@ export const flutterwaveWebhook = async (req, res) => {
         updatedPayment.ticketName,
         payload.tx_ref,
       )
+
+      console.log('Payment successfully processed:', payload.tx_ref)
     }
 
-    console.log(req.body)
-    console.log('Headers:', req.headers)
     return res.sendStatus(200)
   } catch (error) {
     console.error('Webhook error:', error)
