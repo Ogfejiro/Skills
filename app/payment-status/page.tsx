@@ -4,7 +4,7 @@ import PaymentStatusPageComponent from './../../components/paymentPage'
 export default function PaymentStatusPage() {
   return (
     <Suspense fallback={<div>Loading payment details...</div>}>
-      <PaymentStatusPageComponent />
+      <PaymentStatusPageComponent/>
     </Suspense>
   )
 }
