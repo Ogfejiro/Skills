@@ -27,16 +27,19 @@ import TicketModal from '@/components/TicketModal';
 export default function HomePage() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   
+  // LINKS
   const xAccountLink = "https://x.com/hidreams__/status/2006591300829639020?s=46";
-  const learnMoreLink = "https://x.com/hidreams__"; // DIFFERENT LINK FOR "LEARN MORE ABOUT US"
+  const learnMoreLink = "https://x.com/i/status/2023276431896105358"; // Learn more about us link
+  const lumaLink = "https://luma.com/cbnowerri"; // LUMA link for NFT EVENT ONLY
+  const calendlyLink = "https://calendly.com/hidreamsofweb3/30min"; // Sponsor/meeting link
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
-    // Valentine event image (changed from video)
+    // Valentine event image
     valentineEvent: "/images/new.jpg", // Your image path here
     
     // Other events
-    nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
+    nftGala: "/images/meta.jpg",
     mainParty: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop",
   };
 
@@ -387,7 +390,7 @@ export default function HomePage() {
 
                 {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Image Side - MADE CLICKABLE */}
+                  {/* Image Side - MADE CLICKABLE to X POST */}
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -411,6 +414,14 @@ export default function HomePage() {
                         />
                         
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                        
+                        {/* Click indicator */}
+                        <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-gold/50">
+                          <span className="text-xs text-gold flex items-center gap-1">
+                            <ExternalLink className="w-3 h-3" />
+                            View Post
+                          </span>
+                        </div>
                       </motion.div>
                     </motion.div>
                   </motion.div>
@@ -436,7 +447,7 @@ export default function HomePage() {
                       
                       <p className="text-gray-300 mb-6 leading-relaxed">
                         An unforgettable evening of fine dining and celebrations with web3 elites of crypto twitter Africa. 
-                        Join us for an exclusive Red Carpet experience featuring gourmet cuisine,premium cocktails, and blockchain networking.
+                        Join us for an exclusive Red Carpet experience featuring gourmet cuisine, premium cocktails, and blockchain networking.
                       </p>
 
                       {/* Event Details */}
@@ -461,7 +472,7 @@ export default function HomePage() {
                         ))}
                       </div>
 
-                      {/* Buttons - UPDATED: Get Tickets button now opens modal */}
+                      {/* Buttons - MAIN EVENT uses TicketModal, NOT Luma */}
                       <div className="flex flex-col sm:flex-row gap-4">
                         <motion.button
                           whileHover={{ scale: 1.05 }}
@@ -474,7 +485,7 @@ export default function HomePage() {
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          onClick={() => openLink("https://calendly.com/hidreamsofweb3/30min")}
+                          onClick={() => openLink(calendlyLink)}
                           className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition cursor-pointer"
                         >
                           Sponsor Event
@@ -485,60 +496,115 @@ export default function HomePage() {
                 </div>
               </motion.div>
 
-              {/* EVENT 2: NFT Art Gala */}
+              {/* EVENT 2: NFT Art Gala - NOW UNBLURRED AND FULLY CLICKABLE */}
               <motion.div
                 initial={{ opacity: 0, x: -100 }}
-                whileInView={{ opacity: 0.8, x: 0 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative blur-[8px] hover:blur-0 transition-all duration-500"
+                className="relative"
               >
+                {/* Connector Dot */}
                 <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-3 h-3 rounded-full bg-gold/50 border-2 border-black"></div>
+                  <div className="w-3 h-3 rounded-full bg-gold border-2 border-black"></div>
                 </div>
 
+                {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  <div className="md:order-1 mb-8 md:mb-0">
-                    <div 
+                  {/* Image Side - CLICKABLE to X POST */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                    viewport={{ once: true }}
+                    className="md:order-1 mb-8 md:mb-0"
+                  >
+                    <motion.div
                       onClick={() => openLink(xAccountLink)}
-                      className="relative rounded-2xl overflow-hidden border border-gold/30 cursor-pointer"
+                      className="block cursor-pointer"
                     >
-                      <img
-                        src={eventImages.nftGala}
-                        alt="NFT Art Gala"
-                        className="w-full h-64 md:h-80 object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
-                    </div>
-                  </div>
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        className="relative rounded-2xl overflow-hidden border-2 border-gold/50 hover:border-gold transition-all duration-300 shadow-xl hover:shadow-gold/20"
+                      >
+                        <img
+                          src={eventImages.nftGala}
+                          alt="NFT Art Gala"
+                          className="w-full h-64 md:h-80 object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        
+                        {/* Click indicator */}
+                        <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-gold/50">
+                          <span className="text-xs text-gold flex items-center gap-1">
+                            <ExternalLink className="w-3 h-3" />
+                            View Post
+                          </span>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
 
-                  <div className="md:order-2">
-                    <div className="bg-black/70 rounded-2xl border border-gold/20 p-6">
+                  {/* Content Side */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3, duration: 0.5 }}
+                    viewport={{ once: true }}
+                    className="md:order-2"
+                  >
+                    <div className="bg-black/90 rounded-2xl border border-gold/30 p-6 backdrop-blur-sm">
                       <div className="mb-4">
-                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold/20 mb-3">
+                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold/50 mb-3">
                           <span className="text-gold text-sm font-bold">COMING SOON</span>
                         </span>
-                        <h3 className="text-xl font-bold text-white mb-3">
-                          NFT Art Gala Night
+                        <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
+                          METAMASK COMMUNITY BUILDERS NIGHT, OWERRI
                         </h3>
                         <p className="text-gray-300 mb-6">
-                          Exclusive digital art exhibition featuring Africa's top NFT artists, 
-                          live minting, and collector networking.
+                         Community Builder Night is a commuinty first version of MetaMask's global Builder Nights bringing Web3 education, onbording, ards and conversations closo local ecosystem.
                         </p>
                       </div>
 
-                      <div className="space-y-3">
+                      {/* Event Details */}
+                      <div className="space-y-3 mb-6">
                         <div className="flex items-center gap-3">
                           <Calendar className="w-5 h-5 text-gold" />
-                          <p className="text-gray-400">April 5, 2026</p>
+                          <div>
+                            <p className="text-sm text-gray-400">Date</p>
+                            <p className="text-white">March 7, 2026</p>
+                          </div>
                         </div>
                         <div className="flex items-center gap-3">
-                          <Coins className="w-5 h-5 text-gold" />
-                          <p className="text-gray-400">Digital Gallery</p>
+                          <MapPin className="w-5 h-5 text-gold" />
+                          <div>
+                            <p className="text-sm text-gray-400">Location</p>
+                            <p className="text-white">Owerri, Nigeria</p>
+                          </div>
                         </div>
                       </div>
+
+                      {/* Buttons for Event 2 - NFT EVENT uses LUMA link */}
+                      <div className="flex flex-col sm:flex-row gap-3">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => openLink(lumaLink)}
+                          className="flex-1 text-center px-4 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition text-sm"
+                        >
+                          Get LUMA Link
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => openLink(xAccountLink)}
+                          className="flex-1 text-center px-4 py-3 rounded-full bg-gold/20 text-gold font-bold hover:bg-gold/30 transition text-sm border border-gold/50"
+                        >
+                          Learn More
+                        </motion.button>
+                      </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
 
