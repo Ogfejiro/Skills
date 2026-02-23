@@ -78,34 +78,55 @@ export const flutterwaveWebhook = async (req, res) => {
       return res.sendStatus(401)
     }
 
-    const paymentData = req.body
+    console.log('Webhook payload:', JSON.stringify(req.body, null, 2))
 
-    if (paymentData.status === 'successful') {
-      const updatedPayment = await Payment.findOneAndUpdate(
-        { tx_ref: paymentData.txRef },
-        {
-          status: 'successful',
-          transactionId: paymentData.id,
-        },
-        { new: true },
-      )
+    const payload = req.body.data
 
-      if (!updatedPayment) {
-        console.log('Payment not found:', paymentData.txRef)
+    if (!payload) {
+      return res.sendStatus(200)
+    }
+
+    const status = payload.status?.toLowerCase()
+
+    // Accept possible success values
+    if (['successful', 'completed', 'success'].includes(status)) {
+      
+      // OPTIONAL BUT RECOMMENDED: find existing payment first
+      const existingPayment = await Payment.findOne({
+        tx_ref: payload.tx_ref,
+      })
+
+      if (!existingPayment) {
+        console.log('Payment not found:', payload.tx_ref)
         return res.sendStatus(200)
       }
 
-      console.log('Payment updated:', updatedPayment)
+      // Prevent double-processing (webhooks can fire multiple times)
+      if (existingPayment.status === 'successful') {
+        console.log('Payment already processed:', payload.tx_ref)
+        return res.sendStatus(200)
+      }
 
-      await generateTicket(updatedPayment.tx_ref)
+      const updatedPayment = await Payment.findOneAndUpdate(
+        { tx_ref: payload.tx_ref },
+        {
+          status: 'successful',
+          transactionId: payload.id,
+        },
+        { returnDocument: 'after' } // fixed deprecation warning
+      )
+
+      await generateTicket(payload.tx_ref)
 
       await sendVerificationEmail(
         updatedPayment.customerEmail,
         updatedPayment.amount,
-        `https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
+        `https://www.lofte.live/tickets?tx_ref=${payload.tx_ref}`,
         updatedPayment.ticketName,
-        updatedPayment.tx_ref,
+        payload.tx_ref,
       )
+
+      console.log('Payment successfully processed:', payload.tx_ref)
     }
 
     return res.sendStatus(200)
