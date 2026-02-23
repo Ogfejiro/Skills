@@ -33,7 +33,7 @@ export default function HomePage() {
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
     // Valentine event image (changed from video)
-    valentineEvent: "/images/hde.jpg", // Your image path here
+    valentineEvent: "/images/new.jpg", // Your image path here
     
     // Other events
     nftGala: "https://images.unsplash.com/photo-1541535650810-10d26f5c2ab3?q=80&w=2070&auto=format&fit=crop",
@@ -431,7 +431,7 @@ export default function HomePage() {
                       </div>
                       
                       <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                        LOFTE-3 Dinner Night 
+                        LOFTE-3 PROJECT HANGOUT/CT DINNER EVENT 
                       </h3>
                       
                       <p className="text-gray-300 mb-6 leading-relaxed">

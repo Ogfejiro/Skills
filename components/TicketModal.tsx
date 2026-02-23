@@ -64,13 +64,13 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
       priceUSD: 6.99,
       priceNGN: Math.round(6.99 * exchangeRate), // ₦9,996
       features: [
-        'VIP Access',
-        'Priority Seating',
-        'VIP Swag Pack',
-        'Networking Session',
-        'Complimentary Refreshments and Merch',
-        'Red Carpet Access',
-        'Backstage Access'
+        'Private Acess and Networking session',
+        'Premium seating',
+        'Raffle tickets for prizes',
+        '3-course gourmet dinning experience',
+        'Red carpet professional picture',
+        'Premium souvenir package',
+        
       ],
       type: 'paid' as const,
       description: 'Premium VIP experience with exclusive access',
@@ -81,17 +81,16 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
       priceUSD: 29.99,
       priceNGN: Math.round(29.99 * exchangeRate), // ₦42,886
       features: [
-        'VIP Access',
-        'Priority Seating',
-        'VIP Swag Pack',
-        'Networking Session',
-        'Complimentary Refreshments and Merch',
-        'Red Carpet Access',
-        'Backstage Access',
-        'Luxury Hotel Stay (2 nights)',
-        'Concierge Services',
-        'All Meals Included',
-        'Private Transport'
+        'Private Acess and Networking session',
+        'Premium seating',
+        'Raffle tickets for prizes',
+        '3-course gourmet dinning experience',
+        'Red carpet professional picture',
+        'Premium souvenir package',
+        'Conceirge services',
+        'Luxury hotel stay'
+        
+        
       ],
       type: 'paid' as const,
       description: 'Ultimate luxury experience with concierge services',
