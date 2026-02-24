@@ -1,13 +1,12 @@
-// components/TicketModal.tsx - FIXED TYPE ERROR
+// components/TicketModal.tsx - WITH 40% DISCOUNT AND TICKET COUNTER
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Ticket, Loader, X } from 'lucide-react'
+import { Ticket, Loader, X, Percent, Users, TrendingUp } from 'lucide-react'
 import { paymentService } from '@/app/services/paymentService'
 
 type CurrencyType = 'NGN' | 'USD'
-type TicketType = 'paid'  // Only 'paid' now since we removed free tickets
 
 interface TicketModalProps {
   isOpen: boolean
@@ -20,17 +19,50 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
   const [userEmail, setUserEmail] = useState('')
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [selectedTicket, setSelectedTicket] = useState<any>(null)
+  const [ticketsSold, setTicketsSold] = useState(342) // Starting point
+  const [showTimer, setShowTimer] = useState(true)
 
   // Exchange rate
   const exchangeRate = 1430
 
-  // Updated ticket options as per new requirements
+  // Ticket counter animation
+  useEffect(() => {
+    if (showTimer) {
+      // Simulate tickets selling
+      const interval = setInterval(() => {
+        setTicketsSold(prev => {
+          if (prev < 1000) {
+            // Random increment between 1-3 tickets
+            const increment = Math.floor(Math.random() * 3) + 1
+            return Math.min(prev + increment, 1000)
+          }
+          clearInterval(interval)
+          return prev
+        })
+      }, 8000) // Update every 8 seconds
+
+      return () => clearInterval(interval)
+    }
+  }, [showTimer])
+
+  const ticketsRemaining = 1000 - ticketsSold
+  const percentSold = (ticketsSold / 1000) * 100
+
+  // Calculate original prices (before 40% discount)
+  const calculateOriginalPrice = (discountedPrice: number) => {
+    return Math.round(discountedPrice / 0.6) // discounted price is 60% of original (40% off)
+  }
+
+  // Updated ticket options with original prices for strikethrough
   const ticketOptions = [
     {
       id: 'regular',
       name: 'Regular Ticket',
       priceUSD: 0.9,
-      priceNGN: Math.round(0.9 * exchangeRate), // ₦1,287
+      priceNGN: Math.round(0.9 * exchangeRate), // ₦1,287 (discounted)
+      originalUSD: 1.5,
+      originalNGN: Math.round(1.5 * exchangeRate), // ₦2,145 (original)
+      icon: '🎟️',
       features: [
         'Event Access',
         'Basic Seating',
@@ -38,14 +70,16 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
         'Complimentary Refreshments and Merch',
         'Red Carpet Access'
       ],
-      type: 'paid' as const,
       description: 'Main event access with premium features',
     },
     {
       id: 'regular-accommodation',
       name: 'Regular + Accommodation',
       priceUSD: 9.99,
-      priceNGN: Math.round(9.99 * exchangeRate), // ₦14,286
+      priceNGN: Math.round(9.99 * exchangeRate), // ₦14,286 (discounted)
+      originalUSD: 16.65,
+      originalNGN: Math.round(16.65 * exchangeRate), // ₦23,810 (original)
+      icon: '🏨',
       features: [
         'Event Access',
         'Basic Seating',
@@ -53,52 +87,52 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
         'Complimentary Refreshments and Merch',
         'Red Carpet Access',
         'Private Room Accommodation (1 night)',
-        'Breakfast Included'
+        
       ],
-      type: 'paid' as const,
       description: 'Includes private room accommodation for one night',
     },
     {
       id: 'vip',
       name: 'VIP Ticket',
       priceUSD: 6.99,
-      priceNGN: Math.round(6.99 * exchangeRate), // ₦9,996
+      priceNGN: Math.round(6.99 * exchangeRate), // ₦9,996 (discounted)
+      originalUSD: 11.65,
+      originalNGN: Math.round(11.65 * exchangeRate), // ₦16,660 (original)
+      icon: '⭐',
       features: [
-        'Private Acess and Networking session',
-        'Premium seating',
-        'Raffle tickets for prizes',
+        'Private acecess and Networking session',
+        'Premium Seating',
+        'Raffle Ticket for Exclusive Prizes',
         '3-course gourmet dinning experience',
-        'Red carpet professional picture',
+        'Red carpet professional picture session',
         'Premium souvenir package',
-        
+    
       ],
-      type: 'paid' as const,
       description: 'Premium VIP experience with exclusive access',
     },
     {
       id: 'vip-luxury',
       name: 'VIP + Luxury Accommodation',
       priceUSD: 29.99,
-      priceNGN: Math.round(29.99 * exchangeRate), // ₦42,886
+      priceNGN: Math.round(29.99 * exchangeRate), // ₦42,886 (discounted)
+      originalUSD: 49.98,
+      originalNGN: Math.round(49.98 * exchangeRate), // ₦71,477 (original)
+      icon: '👑',
       features: [
-        'Private Acess and Networking session',
-        'Premium seating',
-        'Raffle tickets for prizes',
+        'Private acecess and Networking session',
+        'Premium Seating',
+        'Raffle Ticket for Exclusive Prizes',
         '3-course gourmet dinning experience',
-        'Red carpet professional picture',
+        'Red carpet professional picture session',
         'Premium souvenir package',
         'Conceirge services',
         'Luxury hotel stay'
-        
-        
       ],
-      type: 'paid' as const,
       description: 'Ultimate luxury experience with concierge services',
     },
   ]
 
   const handleTicketSelect = (ticket: any) => {
-    // All tickets are paid now, so no free ticket check needed
     setSelectedTicket(ticket)
     setShowEmailModal(true)
   }
@@ -118,7 +152,6 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
         email: userEmail
       })
 
-      // This will get the REAL Flutterwave URL from backend
       const { paymentLink } = await paymentService.initiatePayment({
         amount,
         email: userEmail,
@@ -128,9 +161,6 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
         quantity: 1,
       })
 
-      console.log('🔄 Redirecting to Flutterwave:', paymentLink)
-
-      // Redirect to Flutterwave checkout page
       window.location.href = paymentLink
       
     } catch (error: any) {
@@ -168,18 +198,62 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
               className="bg-gradient-to-b from-gray-900 to-black border-2 border-gold/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl shadow-gold/20"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="p-6 border-b border-gold/20 bg-gray-900/50 flex justify-between items-center">
-                <div>
-                  <h2 className="text-2xl font-bold text-gold">LOFTE-3 Tickets</h2>
-                  <p className="text-sm text-gray-400">Select your ticket option for the Main Event</p>
+              {/* Header with Discount Banner */}
+              <div className="relative">
+                {/* 40% OFF Banner */}
+                <div className="bg-gradient-to-r from-red-600 to-red-500 p-4 text-center border-b-2 border-gold">
+                  <div className="flex items-center justify-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-2">
+                      <Percent className="w-6 h-6 text-white animate-pulse" />
+                      <span className="text-2xl md:text-3xl font-black text-white">40% OFF</span>
+                      <TrendingUp className="w-6 h-6 text-white animate-bounce" />
+                    </div>
+                    <span className="text-white/90 text-sm md:text-base">
+                      FOR FIRST 1000 TICKETS ONLY!
+                    </span>
+                  </div>
                 </div>
-                <button
-                  onClick={onClose}
-                  className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-                >
-                  <X className="w-6 h-6 text-gray-400" />
-                </button>
+
+                {/* Ticket Counter Bar */}
+                <div className="bg-gray-900 p-4 border-b border-gold/20">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-5 h-5 text-gold" />
+                      <span className="text-white font-bold">Early Bird Tickets</span>
+                    </div>
+                    <span className="text-gold font-bold text-lg">
+                      {ticketsRemaining} / 1000 left
+                    </span>
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${percentSold}%` }}
+                      transition={{ duration: 1 }}
+                      className="h-full bg-gradient-to-r from-gold to-yellow-500"
+                    />
+                  </div>
+                  
+                  <p className="text-xs text-gray-400 mt-2 text-center">
+                    🔥 {ticketsSold} tickets already sold! Grab yours before price goes up
+                  </p>
+                </div>
+
+                {/* Header */}
+                <div className="p-6 border-b border-gold/20 bg-gray-900/50 flex justify-between items-center">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gold">LOFTE-3 Tickets</h2>
+                    <p className="text-sm text-gray-400">Select your ticket option for the Main Event</p>
+                  </div>
+                  <button
+                    onClick={onClose}
+                    className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                  >
+                    <X className="w-6 h-6 text-gray-400" />
+                  </button>
+                </div>
               </div>
 
               {/* Currency Selector */}
@@ -231,6 +305,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                       <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
+                            <span className="text-2xl">{ticket.icon}</span>
                             <h3 className="text-lg font-bold text-white">{ticket.name}</h3>
                           </div>
                           <p className="text-sm text-gray-400 mb-3">{ticket.description}</p>
@@ -244,6 +319,14 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                           </div>
                         </div>
                         <div className="text-right md:ml-4">
+                          {/* Original Price (Strikethrough) */}
+                          <div className="text-sm text-gray-500 line-through">
+                            {currency === 'NGN' ? '₦' : '$'}
+                            {currency === 'NGN'
+                              ? ticket.originalNGN.toLocaleString()
+                              : ticket.originalUSD.toFixed(2)}
+                          </div>
+                          {/* Discounted Price */}
                           <div className="text-2xl font-bold text-gold">
                             {currency === 'NGN' ? '₦' : '$'}
                             {currency === 'NGN'
@@ -254,6 +337,9 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                             {currency === 'NGN' 
                               ? `~$${ticket.priceUSD.toFixed(2)}` 
                               : `~₦${ticket.priceNGN.toLocaleString()}`}
+                          </div>
+                          <div className="mt-1 text-xs font-bold text-green-400">
+                            40% OFF
                           </div>
                         </div>
                       </div>
@@ -280,7 +366,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
         )}
       </AnimatePresence>
 
-      {/* Email Modal */}
+      {/* Email Modal - Keep existing email modal code */}
       <AnimatePresence>
         {showEmailModal && selectedTicket && (
           <motion.div
@@ -322,12 +408,25 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 font-medium">Amount:</span>
-                  <span className="text-gold font-bold text-3xl">
-                    {currency === 'NGN' ? '₦' : '$'}
-                    {currency === 'NGN'
-                      ? selectedTicket.priceNGN.toLocaleString()
-                      : selectedTicket.priceUSD.toFixed(2)}
-                  </span>
+                  <div className="text-right">
+                    {/* Original price */}
+                    <div className="text-sm text-gray-500 line-through">
+                      {currency === 'NGN' ? '₦' : '$'}
+                      {currency === 'NGN'
+                        ? selectedTicket.originalNGN.toLocaleString()
+                        : selectedTicket.originalUSD.toFixed(2)}
+                    </div>
+                    {/* Discounted price */}
+                    <span className="text-gold font-bold text-3xl">
+                      {currency === 'NGN' ? '₦' : '$'}
+                      {currency === 'NGN'
+                        ? selectedTicket.priceNGN.toLocaleString()
+                        : selectedTicket.priceUSD.toFixed(2)}
+                    </span>
+                    <div className="text-xs text-green-400 font-bold">
+                      40% OFF
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -351,7 +450,6 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
 
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
-                {/* Cancel Button */}
                 <button
                   onClick={() => {
                     setShowEmailModal(false)
@@ -361,8 +459,6 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 >
                   Cancel
                 </button>
-
-                {/* Pay Now Button */}
                 <button
                   onClick={handlePayment}
                   disabled={!userEmail || !userEmail.includes('@') || !userEmail.includes('.') || loading === selectedTicket.id}

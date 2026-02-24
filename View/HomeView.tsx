@@ -409,7 +409,7 @@ export default function HomePage() {
                         {/* Valentine Event Image */}
                         <img
                           src={eventImages.valentineEvent}
-                          alt="LOFTE-3 Valentine's Dinner & Pool Party"
+                          alt="LOFTE-3 Project Hangout/CT Dinner Event"
                           className="w-full h-64 md:h-80 object-cover"
                         />
                         
