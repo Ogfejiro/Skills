@@ -15,7 +15,7 @@ export async function sendVerificationEmail(
       body: JSON.stringify({
         sender: {
           email: process.env.EMAIL_FROM,
-          name: 'Skill App',
+          name: 'Lofte Web3 Events',
         },
         to: [{ email: customerEmail }],
         templateId: Number(process.env.BREVO_TEMPLATE_ID),
