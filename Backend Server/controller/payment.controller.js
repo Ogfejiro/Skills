@@ -191,7 +191,13 @@ export const initiateCryptoPayment = async (req, res) => {
     })
   } catch (error) {
     console.error('Initiate Error:', error.response?.data || error.message)
-    res.status(500).json({ success: false })
+    res
+      .status(500)
+      .json({
+        success: false,
+        error: 'Crypto payment initialization failed',
+        err: error.response?.data || error.message,
+      })
   }
 }
 
