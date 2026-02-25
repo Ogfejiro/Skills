@@ -21,11 +21,9 @@ export const heleketService = async (payload = {}) => {
     sign: sign,
   }
 
-  const response = await axios.post(
-    `${BASE_URL}/v1/payment/services`,
-    payload,
-    { headers },
-  )
+  const response = await axios.post(`${BASE_URL}/v1/payment`, payload, {
+    headers,
+  })
 
   return response.data
 }
