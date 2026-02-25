@@ -9,6 +9,8 @@ const paymentSchema = new mongoose.Schema(
     currency: String,
     status: String,
     customerEmail: String,
+    paymentReference: String,
+    network: String,
     ticketName: String,
   },
   { timestamps: true },
