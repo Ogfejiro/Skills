@@ -1,29 +1,32 @@
+// services/nowPayments.service.js
 import axios from 'axios'
-import crypto from 'crypto'
 
-const BASE_URL = process.env.HELEKET_BASE_URL
-const API_KEY = process.env.HELEKET_API_KEY
-const MERCHANT_UUID = process.env.HELEKET_MERCHANT_UUID
+const API_KEY = process.env.NOWPAYMENTS_API_KEY
+const BASE_URL = process.env.NOWPAYMENTS_BASE_URL
 
-export const heleketService = async (payload = {}) => {
-  const jsonData = JSON.stringify(payload)
-
-  const base64 = Buffer.from(jsonData).toString('base64')
-
-  const sign = crypto
-    .createHash('md5')
-    .update(base64 + API_KEY)
-    .digest('hex')
-
-  const headers = {
+const nowPaymentsApi = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    'x-api-key': API_KEY,
     'Content-Type': 'application/json',
-    merchant: MERCHANT_UUID,
-    sign: sign,
+  },
+})
+
+class NowPaymentsService {
+  async createPayment(data) {
+    const response = await nowPaymentsApi.post('/payment', data)
+    return response.data
   }
 
-  const response = await axios.post(`${BASE_URL}/v1/payment`, payload, {
-    headers,
-  })
+  async createInvoice(data) {
+    const response = await nowPaymentsApi.post('/invoice', data)
+    return response.data
+  }
 
-  return response.data
+  async getPaymentStatus(paymentId) {
+    const response = await nowPaymentsApi.get(`/payment/${paymentId}`)
+    return response.data
+  }
 }
+
+export default new NowPaymentsService()

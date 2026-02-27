@@ -28,6 +28,10 @@ app.use(
 )
 app.use(morgan('dev'))
 app.use(express.json())
+app.use(
+  '/api/payments/crypto-webhook',
+  express.raw({ type: 'application/json' }),
+)
 
 app.use('/api/payments', paymentRoutes)
 

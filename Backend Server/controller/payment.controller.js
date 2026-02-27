@@ -5,7 +5,7 @@ import crypto from 'crypto'
 import Ticket from '../models/ticket.model.js'
 import { sendVerificationEmail } from '../services/sendVerificationEmail.js'
 import { generateTicket } from '../services/ticket.service.js'
-import { heleketService } from './../config/heleket.js'
+import nowPaymentsService from './../config/heleket.js'
 
 export const initiatePayment = async (req, res) => {
   try {
@@ -134,7 +134,7 @@ export const getTicketByTxRef = async (req, res) => {
   }
 }
 
-export const initiateCryptoPayment = async (req, res) => {
+export const createInvoice = async (req, res) => {
   try {
     const { amount, email, userId, ticketName } = req.body
 
@@ -144,104 +144,97 @@ export const initiateCryptoPayment = async (req, res) => {
       userId,
       tx_ref,
       amount,
-      currency: 'USDT',
+      currency: 'USD',
       status: 'pending',
       customerEmail: email,
       ticketName,
     })
 
-    const paymentData = await heleketService({
-      amount,
-      currency: 'USDT',
+    const invoice = await nowPaymentsService.createInvoice({
+      price_amount: amount,
+      price_currency: 'USD',
       order_id: tx_ref,
-      payer_email: email,
-      subtract: 100,
-      callback_url:
+      order_description: `Payment for ${ticketName} ticket`,
+      ipn_callback_url:
         'https://skills-k6pv.onrender.com/api/payments/crypto-webhook',
-      return_url: `https://www.lofte.live/`,
-      url_success: `https://www.lofte.live/payment-status?tx_ref=${tx_ref}`,
+      success_url: `${process.env.FRONTEND_URL}/payment-status?tx_ref=${tx_ref}`,
+      cancel_url: `${process.env.FRONTEND_URL}/payment-status?tx_ref=${tx_ref}`,
     })
 
-    console.log('Heleket response:', paymentData.result.url)
-
-    res.status(200).json({
-      success: true,
-      paymentLink: paymentData.result.url,
+    res.json({
+      checkout_url: invoice.invoice_url,
     })
   } catch (error) {
-    console.error('Initiate Error:', error.response?.data || error.message)
+    console.error(error.response?.data || error.message)
     res
       .status(500)
-      .json({
-        success: false,
-        error: 'Crypto payment initialization failed',
-        err: error.response?.data || error.message,
-      })
+      .json({ message: 'Invoice creation failed', error: error.message })
   }
 }
 
-export const heleketWebhook = async (req, res) => {
+export const cryptoWebhook = async (req, res) => {
   try {
-    const data = { ...req.body }
+    const signature = req.headers['x-nowpayments-sig']
+    const rawBody = req.body.toString()
 
-    const receivedSign = data.sign
-    if (!receivedSign) {
-      return res.status(400).json({ message: 'No signature' })
-    }
-
-    delete data.sign
-
-    const jsonString = JSON.stringify(data).replace(/\//g, '\\/')
-
-    const base64 = Buffer.from(jsonString).toString('base64')
-    const generatedSign = crypto
-      .createHash('md5')
-      .update(base64 + process.env.HELEKET_API_KEY)
+    const hmac = crypto
+      .createHmac('sha512', process.env.NOWPAYMENTS_IPN_SECRET)
+      .update(rawBody)
       .digest('hex')
 
-    if (generatedSign !== receivedSign) {
-      return res.status(400).json({ message: 'Invalid signature' })
+    if (hmac !== signature) {
+      return res.status(400).send('Invalid signature')
     }
 
-    const {
-      order_id,
-      status,
-      is_final,
-      merchant_amount,
-      txid,
-      network,
-      uuid,
-      payer_currency,
-    } = data
+    const paymentData = JSON.parse(rawBody)
 
-    const order = await Payment.findOne({ tx_ref: order_id })
-    if (!order) return res.status(404).json({ message: 'Order not found' })
-
-    if (is_final && status === 'paid') {
-      // Prevent double processing
-      if (order.status !== 'paid') {
-        order.status = 'paid'
-        order.paymentReference = uuid
-        order.transactionId = txid
-        order.network = network
-        order.amount = merchant_amount
-        order.currency = payer_currency
-        await order.save()
-
-        await generateTicket(order.tx_ref)
-        await sendVerificationEmail(
-          order.customerEmail,
-          order.amount,
-          `https://www.lofte.live/tickets?tx_ref=${order.tx_ref}`,
-          order.ticketName,
-          order.tx_ref,
-        )
-      }
+    if (paymentData.payment_status !== 'finished') {
+      return res.sendStatus(200)
     }
 
-    return res.status(200).json({ received: true })
+    const existingPayment = await Payment.findOne({
+      tx_ref: paymentData.order_id,
+    })
+
+    if (!existingPayment) {
+      console.log('Payment not found:', paymentData.order_id)
+      return res.sendStatus(200)
+    }
+
+    if (existingPayment.status === 'successful') {
+      return res.sendStatus(200)
+    }
+
+    if (Number(paymentData.price_amount) !== Number(existingPayment.amount)) {
+      console.log('Amount mismatch!')
+      return res.status(400).send('Amount mismatch')
+    }
+
+    if (!paymentData.pay_amount || !paymentData.pay_currency) {
+      console.log('Missing crypto outcome data')
+      return res.status(400).send('Invalid payment data')
+    }
+
+    existingPayment.status = 'successful'
+    existingPayment.transactionId = paymentData.payment_id
+    existingPayment.paidAmountCrypto = paymentData.pay_amount
+    existingPayment.currency = paymentData.pay_currency
+
+    await existingPayment.save()
+
+    await generateTicket(existingPayment.tx_ref)
+
+    await sendVerificationEmail(
+      existingPayment.customerEmail,
+      existingPayment.amount,
+      `https://www.lofte.live/tickets?tx_ref=${existingPayment.tx_ref}`,
+      existingPayment.ticketName,
+      existingPayment.tx_ref,
+    )
+
+    return res.sendStatus(200)
   } catch (error) {
-    console.error('Webhook Error:', error)
-    return res.status(500).json({ success: false, error: error.message })
+    console.error(error)
+    return res.sendStatus(500)
   }
 }
