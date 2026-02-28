@@ -48,9 +48,7 @@ export const verifyPayment = async (req, res) => {
   try {
     const { tx_ref } = req.body
 
-    const payment = await Payment.findOne({
-      tx_ref,
-    })
+    const payment = await Payment.findOne({ tx_ref })
 
     if (!payment) {
       return res
@@ -181,7 +179,7 @@ export const createInvoice = async (req, res) => {
     })
 
     res.json({
-      checkout_url: invoice.invoice_url,
+      paymentLink: invoice.invoice_url,
     })
   } catch (error) {
     console.error(error.response?.data || error.message)
