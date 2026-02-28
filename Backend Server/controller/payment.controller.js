@@ -46,11 +46,10 @@ export const initiatePayment = async (req, res) => {
 
 export const verifyPayment = async (req, res) => {
   try {
-    const { transaction_id, tx_ref } = req.body
+    const { tx_ref } = req.body
 
     const payment = await Payment.findOne({
       tx_ref,
-      transactionId: transaction_id,
     })
 
     if (!payment) {
@@ -96,7 +95,6 @@ export const flutterwaveWebhook = async (req, res) => {
 
     // Accept possible success values
     if (['successful', 'completed', 'success'].includes(status)) {
-      
       // OPTIONAL BUT RECOMMENDED: find existing payment first
       const existingPayment = await Payment.findOne({
         tx_ref: payload.tx_ref,
@@ -119,7 +117,7 @@ export const flutterwaveWebhook = async (req, res) => {
           status: 'successful',
           transactionId: payload.id,
         },
-        { returnDocument: 'after' } // fixed deprecation warning
+        { returnDocument: 'after' }, // fixed deprecation warning
       )
 
       await generateTicket(payload.tx_ref)
@@ -207,11 +205,6 @@ export const cryptoWebhook = async (req, res) => {
       return res.status(400).send('Invalid signature')
     }
 
-    console.log('Signature header:', signature)
-    console.log('Generated HMAC:', hmac)
-
-    console.log('Received crypto webhook:', rawBody)
-
     const paymentData = JSON.parse(rawBody.toString())
 
     if (paymentData.payment_status !== 'finished') {
@@ -260,7 +253,6 @@ export const cryptoWebhook = async (req, res) => {
 
     return res.sendStatus(200)
   } catch (error) {
-    console.error(error)
     return res.status(500).json({ error: error.message })
   }
 }
