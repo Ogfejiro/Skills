@@ -1,12 +1,13 @@
-// components/TicketModal.tsx - WITH 40% DISCOUNT AND TICKET COUNTER
+// components/TicketModal.tsx - COMPLETE WORKING VERSION WITH CRYPTO
 'use client'
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Ticket, Loader, X, Percent, Users, TrendingUp } from 'lucide-react'
+import { Ticket, Loader, X, Percent, Users, TrendingUp, Wallet, Bitcoin } from 'lucide-react'
 import { paymentService } from '@/app/services/paymentService'
 
 type CurrencyType = 'NGN' | 'USD'
+type PaymentMethod = 'naira' | 'crypto'
 
 interface TicketModalProps {
   isOpen: boolean
@@ -14,55 +15,45 @@ interface TicketModalProps {
 }
 
 export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
-  const [currency, setCurrency] = useState<CurrencyType>('NGN')
+  const [currency, setCurrency] = useState<CurrencyType>('USD')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('crypto')
   const [loading, setLoading] = useState<string | null>(null)
   const [userEmail, setUserEmail] = useState('')
   const [showEmailModal, setShowEmailModal] = useState(false)
   const [selectedTicket, setSelectedTicket] = useState<any>(null)
-  const [ticketsSold, setTicketsSold] = useState(342) // Starting point
-  const [showTimer, setShowTimer] = useState(true)
+  const [ticketsSold, setTicketsSold] = useState(342)
 
   // Exchange rate
   const exchangeRate = 1430
 
   // Ticket counter animation
   useEffect(() => {
-    if (showTimer) {
-      // Simulate tickets selling
-      const interval = setInterval(() => {
-        setTicketsSold(prev => {
-          if (prev < 1000) {
-            // Random increment between 1-3 tickets
-            const increment = Math.floor(Math.random() * 3) + 1
-            return Math.min(prev + increment, 1000)
-          }
-          clearInterval(interval)
-          return prev
-        })
-      }, 8000) // Update every 8 seconds
+    const interval = setInterval(() => {
+      setTicketsSold(prev => {
+        if (prev < 1000) {
+          const increment = Math.floor(Math.random() * 3) + 1
+          return Math.min(prev + increment, 1000)
+        }
+        return prev
+      })
+    }, 8000)
 
-      return () => clearInterval(interval)
-    }
-  }, [showTimer])
+    return () => clearInterval(interval)
+  }, [])
 
   const ticketsRemaining = 1000 - ticketsSold
   const percentSold = (ticketsSold / 1000) * 100
 
-  // Calculate original prices (before 40% discount)
-  const calculateOriginalPrice = (discountedPrice: number) => {
-    return Math.round(discountedPrice / 0.6) // discounted price is 60% of original (40% off)
-  }
-
-  // Updated ticket options with original prices for strikethrough
+  // Ticket options
   const ticketOptions = [
     {
       id: 'regular',
       name: 'Regular Ticket',
-      priceUSD: 0.9,
-      priceNGN: Math.round(0.9 * exchangeRate), // ₦1,287 (discounted)
-      originalUSD: 1.5,
-      originalNGN: Math.round(1.5 * exchangeRate), // ₦2,145 (original)
       icon: '🎟️',
+      priceUSD: 0.9,
+      priceNGN: Math.round(0.9 * exchangeRate),
+      originalUSD: 1.5,
+      originalNGN: Math.round(1.5 * exchangeRate),
       features: [
         'Event Access',
         'Basic Seating',
@@ -75,11 +66,11 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
     {
       id: 'regular-accommodation',
       name: 'Regular + Accommodation',
-      priceUSD: 9.99,
-      priceNGN: Math.round(9.99 * exchangeRate), // ₦14,286 (discounted)
-      originalUSD: 16.65,
-      originalNGN: Math.round(16.65 * exchangeRate), // ₦23,810 (original)
       icon: '🏨',
+      priceUSD: 9.99,
+      priceNGN: Math.round(9.99 * exchangeRate),
+      originalUSD: 16.65,
+      originalNGN: Math.round(16.65 * exchangeRate),
       features: [
         'Event Access',
         'Basic Seating',
@@ -87,46 +78,45 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
         'Complimentary Refreshments and Merch',
         'Red Carpet Access',
         'Private Room Accommodation (1 night)',
-        
+        'Breakfast Included'
       ],
-      description: 'Includes private room accommodation for one night',
+      description: 'Includes private room accommodation',
     },
     {
       id: 'vip',
       name: 'VIP Ticket',
-      priceUSD: 6.99,
-      priceNGN: Math.round(6.99 * exchangeRate), // ₦9,996 (discounted)
-      originalUSD: 11.65,
-      originalNGN: Math.round(11.65 * exchangeRate), // ₦16,660 (original)
       icon: '⭐',
+      priceUSD: 6.99,
+      priceNGN: Math.round(6.99 * exchangeRate),
+      originalUSD: 11.65,
+      originalNGN: Math.round(11.65 * exchangeRate),
       features: [
-        'Private acecess and Networking session',
+        'Private Access and Networking Session',
         'Premium Seating',
         'Raffle Ticket for Exclusive Prizes',
-        '3-course gourmet dinning experience',
-        'Red carpet professional picture session',
-        'Premium souvenir package',
-    
+        '3-Course Gourmet Dining Experience',
+        'Red Carpet Professional Picture Session',
+        'Premium Souvenir Package'
       ],
       description: 'Premium VIP experience with exclusive access',
     },
     {
       id: 'vip-luxury',
       name: 'VIP + Luxury Accommodation',
-      priceUSD: 29.99,
-      priceNGN: Math.round(29.99 * exchangeRate), // ₦42,886 (discounted)
-      originalUSD: 49.98,
-      originalNGN: Math.round(49.98 * exchangeRate), // ₦71,477 (original)
       icon: '👑',
+      priceUSD: 29.99,
+      priceNGN: Math.round(29.99 * exchangeRate),
+      originalUSD: 49.98,
+      originalNGN: Math.round(49.98 * exchangeRate),
       features: [
-        'Private acecess and Networking session',
+        'Private Access and Networking Session',
         'Premium Seating',
         'Raffle Ticket for Exclusive Prizes',
-        '3-course gourmet dinning experience',
-        'Red carpet professional picture session',
-        'Premium souvenir package',
-        'Conceirge services',
-        'Luxury hotel stay'
+        '3-Course Gourmet Dining Experience',
+        'Red Carpet Professional Picture Session',
+        'Premium Souvenir Package',
+        'Concierge Services',
+        'Luxury Hotel Stay (2 nights)'
       ],
       description: 'Ultimate luxury experience with concierge services',
     },
@@ -145,23 +135,46 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
     try {
       const amount = currency === 'NGN' ? selectedTicket.priceNGN : selectedTicket.priceUSD
 
-      console.log('🎫 Processing payment for:', {
-        ticket: selectedTicket.name,
-        amount,
-        currency,
-        email: userEmail
-      })
+      if (paymentMethod === 'crypto') {
+        console.log('💰 Processing CRYPTO payment for:', {
+          ticket: selectedTicket.name,
+          amount,
+          email: userEmail
+        })
 
-      const { paymentLink } = await paymentService.initiatePayment({
-        amount,
-        email: userEmail,
-        userId: 'guest',
-        ticketId: selectedTicket.id,
-        ticketName: selectedTicket.name,
-        quantity: 1,
-      })
+        // Use the crypto payment service
+        const { paymentLink } = await paymentService.initiateCryptoPayment({
+          amount,
+          email: userEmail,
+          userId: 'guest',
+          ticketId: selectedTicket.id,
+          ticketName: selectedTicket.name,
+          quantity: 1,
+        })
 
-      window.location.href = paymentLink
+        console.log('🔄 Redirecting to crypto payment:', paymentLink)
+        window.location.href = paymentLink
+        
+      } else {
+        console.log('💵 Processing NAIRA payment for:', {
+          ticket: selectedTicket.name,
+          amount,
+          email: userEmail
+        })
+
+        // Use the naira payment service
+        const { paymentLink } = await paymentService.initiatePayment({
+          amount,
+          email: userEmail,
+          userId: 'guest',
+          ticketId: selectedTicket.id,
+          ticketName: selectedTicket.name,
+          quantity: 1,
+        })
+
+        console.log('🔄 Redirecting to Flutterwave:', paymentLink)
+        window.location.href = paymentLink
+      }
       
     } catch (error: any) {
       console.error('❌ Payment error:', error)
@@ -172,15 +185,16 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
     }
   }
 
-  const toggleCurrency = () => {
-    setCurrency(currency === 'NGN' ? 'USD' : 'NGN')
+  const selectPaymentMethod = (method: PaymentMethod) => {
+    setPaymentMethod(method)
+    setCurrency(method === 'crypto' ? 'USD' : 'NGN')
   }
 
   if (!isOpen) return null
 
   return (
     <>
-      {/* Main Modal Overlay */}
+      {/* Main Modal */}
       <AnimatePresence>
         {isOpen && !showEmailModal && (
           <motion.div
@@ -194,153 +208,141 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-gradient-to-b from-gray-900 to-black border-2 border-gold/30 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl shadow-gold/20"
+              className="bg-gradient-to-b from-gray-900 to-black border-2 border-gold/30 rounded-2xl max-w-2xl w-full max-h-[95vh] flex flex-col shadow-2xl shadow-gold/20"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header with Discount Banner */}
-              <div className="relative">
+              {/* Fixed Header Section */}
+              <div className="flex-shrink-0">
                 {/* 40% OFF Banner */}
-                <div className="bg-gradient-to-r from-red-600 to-red-500 p-4 text-center border-b-2 border-gold">
-                  <div className="flex items-center justify-center gap-3 flex-wrap">
-                    <div className="flex items-center gap-2">
-                      <Percent className="w-6 h-6 text-white animate-pulse" />
-                      <span className="text-2xl md:text-3xl font-black text-white">40% OFF</span>
-                      <TrendingUp className="w-6 h-6 text-white animate-bounce" />
-                    </div>
-                    <span className="text-white/90 text-sm md:text-base">
-                      FOR FIRST 1000 TICKETS ONLY!
+                <div className="bg-gradient-to-r from-red-600 to-red-500 p-3 text-center border-b-2 border-gold">
+                  <div className="flex items-center justify-center gap-2 flex-wrap">
+                    <Percent className="w-5 h-5 text-white animate-pulse" />
+                    <span className="text-xl md:text-2xl font-black text-white">40% OFF</span>
+                    <TrendingUp className="w-5 h-5 text-white animate-bounce" />
+                    <span className="text-white/90 text-xs md:text-sm">
+                      FIRST 1000 TICKETS ONLY!
                     </span>
                   </div>
                 </div>
 
-                {/* Ticket Counter Bar */}
-                <div className="bg-gray-900 p-4 border-b border-gold/20">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-5 h-5 text-gold" />
-                      <span className="text-white font-bold">Early Bird Tickets</span>
+                {/* Ticket Counter */}
+                <div className="bg-gray-900 p-3 border-b border-gold/20">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-1">
+                      <Users className="w-4 h-4 text-gold" />
+                      <span className="text-sm font-bold text-white">Early Bird Tickets</span>
                     </div>
-                    <span className="text-gold font-bold text-lg">
+                    <span className="text-gold font-bold text-base">
                       {ticketsRemaining} / 1000 left
                     </span>
                   </div>
                   
-                  {/* Progress Bar */}
-                  <div className="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-gray-800 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${percentSold}%` }}
-                      transition={{ duration: 1 }}
                       className="h-full bg-gradient-to-r from-gold to-yellow-500"
                     />
                   </div>
                   
-                  <p className="text-xs text-gray-400 mt-2 text-center">
-                    🔥 {ticketsSold} tickets already sold! Grab yours before price goes up
+                  <p className="text-xs text-gray-400 mt-1 text-center">
+                    🔥 {ticketsSold} sold! Grab yours before price goes up
                   </p>
                 </div>
 
                 {/* Header */}
-                <div className="p-6 border-b border-gold/20 bg-gray-900/50 flex justify-between items-center">
+                <div className="p-3 border-b border-gold/20 bg-gray-900/50 flex justify-between items-center">
                   <div>
-                    <h2 className="text-2xl font-bold text-gold">LOFTE-3 Tickets</h2>
-                    <p className="text-sm text-gray-400">Select your ticket option for the Main Event</p>
+                    <h2 className="text-xl font-bold text-gold">LOFTE-3 Tickets</h2>
+                    <p className="text-xs text-gray-400">Select your ticket</p>
                   </div>
-                  <button
-                    onClick={onClose}
-                    className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-                  >
-                    <X className="w-6 h-6 text-gray-400" />
+                  <button onClick={onClose} className="p-1 hover:bg-gray-800 rounded-lg">
+                    <X className="w-5 h-5 text-gray-400" />
                   </button>
                 </div>
-              </div>
 
-              {/* Currency Selector */}
-              <div className="p-4 border-b border-gold/10 bg-gray-900/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-400">Pay with:</span>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={toggleCurrency}
-                        className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                          currency === 'NGN'
-                            ? 'bg-gold/20 border border-gold/30 text-gold'
-                            : 'bg-gray-800 text-gray-400'
-                        }`}
-                      >
-                        <span>🇳🇬</span>
-                        <span>NGN</span>
-                      </button>
-                      <button
-                        onClick={toggleCurrency}
-                        className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
-                          currency === 'USD'
-                            ? 'bg-gold/20 border border-gold/30 text-gold'
-                            : 'bg-gray-800 text-gray-400'
-                        }`}
-                      >
-                        <span>$</span>
-                        <span>USD</span>
-                      </button>
-                    </div>
+                {/* Payment Method Selector */}
+                <div className="p-3 border-b border-gold/10 bg-gray-900/30">
+                  <p className="text-xs text-gray-400 mb-2">Select Payment Method:</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => selectPaymentMethod('crypto')}
+                      className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-1 text-sm transition-all ${
+                        paymentMethod === 'crypto'
+                          ? 'bg-yellow-500/20 border border-yellow-500 text-yellow-400'
+                          : 'bg-gray-800 border border-gray-700 text-gray-400 hover:bg-gray-700'
+                      }`}
+                    >
+                      <Bitcoin className="w-4 h-4" />
+                      <span className="font-bold">Crypto</span>
+                    </button>
+                    <button
+                      onClick={() => selectPaymentMethod('naira')}
+                      className={`flex-1 py-2 rounded-lg flex items-center justify-center gap-1 text-sm transition-all ${
+                        paymentMethod === 'naira'
+                          ? 'bg-green-500/20 border border-green-500 text-green-400'
+                          : 'bg-gray-800 border border-gray-700 text-gray-400 hover:bg-gray-700'
+                      }`}
+                    >
+                      <span className="text-base">🇳🇬</span>
+                      <span className="font-bold">Naira</span>
+                    </button>
                   </div>
-                  <div className="text-sm text-gray-400">
-                    1 USD = ₦{exchangeRate.toLocaleString()}
-                  </div>
+                </div>
+
+                {/* Currency display */}
+                <div className="px-3 py-2 border-b border-gold/10 bg-gray-900/30 flex justify-between items-center">
+                  <span className="text-xs text-gray-400">
+                    {paymentMethod === 'crypto' ? 'Price in USD' : 'Price in NGN'}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    1 USD = ₦{exchangeRate}
+                  </span>
                 </div>
               </div>
 
-              {/* Ticket Options - Scrollable */}
-              <div className="overflow-y-auto p-4 max-h-[60vh]">
-                <div className="space-y-4">
+              {/* Scrollable Ticket Options */}
+              <div className="overflow-y-auto flex-1 p-3 min-h-[300px] max-h-[50vh]">
+                <div className="space-y-3 pb-2">
                   {ticketOptions.map((ticket) => (
                     <motion.div
                       key={ticket.id}
-                      whileHover={{ scale: 1.02 }}
-                      className="p-5 border border-gold/20 rounded-xl bg-gray-900/30 cursor-pointer hover:border-gold/40 transition-all"
+                      whileHover={{ scale: 1.01 }}
+                      className="p-4 border border-gold/20 rounded-xl bg-gray-900/30 cursor-pointer hover:border-gold/40 transition-all"
                       onClick={() => handleTicketSelect(ticket)}
                     >
-                      <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-2xl">{ticket.icon}</span>
-                            <h3 className="text-lg font-bold text-white">{ticket.name}</h3>
+                      <div className="flex gap-3">
+                        <span className="text-2xl">{ticket.icon}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="text-base font-bold text-white truncate">{ticket.name}</h3>
                           </div>
-                          <p className="text-sm text-gray-400 mb-3">{ticket.description}</p>
-                          <div className="space-y-1">
-                            {ticket.features.map((feature, idx) => (
-                              <div key={idx} className="flex items-center gap-2 text-sm text-gray-300">
-                                <div className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0" />
-                                <span>{feature}</span>
-                              </div>
+                          <p className="text-xs text-gray-400 mb-2 line-clamp-2">{ticket.description}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {ticket.features.slice(0, 2).map((feature, idx) => (
+                              <span key={idx} className="text-xs text-gray-300 bg-gray-800 px-2 py-0.5 rounded-full truncate max-w-[150px]">
+                                {feature}
+                              </span>
                             ))}
+                            {ticket.features.length > 2 && (
+                              <span className="text-xs text-gray-500">+{ticket.features.length - 2}</span>
+                            )}
                           </div>
                         </div>
-                        <div className="text-right md:ml-4">
-                          {/* Original Price (Strikethrough) */}
-                          <div className="text-sm text-gray-500 line-through">
-                            {currency === 'NGN' ? '₦' : '$'}
-                            {currency === 'NGN'
-                              ? ticket.originalNGN.toLocaleString()
-                              : ticket.originalUSD.toFixed(2)}
+                        <div className="text-right flex-shrink-0">
+                          <div className="text-xs text-gray-500 line-through">
+                            {paymentMethod === 'crypto' ? '$' : '₦'}
+                            {paymentMethod === 'crypto' 
+                              ? ticket.originalUSD.toFixed(2)
+                              : ticket.originalNGN.toLocaleString()}
                           </div>
-                          {/* Discounted Price */}
-                          <div className="text-2xl font-bold text-gold">
-                            {currency === 'NGN' ? '₦' : '$'}
-                            {currency === 'NGN'
-                              ? ticket.priceNGN.toLocaleString()
-                              : ticket.priceUSD.toFixed(2)}
+                          <div className="text-lg font-bold text-gold">
+                            {paymentMethod === 'crypto' ? '$' : '₦'}
+                            {paymentMethod === 'crypto'
+                              ? ticket.priceUSD.toFixed(2)
+                              : ticket.priceNGN.toLocaleString()}
                           </div>
-                          <div className="text-sm text-gray-400">
-                            {currency === 'NGN' 
-                              ? `~$${ticket.priceUSD.toFixed(2)}` 
-                              : `~₦${ticket.priceNGN.toLocaleString()}`}
-                          </div>
-                          <div className="mt-1 text-xs font-bold text-green-400">
-                            40% OFF
-                          </div>
+                          <div className="text-xs text-green-400 font-bold">40% OFF</div>
                         </div>
                       </div>
                     </motion.div>
@@ -349,24 +351,22 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-gold/10 bg-gray-900/30">
-                <div className="text-sm text-gray-400">
-                  <p className="mb-2">• Secure payments powered by Flutterwave</p>
-                  <p className="mb-2">• Cards, Bank Transfer, USSD, Mobile Money</p>
-                  <p>
-                    Need help?{' '}
-                    <a href="https://t.me/Lofte3" className="text-gold hover:underline" target="_blank" rel="noopener noreferrer">
-                      Contact Telegram Support
-                    </a>
-                  </p>
-                </div>
+              <div className="flex-shrink-0 p-3 border-t border-gold/10 bg-gray-900/30">
+                <p className="text-xs text-gray-400 text-center">
+                  {paymentMethod === 'crypto' 
+                    ? '🔐 Secure crypto payment via USDT • '
+                    : '🔐 Secure payments by Flutterwave • '}
+                  <a href="https://t.me/Lofte3" className="text-gold hover:underline">
+                    Support
+                  </a>
+                </p>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Email Modal - Keep existing email modal code */}
+      {/* Email Modal */}
       <AnimatePresence>
         {showEmailModal && selectedTicket && (
           <motion.div
@@ -383,125 +383,97 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="bg-gradient-to-b from-gray-900 to-black border-2 border-gold rounded-2xl max-w-md w-full p-8 shadow-2xl shadow-gold/30"
+              className="bg-gradient-to-b from-gray-900 to-black border-2 border-gold rounded-2xl max-w-md w-full p-6 shadow-2xl shadow-gold/30"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Header */}
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-gold to-gold/60 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-gold/30">
-                  <Ticket className="w-10 h-10 text-black" />
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-gold to-gold/60 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Ticket className="w-8 h-8 text-black" />
                 </div>
-                <h3 className="text-3xl font-bold text-gold mb-2">
-                  Complete Purchase
+                <h3 className="text-2xl font-bold text-gold mb-1">
+                  {paymentMethod === 'crypto' ? 'Crypto Payment' : 'Complete Purchase'}
                 </h3>
-                <p className="text-gray-400">
-                  Enter your email to receive tickets and payment confirmation
+                <p className="text-xs text-gray-400">
+                  Enter your email to receive tickets
                 </p>
               </div>
 
-              {/* Ticket Summary */}
-              <div className="mb-6 p-5 bg-gray-800/70 border border-gold/30 rounded-xl">
-                <div className="flex justify-between items-center mb-3 pb-3 border-b border-gray-700">
-                  <span className="text-gray-400 font-medium">Ticket:</span>
-                  <span className="text-white font-bold text-lg">{selectedTicket.name}</span>
+              <div className="mb-4 p-4 bg-gray-800/70 border border-gold/30 rounded-xl">
+                <div className="flex justify-between mb-2 pb-2 border-b border-gray-700">
+                  <span className="text-xs text-gray-400">Ticket:</span>
+                  <span className="text-sm font-bold text-white">{selectedTicket.name}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-xs text-gray-400">Payment:</span>
+                  <span className={`text-xs font-bold ${paymentMethod === 'crypto' ? 'text-yellow-400' : 'text-green-400'}`}>
+                    {paymentMethod === 'crypto' ? 'USDT (Crypto)' : 'Naira (Flutterwave)'}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 font-medium">Amount:</span>
+                  <span className="text-xs text-gray-400">Amount:</span>
                   <div className="text-right">
-                    {/* Original price */}
-                    <div className="text-sm text-gray-500 line-through">
-                      {currency === 'NGN' ? '₦' : '$'}
-                      {currency === 'NGN'
-                        ? selectedTicket.originalNGN.toLocaleString()
-                        : selectedTicket.originalUSD.toFixed(2)}
+                    <div className="text-xs text-gray-500 line-through">
+                      {paymentMethod === 'crypto' ? '$' : '₦'}
+                      {paymentMethod === 'crypto'
+                        ? selectedTicket.originalUSD.toFixed(2)
+                        : selectedTicket.originalNGN.toLocaleString()}
                     </div>
-                    {/* Discounted price */}
-                    <span className="text-gold font-bold text-3xl">
-                      {currency === 'NGN' ? '₦' : '$'}
-                      {currency === 'NGN'
-                        ? selectedTicket.priceNGN.toLocaleString()
-                        : selectedTicket.priceUSD.toFixed(2)}
+                    <span className="text-gold font-bold text-xl">
+                      {paymentMethod === 'crypto' ? '$' : '₦'}
+                      {paymentMethod === 'crypto'
+                        ? selectedTicket.priceUSD.toFixed(2)
+                        : selectedTicket.priceNGN.toLocaleString()}
                     </span>
-                    <div className="text-xs text-green-400 font-bold">
-                      40% OFF
-                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Email Input */}
-              <div className="mb-8">
-                <label className="block text-gray-300 font-semibold mb-2">
-                  Email Address <span className="text-gold text-lg">*</span>
-                </label>
+              <div className="mb-4">
                 <input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder="Your email"
                   value={userEmail}
                   onChange={(e) => setUserEmail(e.target.value)}
-                  className="w-full p-4 bg-gray-800 border-2 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-gold focus:outline-none transition-all text-lg"
+                  className="w-full p-3 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-500 focus:border-gold focus:outline-none"
                   required
                 />
-                <p className="text-xs text-gray-500 mt-2">
-                  We'll send your tickets and payment receipt to this email
-                </p>
               </div>
 
-              {/* Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex gap-3">
                 <button
                   onClick={() => {
                     setShowEmailModal(false)
                     setUserEmail('')
                   }}
-                  className="flex-1 py-4 border-2 border-gray-600 rounded-xl text-gray-300 font-bold hover:bg-gray-800 hover:border-gray-500 transition-all text-lg"
+                  className="flex-1 py-3 border border-gray-600 rounded-lg text-gray-300 text-sm font-bold hover:bg-gray-800 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handlePayment}
-                  disabled={!userEmail || !userEmail.includes('@') || !userEmail.includes('.') || loading === selectedTicket.id}
-                  className="flex-1 py-4 bg-gradient-to-r from-gold to-yellow-500 text-black font-extrabold rounded-xl hover:shadow-xl hover:shadow-gold/40 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                  disabled={!userEmail || !userEmail.includes('@') || loading === selectedTicket.id}
+                  className={`flex-1 py-3 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 ${
+                    paymentMethod === 'crypto'
+                      ? 'bg-yellow-500 text-black hover:bg-yellow-400'
+                      : 'bg-gradient-to-r from-gold to-yellow-500 text-black'
+                  }`}
                 >
                   {loading === selectedTicket.id ? (
                     <>
-                      <Loader className="w-5 h-5 animate-spin" />
-                      <span>Processing...</span>
+                      <Loader className="w-4 h-4 animate-spin" />
+                      Processing...
                     </>
                   ) : (
-                    <>
-                      <span>Pay Now</span>
-                      <span className="bg-black/20 px-3 py-1 rounded-lg">
-                        {currency === 'NGN' ? '₦' : '$'}
-                        {currency === 'NGN'
-                          ? selectedTicket.priceNGN.toLocaleString()
-                          : selectedTicket.priceUSD.toFixed(2)}
-                      </span>
-                    </>
+                    paymentMethod === 'crypto' ? 'Pay with Crypto' : 'Pay Now'
                   )}
                 </button>
               </div>
 
-              {/* Payment Info */}
-              <div className="mt-6 pt-4 border-t border-gray-800">
-                <div className="flex items-center justify-center gap-3 text-sm text-gray-500">
-                  <span className="flex items-center gap-1">
-                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    Secure SSL
-                  </span>
-                  <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
-                  <span className="flex items-center gap-1">
-                    <span>🔒</span>
-                    Encrypted
-                  </span>
-                  <span className="w-1 h-1 bg-gray-600 rounded-full"></span>
-                  <span className="text-gold">Flutterwave</span>
-                </div>
-                <p className="text-xs text-center text-gray-600 mt-3">
-                  By proceeding, you agree to our Terms of Service and Privacy Policy
-                </p>
-              </div>
+              <p className="text-xs text-gray-500 text-center mt-4">
+                {paymentMethod === 'crypto' 
+                  ? 'You will be redirected to complete your crypto payment'
+                  : 'You will be redirected to Flutterwave secure checkout'}
+              </p>
             </motion.div>
           </motion.div>
         )}

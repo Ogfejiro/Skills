@@ -1,4 +1,4 @@
-// app/services/paymentService.ts - LIVE BACKEND VERSION
+// app/services/paymentService.ts - COMPLETE WITH CRYPTO SUPPORT
 export interface InitiatePaymentRequest {
   amount: number
   email: string
@@ -18,24 +18,21 @@ export interface VerifyPaymentRequest {
 }
 
 class PaymentService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL
+  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com'
 
-  // 🟢 REAL VERSION - CONNECTED TO BACKEND
+  // For Naira payments (Flutterwave)
   async initiatePayment(
     data: InitiatePaymentRequest,
   ): Promise<InitiatePaymentResponse> {
     try {
-      console.log(
-        '📡 Sending to backend:',
-        `${this.baseUrl}/api/payments/initiate`,
-      )
+      console.log('📡 Naira payment to:', `${this.baseUrl}/api/payments/initiate`)
       console.log('📡 Request data:', {
         amount: data.amount,
         email: data.email,
         userId: data.userId,
         ticketName: data.ticketName,
       })
-
+      
       const response = await fetch(`${this.baseUrl}/api/payments/initiate`, {
         method: 'POST',
         headers: {
@@ -51,53 +48,83 @@ class PaymentService {
 
       if (!response.ok) {
         const error = await response.json()
-        console.error('❌ Backend error:', error)
-        throw new Error(error.error || 'Payment initialization failed')
+        console.error('❌ Naira backend error:', error)
+        throw new Error(error.error || 'Naira payment initialization failed')
       }
 
       const result = await response.json()
-      console.log('📡 Backend response:', result)
-
+      console.log('📡 Naira response:', result)
+      
       return result
     } catch (error) {
-      console.error('❌ Payment initiation error:', error)
+      console.error('❌ Naira payment error:', error)
       throw error
     }
   }
 
-  // 🟢 REAL VERSION - CONNECTED TO BACKEND
-  async verifyPayment(
-    data: VerifyPaymentRequest,
-  ): Promise<{ success: boolean }> {
+  // For Crypto payments (USDT)
+  async initiateCryptoPayment(
+    data: InitiatePaymentRequest,
+  ): Promise<InitiatePaymentResponse> {
     try {
-      console.log(
-        '📡 Verifying with backend:',
-        `${this.baseUrl}/api/payments/verify`,
-      )
-      console.log('📡 Verification data:', data)
+      console.log('📡 Crypto payment to:', `${this.baseUrl}/api/payments/pay-usdt`)
+      console.log('📡 Crypto request data:', {
+        amount: data.amount,
+        email: data.email,
+        userId: data.userId,
+        ticketName: data.ticketName,
+      })
+      
+      const response = await fetch(`${this.baseUrl}/api/payments/pay-usdt`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: data.amount,
+          email: data.email,
+          userId: data.userId,
+          ticketName: data.ticketName,
+        }),
+      })
 
+      if (!response.ok) {
+        const error = await response.json()
+        console.error('❌ Crypto backend error:', error)
+        throw new Error(error.error || 'Crypto payment initialization failed')
+      }
+
+      const result = await response.json()
+      console.log('📡 Crypto response:', result)
+      
+      return result
+    } catch (error) {
+      console.error('❌ Crypto payment error:', error)
+      throw error
+    }
+  }
+
+  // Verify payment (works for both)
+  async verifyPayment(data: VerifyPaymentRequest): Promise<void> {
+    try {
+      console.log('📡 Verifying with backend:', `${this.baseUrl}/api/payments/verify`)
+      console.log('📡 Verification data:', data)
+      
       const response = await fetch(`${this.baseUrl}/api/payments/verify`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data),
       })
 
-      const text = await response.text()
-
-      // Safely parse JSON, fallback to error if HTML returned
-      let json
-      try {
-        json = JSON.parse(text)
-      } catch {
-        console.error('Non-JSON response from backend:', text)
-        throw new Error('Backend did not return JSON')
-      }
-
       if (!response.ok) {
-        throw new Error(json.error || 'Payment verification failed')
+        const error = await response.json()
+        console.error('❌ Verification error:', error)
+        throw new Error(error.error || 'Payment verification failed')
       }
-
-      return json
+      
+      console.log('✅ Payment verified by backend')
     } catch (error) {
       console.error('❌ Payment verification error:', error)
       throw error
