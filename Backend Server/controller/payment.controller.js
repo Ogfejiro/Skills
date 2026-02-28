@@ -196,7 +196,7 @@ export const createInvoice = async (req, res) => {
 export const cryptoWebhook = async (req, res) => {
   try {
     const signature = req.headers['x-nowpayments-sig']
-    const rawBody = req.body.toString()
+    const rawBody = req.body
 
     const hmac = crypto
       .createHmac('sha512', process.env.NOWPAYMENTS_IPN_SECRET)
@@ -207,7 +207,12 @@ export const cryptoWebhook = async (req, res) => {
       return res.status(400).send('Invalid signature')
     }
 
-    const paymentData = JSON.parse(rawBody)
+    console.log('Signature header:', signature)
+    console.log('Generated HMAC:', hmac)
+
+    console.log('Received crypto webhook:', rawBody)
+
+    const paymentData = JSON.parse(rawBody.toString())
 
     if (paymentData.payment_status !== 'finished') {
       return res.sendStatus(200)
@@ -256,6 +261,6 @@ export const cryptoWebhook = async (req, res) => {
     return res.sendStatus(200)
   } catch (error) {
     console.error(error)
-    return res.sendStatus(500)
+    return res.status(500).json({ error: error.message })
   }
 }

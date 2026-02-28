@@ -27,11 +27,12 @@ app.use(
   }),
 )
 app.use(morgan('dev'))
-app.use(express.json())
-app.use(
+app.post(
   '/api/payments/crypto-webhook',
   express.raw({ type: 'application/json' }),
+  cryptoWebhook,
 )
+app.use(express.json())
 
 app.use('/api/payments', paymentRoutes)
 
