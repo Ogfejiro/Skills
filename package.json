@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "type": "module",
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@heroui/react": "^2.8.0",
