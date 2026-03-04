@@ -1,9 +1,9 @@
-// components/TicketModal.tsx - COMPLETE WORKING VERSION WITH CRYPTO
+// components/TicketModal.tsx - WITH ALL FEATURES VISIBLE
 'use client'
 
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Ticket, Loader, X, Percent, Users, TrendingUp, Wallet, Bitcoin } from 'lucide-react'
+import { Ticket, Loader, X, Percent, Users, TrendingUp, Wallet, Bitcoin, Check } from 'lucide-react'
 import { paymentService } from '@/app/services/paymentService'
 
 type CurrencyType = 'NGN' | 'USD'
@@ -44,7 +44,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
   const ticketsRemaining = 1000 - ticketsSold
   const percentSold = (ticketsSold / 1000) * 100
 
-  // Ticket options
+  // Ticket options with all features
   const ticketOptions = [
     {
       id: 'regular',
@@ -142,7 +142,6 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
           email: userEmail
         })
 
-        // Use the crypto payment service
         const { paymentLink } = await paymentService.initiateCryptoPayment({
           amount,
           email: userEmail,
@@ -152,7 +151,6 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
           quantity: 1,
         })
 
-        console.log('🔄 Redirecting to crypto payment:', paymentLink)
         window.location.href = paymentLink
         
       } else {
@@ -162,7 +160,6 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
           email: userEmail
         })
 
-        // Use the naira payment service
         const { paymentLink } = await paymentService.initiatePayment({
           amount,
           email: userEmail,
@@ -172,7 +169,6 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
           quantity: 1,
         })
 
-        console.log('🔄 Redirecting to Flutterwave:', paymentLink)
         window.location.href = paymentLink
       }
       
@@ -301,9 +297,9 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 </div>
               </div>
 
-              {/* Scrollable Ticket Options */}
-              <div className="overflow-y-auto flex-1 p-3 min-h-[300px] max-h-[50vh]">
-                <div className="space-y-3 pb-2">
+              {/* Scrollable Ticket Options - WITH ALL FEATURES SHOWING */}
+              <div className="overflow-y-auto flex-1 p-3">
+                <div className="space-y-4 pb-4">
                   {ticketOptions.map((ticket) => (
                     <motion.div
                       key={ticket.id}
@@ -311,38 +307,51 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                       className="p-4 border border-gold/20 rounded-xl bg-gray-900/30 cursor-pointer hover:border-gold/40 transition-all"
                       onClick={() => handleTicketSelect(ticket)}
                     >
-                      <div className="flex gap-3">
-                        <span className="text-2xl">{ticket.icon}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="text-base font-bold text-white truncate">{ticket.name}</h3>
+                      <div className="flex flex-col gap-3">
+                        {/* Header with Icon and Price */}
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-2xl">{ticket.icon}</span>
+                            <div>
+                              <h3 className="text-base font-bold text-white">{ticket.name}</h3>
+                              <p className="text-xs text-gray-400">{ticket.description}</p>
+                            </div>
                           </div>
-                          <p className="text-xs text-gray-400 mb-2 line-clamp-2">{ticket.description}</p>
-                          <div className="flex flex-wrap gap-1">
-                            {ticket.features.slice(0, 2).map((feature, idx) => (
-                              <span key={idx} className="text-xs text-gray-300 bg-gray-800 px-2 py-0.5 rounded-full truncate max-w-[150px]">
-                                {feature}
-                              </span>
-                            ))}
-                            {ticket.features.length > 2 && (
-                              <span className="text-xs text-gray-500">+{ticket.features.length - 2}</span>
-                            )}
+                          <div className="text-right">
+                            <div className="text-xs text-gray-500 line-through">
+                              {paymentMethod === 'crypto' ? '$' : '₦'}
+                              {paymentMethod === 'crypto' 
+                                ? ticket.originalUSD.toFixed(2)
+                                : ticket.originalNGN.toLocaleString()}
+                            </div>
+                            <div className="text-lg font-bold text-gold">
+                              {paymentMethod === 'crypto' ? '$' : '₦'}
+                              {paymentMethod === 'crypto'
+                                ? ticket.priceUSD.toFixed(2)
+                                : ticket.priceNGN.toLocaleString()}
+                            </div>
+                            <div className="text-xs text-green-400 font-bold">40% OFF</div>
                           </div>
                         </div>
-                        <div className="text-right flex-shrink-0">
-                          <div className="text-xs text-gray-500 line-through">
-                            {paymentMethod === 'crypto' ? '$' : '₦'}
-                            {paymentMethod === 'crypto' 
-                              ? ticket.originalUSD.toFixed(2)
-                              : ticket.originalNGN.toLocaleString()}
+
+                        {/* ALL FEATURES - Fully visible */}
+                        <div className="mt-2">
+                          <p className="text-xs text-gold mb-2 font-semibold">What's included:</p>
+                          <div className="grid grid-cols-1 gap-2">
+                            {ticket.features.map((feature, idx) => (
+                              <div key={idx} className="flex items-start gap-2">
+                                <Check className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                                <span className="text-sm text-gray-300">{feature}</span>
+                              </div>
+                            ))}
                           </div>
-                          <div className="text-lg font-bold text-gold">
-                            {paymentMethod === 'crypto' ? '$' : '₦'}
-                            {paymentMethod === 'crypto'
-                              ? ticket.priceUSD.toFixed(2)
-                              : ticket.priceNGN.toLocaleString()}
-                          </div>
-                          <div className="text-xs text-green-400 font-bold">40% OFF</div>
+                        </div>
+
+                        {/* Select button */}
+                        <div className="mt-2 pt-2 border-t border-gray-800">
+                          <button className="w-full py-2 bg-gold/20 border border-gold/30 rounded-lg text-gold text-sm font-bold hover:bg-gold/30 transition-all">
+                            Select Ticket
+                          </button>
                         </div>
                       </div>
                     </motion.div>
