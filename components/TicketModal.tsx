@@ -125,7 +125,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
         'Red Carpet Professional Picture Session',
         'Premium Souvenir Package',
         'Concierge Services',
-        'Luxury Hotel Stay (2 nights)',
+        'Luxury Hotel Stay (1 night)',
       ],
       description: 'Ultimate luxury experience with concierge services',
     },
