@@ -29,9 +29,9 @@ export default function HomePage() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   
   // LINKS
-  const xAccountLink = "https://x.com/hidreams__/status/2006591300829639020?s=46";
-  const learnMoreLink = "https://x.com/i/status/2023276431896105358"; // Learn more about us link
-  const lumaLink = "https://luma.com/cbnowerri"; // LUMA link for NFT EVENT ONLY
+  const learnMoreLink = "https://x.com/lofte3_/status/2025126808362918267";
+  const xAccountLink = "https://x.com/onomeofweb3/status/2030947775643353242"; // Learn more about us link
+  const lumaLink = "https://luma.com/cbnabuja"; // LUMA link for NFT EVENT ONLY
   const calendlyLink = "https://calendly.com/hidreamsofweb3/30min"; // Sponsor/meeting link
   
   // CONFIGURE YOUR IMAGES HERE:
@@ -564,7 +564,7 @@ export default function HomePage() {
                           <span className="text-gold text-sm font-bold">COMING SOON</span>
                         </span>
                         <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
-                          METAMASK COMMUNITY BUILDERS NIGHT, OWERRI
+                          METAMASK COMMUNITY BUILDERS NIGHT, ABUJA
                         </h3>
                         <p className="text-gray-300 mb-6">
                          Community Builder Night is a commuinty first version of MetaMask's global Builder Nights bringing Web3 education, onbording, ards and conversations closo local ecosystem.
@@ -577,14 +577,14 @@ export default function HomePage() {
                           <Calendar className="w-5 h-5 text-gold" />
                           <div>
                             <p className="text-sm text-gray-400">Date</p>
-                            <p className="text-white">March 7, 2026</p>
+                            <p className="text-white">March 14, 2026</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
                           <MapPin className="w-5 h-5 text-gold" />
                           <div>
                             <p className="text-sm text-gray-400">Location</p>
-                            <p className="text-white">Owerri, Nigeria</p>
+                            <p className="text-white">Abuja, Nigeria</p>
                           </div>
                         </div>
                       </div>

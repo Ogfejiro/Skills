@@ -59,7 +59,7 @@ export default function Navbar() {
     },
     {
       id: 'waitlist',
-      label: 'Waitlist',
+      label: 'Learn More',
       icon: <Users className='w-5 h-5' />,
       href: 'https://forms.gle/gwhB683FptSMNsE39',
       external: true,
