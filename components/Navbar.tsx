@@ -1,4 +1,4 @@
-// components/Navbar.tsx - CLEANED VERSION (no ticket button)
+// components/Navbar.tsx - UPDATED WITH LIST EVENT BUTTON
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -8,8 +8,10 @@ import {
   Calendar,
   Users,
   Home,
+  PlusCircle,
 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -127,6 +129,16 @@ export default function Navbar() {
                 <span className='absolute bottom-0 left-1/2 w-0 h-0.5 bg-gold group-hover:w-8 group-hover:left-1/4 transition-all duration-300' />
               </a>
             ))}
+
+            {/* LIST EVENT BUTTON */}
+            <Link
+              href="/dashboard/events"
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all text-sm uppercase tracking-wider group relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <PlusCircle className="w-4 h-4" />
+              <span>List Event</span>
+            </Link>
           </div>
         </div>
       </nav>
@@ -175,6 +187,26 @@ export default function Navbar() {
               )}
             </a>
           ))}
+          
+          {/* MOBILE LIST EVENT BUTTON */}
+          <Link
+            href="/dashboard/events"
+            className='flex flex-col items-center justify-center px-3 py-2 relative'
+          >
+            <div className='p-2 rounded-full bg-gradient-to-r from-gold to-yellow-500 border border-gold/30'>
+              <PlusCircle className='w-5 h-5 text-black' />
+            </div>
+            <span className='text-xs mt-1 text-gold font-medium'>List</span>
+            
+            {/* Live indicator - optional */}
+            <div className='absolute top-0 right-2'>
+              <motion.div
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className='w-1.5 h-1.5 bg-red-500 rounded-full'
+              />
+            </div>
+          </Link>
         </div>
       </nav>
 
