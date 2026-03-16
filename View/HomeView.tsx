@@ -1,4 +1,4 @@
-// app/page.tsx - COMPLETE VERSION WITH ALL YOUR CONTENT
+// app/page.tsx - COMPLETE CORRECTED VERSION WITH EXPIRED EVENT COMMENTED OUT
 'use client';
 
 import { motion } from 'framer-motion';
@@ -30,14 +30,14 @@ export default function HomePage() {
   
   // LINKS
   const learnMoreLink = "https://x.com/lofte3_/status/2025126808362918267";
-  const xAccountLink = "https://x.com/onomeofweb3/status/2030947775643353242"; // Learn more about us link
-  const lumaLink = "https://luma.com/cbnabuja"; // LUMA link for NFT EVENT ONLY
-  const calendlyLink = "https://calendly.com/hidreamsofweb3/30min"; // Sponsor/meeting link
+  const xAccountLink = "https://x.com/onomeofweb3/status/2030947775643353242";
+  const lumaLink = "https://luma.com/cbnabuja";
+  const calendlyLink = "https://calendly.com/hidreamsofweb3/30min";
   
   // CONFIGURE YOUR IMAGES HERE:
   const eventImages = {
     // Valentine event image
-    valentineEvent: "/images/new.jpg", // Your image path here
+    valentineEvent: "/images/new.jpg",
     
     // Other events
     nftGala: "/images/meta.jpg",
@@ -53,7 +53,7 @@ export default function HomePage() {
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <Navbar />
 
-       <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4">
         <AdBanner />
       </div>
       
@@ -287,7 +287,7 @@ export default function HomePage() {
             </motion.div>
           </motion.div>
 
-          {/* LEARN MORE BUTTON - FIXED WITH DIFFERENT LINK */}
+          {/* LEARN MORE BUTTON */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -375,7 +375,7 @@ export default function HomePage() {
 
             {/* EVENTS STACK */}
             <div className="space-y-32 md:space-y-48">
-              {/* EVENT 1: VALENTINE'S DINNER & POOL PARTY - MAIN EVENT */}
+              {/* EVENT 1: LOFTE-3 PROJECT HANGOUT/CT DINNER EVENT - MAIN EVENT */}
               <motion.div
                 initial={{ opacity: 0, x: -100 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -477,7 +477,7 @@ export default function HomePage() {
                         ))}
                       </div>
 
-                      {/* Buttons - MAIN EVENT uses TicketModal, NOT Luma */}
+                      {/* Buttons - MAIN EVENT uses TicketModal */}
                       <div className="flex flex-col sm:flex-row gap-4">
                         <motion.button
                           whileHover={{ scale: 1.05 }}
@@ -501,7 +501,8 @@ export default function HomePage() {
                 </div>
               </motion.div>
 
-              {/* EVENT 2: NFT Art Gala - NOW UNBLURRED AND FULLY CLICKABLE */}
+              {/* EVENT 2: METAMASK COMMUNITY BUILDERS NIGHT - EXPIRED - COMMENTED OUT */}
+              {/*
               <motion.div
                 initial={{ opacity: 0, x: -100 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -509,14 +510,11 @@ export default function HomePage() {
                 viewport={{ once: true, margin: "-100px" }}
                 className="relative"
               >
-                {/* Connector Dot */}
                 <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                   <div className="w-3 h-3 rounded-full bg-gold border-2 border-black"></div>
                 </div>
 
-                {/* Card Container */}
                 <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Image Side - CLICKABLE to X POST */}
                   <motion.div
                     initial={{ opacity: 0, x: -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -534,12 +532,11 @@ export default function HomePage() {
                       >
                         <img
                           src={eventImages.nftGala}
-                          alt="NFT Art Gala"
+                          alt="MetaMask Community Builders Night"
                           className="w-full h-64 md:h-80 object-cover"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                         
-                        {/* Click indicator */}
                         <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-gold/50">
                           <span className="text-xs text-gold flex items-center gap-1">
                             <ExternalLink className="w-3 h-3" />
@@ -550,7 +547,6 @@ export default function HomePage() {
                     </motion.div>
                   </motion.div>
 
-                  {/* Content Side */}
                   <motion.div
                     initial={{ opacity: 0, x: 50 }}
                     whileInView={{ opacity: 1, x: 0 }}
@@ -560,24 +556,23 @@ export default function HomePage() {
                   >
                     <div className="bg-black/90 rounded-2xl border border-gold/30 p-6 backdrop-blur-sm">
                       <div className="mb-4">
-                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold/50 mb-3">
-                          <span className="text-gold text-sm font-bold">COMING SOON</span>
+                        <span className="inline-block px-4 py-1 rounded-full bg-red-500/20 border border-red-500/50 mb-3">
+                          <span className="text-red-400 text-sm font-bold">EXPIRED</span>
                         </span>
                         <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
                           METAMASK COMMUNITY BUILDERS NIGHT, ABUJA
                         </h3>
                         <p className="text-gray-300 mb-6">
-                         Community Builder Night is a commuinty first version of MetaMask's global Builder Nights bringing Web3 education, onbording, ards and conversations closo local ecosystem.
+                          Community Builder Night is a community first version of MetaMask's global Builder Nights bringing Web3 education, onboarding, awards and conversations close to local ecosystem.
                         </p>
                       </div>
 
-                      {/* Event Details */}
                       <div className="space-y-3 mb-6">
                         <div className="flex items-center gap-3">
                           <Calendar className="w-5 h-5 text-gold" />
                           <div>
                             <p className="text-sm text-gray-400">Date</p>
-                            <p className="text-white">March 14, 2026</p>
+                            <p className="text-white line-through">March 14, 2026</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-3">
@@ -589,31 +584,27 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      {/* Buttons for Event 2 - NFT EVENT uses LUMA link */}
                       <div className="flex flex-col sm:flex-row gap-3">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => openLink(lumaLink)}
-                          className="flex-1 text-center px-4 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition text-sm"
-                        >
-                          Get LUMA Link
-                        </motion.button>
+                        <div className="flex-1 text-center px-4 py-3 rounded-full bg-gray-800 text-gray-400 text-sm cursor-not-allowed">
+                          Event Ended
+                        </div>
                         <motion.button
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => openLink(xAccountLink)}
                           className="flex-1 text-center px-4 py-3 rounded-full bg-gold/20 text-gold font-bold hover:bg-gold/30 transition text-sm border border-gold/50"
                         >
-                          Learn More
+                          View Recap
                         </motion.button>
                       </div>
                     </div>
                   </motion.div>
                 </div>
               </motion.div>
+              */}
 
-              {/* EVENT 3: DeFi Hackathon - You had this commented out, but I'll leave it as is */}
+              {/* Add new events here */}
+
             </div>
           </div>
 
