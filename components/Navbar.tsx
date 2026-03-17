@@ -59,9 +59,9 @@ export default function Navbar() {
     },
     {
       id: 'waitlist',
-      label: 'Waitlist',
+      label: 'Learn More',
       icon: <Users className='w-5 h-5' />,
-      href: 'https://forms.gle/gwhB683FptSMNsE39',
+      href: 'https://x.com/lofte3_?s=11',
       external: true,
     },
   ]

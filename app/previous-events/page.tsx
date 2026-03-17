@@ -63,6 +63,17 @@ export default function PreviousEventsPage() {
       link: "https://www.facebook.com/share/p/17V3KRYxNw/", // Replace with your actual NFT Games link
       highlights: ["Tech Lectures", "Networking", "Games"]
     },
+    {
+      id: 6,
+      title: "MetaMask Community Builders Night, Abuja",
+      description: "Community Builder Night is a commuinty first version of MetaMask's global Builder Nights bringing Web3 education, onbording, ards and conversations closo local ecosystem.",
+      date: "March, 2026",
+      location: "Abuja",
+      attendees: "100+",
+      image: "/images/meta.jpg",
+      link: "https://x.com/i/status/2030529869453414767", // Replace with your actual NFT Games link
+      highlights: ["Connections", "Networking", "Onboarding"]
+    },
   ];
 
   // Function to open external link
