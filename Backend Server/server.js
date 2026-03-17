@@ -1,11 +1,11 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
-import connectDB from '../src/config/db.js'
+import connectDB from './config/db.js'
 import cors from 'cors'
 import morgan from 'morgan'
-import paymentRoutes from '../src/modules/payments/payment.routes.js'
-import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
+import paymentRoutes from './routes/payment.routes.js'
+import { cryptoWebhook } from './controller/payment.controller.js'
 
 dotenv.config()
 
