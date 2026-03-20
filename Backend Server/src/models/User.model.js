@@ -47,6 +47,16 @@ const userSchema = new mongoose.Schema(
       enum: ['google', 'local'],
       default: ['local'],
     },
+
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    phoneVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timeStamp: true },
 )
