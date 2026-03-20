@@ -12,7 +12,6 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
-      minLenght: 6,
     },
 
     phone: {
@@ -46,6 +45,16 @@ const userSchema = new mongoose.Schema(
       type: [String],
       enum: ['google', 'local'],
       default: ['local'],
+    },
+
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    phoneVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   { timeStamp: true },
