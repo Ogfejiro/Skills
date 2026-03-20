@@ -1,5 +1,5 @@
-import Payment from '../models/payment.model.js'
-import Ticket from '../models/ticket.model.js'
+import Payment from '../../models/payment.model.js'
+import Ticket from '../../models/ticket.model.js'
 import { nanoid } from 'nanoid'
 
 export async function generateTicket(tx_ref) {
