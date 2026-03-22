@@ -1,4 +1,3 @@
-// services/nowPayments.service.js
 import axios from 'axios'
 
 const API_KEY = process.env.NOWPAYMENTS_API_KEY
