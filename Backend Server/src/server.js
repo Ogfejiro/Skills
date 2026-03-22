@@ -1,10 +1,11 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import mongoose from 'mongoose'
 import connectDB from '../src/config/db.js'
 import cors from 'cors'
 import morgan from 'morgan'
 import helmet from 'helmet'
+import authRoutes from './modules/auth/auth.route.js'
+import hostRoutes from './modules/host Profile/host.route.js'
 import paymentRoutes from '../src/modules/payments/payment.routes.js'
 import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
 
@@ -37,6 +38,9 @@ app.post(
   cryptoWebhook,
 )
 app.use(express.json())
+
+app.use('/api/auth', authRoutes)
+app.use('/api/host', hostRoutes)
 
 app.use('/api/payments', paymentRoutes)
 

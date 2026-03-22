@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt'
 import User from '../../models/User.model.js'
-import verifyGoogleToken from '../../services/shared/GoogleAuth.js'
+import { verifyGoogleToken } from '../../services/shared/GoogleAuth.js'
 import AppError from '../../services/shared/appError.js'
-import generateRefId from '../../services/shared/generateRefId.js'
+import { generateRefId } from '../../services/shared/generateRefId.js'
 import { generateAccessToken } from '../../services/shared/generateToken.js'
 
 export async function registrationService(
