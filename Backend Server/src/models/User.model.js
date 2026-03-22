@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
 
     password: {
       type: String,
+      select: false,
     },
 
     phone: {
@@ -57,8 +58,12 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timeStamp: true },
+  { timestamps: true },
 )
+
+userSchema.index({ email: 1 })
+userSchema.index({ phone: 1 })
+userSchema.index({ role: 1 })
 
 const User = mongoose.model('User', userSchema)
 

@@ -7,13 +7,14 @@ import { generateAccessToken } from '../../services/shared/generateToken.js'
 
 export async function registrationService(
   email,
+  phone,
   password,
   firstName,
   lastName,
   role,
   profession,
 ) {
-  const existingUser = await User.findOne({ email: email, phone: phone })
+  const existingUser = await User.findOne({ email, phone })
 
   if (existingUser) {
     throw new AppError('User already exist with the provided details', 401)
@@ -21,9 +22,10 @@ export async function registrationService(
 
   const hashedPassword = await bcrypt.hash(password, 10)
 
-  const refId = await generateRefId
+  const refId = await generateRefId()
   const user = await User.create({
     email,
+    phone,
     password: hashedPassword,
     firstName,
     lastName,
@@ -75,6 +77,7 @@ export async function googleAuth(idToken) {
 
   const accessToken = await generateAccessToken({
     id: user._id.toString(),
+    role: user.role.toString(),
   })
 
   return {
@@ -84,7 +87,7 @@ export async function googleAuth(idToken) {
 }
 
 export async function loginService(email, password) {
-  const userExist = await User.findOne(email)
+  const userExist = await User.findOne({ email }).select('+password')
   if (!userExist) {
     throw new AppError('User not found, register new User', 404)
   }
@@ -98,10 +101,13 @@ export async function loginService(email, password) {
     throw new AppError('Invalid Password', 409)
   }
 
-  const accessToken = await generateAccessToken(userExist._id)
+  const accessToken = await generateAccessToken({
+    id: userExist._id.toString(),
+    role: userExist.role.toString(),
+  })
 
   return {
-    message: 'Google authentication successful',
+    message: 'Login successful',
     accessToken,
   }
 }

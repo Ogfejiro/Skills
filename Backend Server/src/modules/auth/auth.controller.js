@@ -7,9 +7,18 @@ import {
 } from './auth.service.js'
 
 export const register = asyncHandler(async (req, res) => {
-  const { email, password, firstName, lastName, role, profession } = req.body
+  const { email, phone, password, firstName, lastName, role, profession } =
+    req.body
 
-  if (!email || !password || !firstName || !lastName || !role || !profession) {
+  if (
+    !email ||
+    !phone ||
+    !password ||
+    !firstName ||
+    !lastName ||
+    !role ||
+    !profession
+  ) {
     throw new AppError('All Fields are required', 402)
   }
 
@@ -23,6 +32,7 @@ export const register = asyncHandler(async (req, res) => {
 
   const user = await registrationService(
     email,
+    phone,
     password,
     firstName,
     lastName,

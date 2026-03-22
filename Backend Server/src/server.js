@@ -4,6 +4,7 @@ import mongoose from 'mongoose'
 import connectDB from '../src/config/db.js'
 import cors from 'cors'
 import morgan from 'morgan'
+import helmet from 'helmet'
 import paymentRoutes from '../src/modules/payments/payment.routes.js'
 import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
 
@@ -28,6 +29,8 @@ app.use(
   }),
 )
 app.use(morgan('dev'))
+app.use(helmet())
+
 app.post(
   '/api/payments/crypto-webhook',
   express.raw({ type: 'application/json' }),
