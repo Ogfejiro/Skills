@@ -7,7 +7,7 @@ import {
   getTicketByTxRef,
   createInvoice,
   cryptoWebhook,
-} from './payment.controller.js'
+} from '../controller/payment.controller.js'
 
 const router = express.Router()
 
