@@ -9,7 +9,7 @@ import {
 } from './event.service.js'
 
 export const createEventController = asyncHandler(async (req, res) => {
-    const { id } = req.user.id
+    const id = req.user.id
     const {
         title,
         description,
@@ -50,11 +50,15 @@ export const createEventController = asyncHandler(async (req, res) => {
 })
 
 export const getHostEventsController = asyncHandler(async (req, res) => {
+    console.log('hostId:', req.user.role)
     const { page = 1, limit = 10 } = req.query
-    const events = await getHostEvents(req.user.id, page, limit)
+    const hostId = req.user.id
+
+    const eventsData = await getHostEvents(hostId, page, limit)
+
     res.status(200).json({
         success: true,
-        data: events,
+        data: eventsData,
     })
 })
 

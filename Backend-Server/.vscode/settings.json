@@ -1,0 +1,7 @@
+{
+  "[skill]": {
+    "editor.tabSize": 4
+  },
+  "editor.indentSize": "tabSize",
+  "prettier.tabWidth": 4
+}

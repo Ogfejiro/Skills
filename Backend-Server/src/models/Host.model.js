@@ -11,6 +11,9 @@ const hostSchema = new mongoose.Schema(
         address: {
             type: String,
         },
+        organization: {
+            type: String,
+        },
         accountNo: {
             type: String,
             required: function () {
@@ -43,8 +46,6 @@ const hostSchema = new mongoose.Schema(
     },
     { timestamps: true },
 )
-
-hostSchema.index({ hostId: 1 })
 
 const HostProfile = mongoose.model('HostProfile', hostSchema)
 

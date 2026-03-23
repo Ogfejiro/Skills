@@ -7,7 +7,26 @@ import {
 } from './host.service.js'
 
 export const updateHostProfile = asyncHandler(async (req, res) => {
-    const profile = await updateProfile(req.user.id, req.body)
+    const allowedFields = [
+        'address',
+        'accountNo',
+        'accountName',
+        'walletAddress',
+        'walletType',
+        'conversionRate',
+    ]
+    const hostId = req.user.id
+
+    const updateData = {}
+
+    for (const key of allowedFields) {
+        if (req.body[key] !== undefined) {
+            updateData[key] = req.body[key]
+        }
+    }
+
+    const profile = await updateProfile(hostId, updateData)
+
     res.status(200).json({
         success: true,
         message: 'Profile updated successfully',
