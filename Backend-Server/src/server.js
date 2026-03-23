@@ -8,6 +8,7 @@ import authRoutes from './modules/auth/auth.route.js'
 import hostRoutes from './modules/host Profile/host.route.js'
 import eventRoutes from './modules/events/event.route.js'
 import paymentRoutes from '../src/modules/payments/payment.routes.js'
+import errorMiddle from '../src/services/middleware/error.js'
 import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
 
 dotenv.config()
@@ -45,6 +46,7 @@ app.use('/api/host', hostRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/payments', paymentRoutes)
 
+app.use(errorMiddle)
 const PORT = process.env.PORT
 
 app.listen(PORT, async () => {

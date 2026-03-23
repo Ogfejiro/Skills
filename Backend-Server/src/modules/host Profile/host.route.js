@@ -9,11 +9,11 @@ import {
     authenticateToken,
     authorizeRoles,
 } from '../../services/middleware/auth.middleware.js'
-import { authLimiter } from '../../services/middleware/rateLimit.js'
+import { profileLimiter } from '../../services/middleware/rateLimit.js'
 
 const router = express.Router()
 
-router.use(authLimiter)
+router.use(profileLimiter)
 router.use(authenticateToken, authorizeRoles('Host'))
 
 router
