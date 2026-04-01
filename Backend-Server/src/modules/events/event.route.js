@@ -1,15 +1,15 @@
 import express from 'express'
 import {
-    createEventController,
-    getHostEventsController,
-    getPublicEventsController,
-    getEventController,
-    updateEventController,
-    deleteEventController,
+	createEventController,
+	getHostEventsController,
+	getPublicEventsController,
+	getEventController,
+	updateEventController,
+	deleteEventController,
 } from './event.controller.js'
 import {
-    authenticateToken,
-    authorizeRoles,
+	authenticateToken,
+	authorizeRoles,
 } from '../../services/middleware/auth.middleware.js'
 import { profileLimiter } from '../../services/middleware/rateLimit.js'
 
@@ -17,16 +17,15 @@ const router = express.Router()
 
 router.use(profileLimiter)
 
+//// Public
+router.get('/', getPublicEventsController)
+router.get('/:id', getEventController)
+
 // Host protected
 router.use(authenticateToken, authorizeRoles('Host'))
 router.get('/host', getHostEventsController)
-console.log('Hitted')
 router.post('/', createEventController)
 router.put('/:id', updateEventController)
 router.delete('/:id', deleteEventController)
-
-// Public
-router.get('/', getPublicEventsController)
-router.get('/:id', getEventController)
 
 export default router
