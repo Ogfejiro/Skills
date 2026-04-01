@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/app/context/AuthContext';
 import { 
   Calendar,
   MapPin,
@@ -46,6 +47,7 @@ interface DashboardEvent {
 }
 
 export default function EventsDashboard() {
+  const { user } = useAuth();
   const [events, setEvents] = useState<DashboardEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,19 +61,6 @@ export default function EventsDashboard() {
   // Mock data for demonstration
   useEffect(() => {
     const mockEvents: DashboardEvent[] = [
-      {
-        id: '1',
-        title: 'LOFTE-3 Dinner Night',
-        date: '2026-03-27',
-        location: 'Eko Hotels & Suites, Lagos',
-        bannerImage: '/images/event1.jpg',
-        status: 'published',
-        paymentStatus: 'paid',
-        ticketSales: 342,
-        revenue: 1250000,
-        views: 15420,
-        createdAt: '2026-02-15'
-      },
       {
         id: '2',
         title: 'NFT Art Gala Night',
@@ -202,6 +191,11 @@ export default function EventsDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">Event Management</h1>
+              {user && (
+                <p className="text-xs text-gray-400 mt-1">
+                  Welcome, {user.firstName} {user.lastName} ({user.role})
+                </p>
+              )}
               <p className="text-sm text-gray-500">Create, manage, and review your events</p>
             </div>
             <Link

@@ -9,13 +9,26 @@ import {
   Users,
   Home,
   PlusCircle,
+  LogOut,
+  User,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useAuth } from '@/app/context/AuthContext'
+import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [activeNav, setActiveNav] = useState('home')
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const { user, logout, isAuthenticated } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    logout()
+    setShowUserMenu(false)
+    router.push('/')
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -130,7 +143,7 @@ export default function Navbar() {
               </a>
             ))}
 
-            {/* LIST EVENT BUTTON */}
+          {/* LIST EVENT BUTTON */}
             <Link
               href="/dashboard/events"
               className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all text-sm uppercase tracking-wider group relative overflow-hidden"
@@ -139,6 +152,57 @@ export default function Navbar() {
               <PlusCircle className="w-4 h-4" />
               <span>List Event</span>
             </Link>
+
+            {/* USER MENU */}
+            {isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gold/10 transition-all"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-gold to-yellow-600 rounded-full flex items-center justify-center text-black font-bold text-sm">
+                    {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                  </div>
+                  <span className="text-sm text-gold font-medium">{user.firstName}</span>
+                </button>
+
+                {/* USER DROPDOWN MENU */}
+                {showUserMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute right-0 mt-2 w-48 bg-black border border-gold/20 rounded-lg shadow-lg shadow-gold/10 overflow-hidden z-50"
+                  >
+                    <div className="px-4 py-3 border-b border-gold/20">
+                      <p className="text-sm font-medium text-white">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      <p className="text-xs text-gray-400">{user.email}</p>
+                    </div>
+
+                    <div className="py-2">
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <User className="w-4 h-4" />
+                        Dashboard
+                      </Link>
+
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
       </nav>
