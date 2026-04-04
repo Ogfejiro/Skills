@@ -18,6 +18,17 @@ import Link from 'next/link';
 export default function PreviousEventsPage() {
   const previousEvents = [
     {
+      id: 0,
+      title: "LOFTE-3 Dinner Night",
+      description: "An exclusive dinner night showcasing the best of Web3 culture and luxury. Held at the prestigious Eko Hotels & Suites in Lagos, this event brought together 342+ ticketed attendees for an evening of fine dining, networking, and celebrating the LOFTE-3 community. Attendees enjoyed premium refreshments, exclusive merch, and red carpet access.",
+      date: "March, 2026",
+      location: "Eko Hotels & Suites, Lagos",
+      attendees: "342+",
+      image: "/images/event1.jpg",
+      link: "#",
+      highlights: ["Event Access", "Premium Seating", "Networking", "Complimentary Refreshments", "Exclusive Merch", "Red Carpet Access"]
+    },
+    {
       id: 1,
       title: "Afriverse CTFFCT",
       description: "Hosted the groundbreaking Afriverse CTFFCT (Code The Future - Finance The Change Together) event in Jos, Plateau State. This pioneering event brought together traders, investors, and crypto enthusiasts to explore the future of digital assets and commodity trading in Africa.",

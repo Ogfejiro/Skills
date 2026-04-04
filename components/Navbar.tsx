@@ -1,4 +1,4 @@
-// components/Navbar.tsx - CLEANED VERSION (no ticket button)
+// components/Navbar.tsx - UPDATED WITH LIST EVENT BUTTON
 'use client'
 
 import React, { useState, useEffect } from 'react'
@@ -8,12 +8,27 @@ import {
   Calendar,
   Users,
   Home,
+  PlusCircle,
+  LogOut,
+  User,
 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useAuth } from '@/app/context/AuthContext'
+import { useRouter } from 'next/navigation'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [activeNav, setActiveNav] = useState('home')
+  const [showUserMenu, setShowUserMenu] = useState(false)
+  const { user, logout, isAuthenticated } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    logout()
+    setShowUserMenu(false)
+    router.push('/')
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -127,6 +142,67 @@ export default function Navbar() {
                 <span className='absolute bottom-0 left-1/2 w-0 h-0.5 bg-gold group-hover:w-8 group-hover:left-1/4 transition-all duration-300' />
               </a>
             ))}
+
+          {/* LIST EVENT BUTTON */}
+            <Link
+              href="/dashboard/events"
+              className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all text-sm uppercase tracking-wider group relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+              <PlusCircle className="w-4 h-4" />
+              <span>List Event</span>
+            </Link>
+
+            {/* USER MENU */}
+            {isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gold/10 transition-all"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-gold to-yellow-600 rounded-full flex items-center justify-center text-black font-bold text-sm">
+                    {user.firstName.charAt(0)}{user.lastName.charAt(0)}
+                  </div>
+                  <span className="text-sm text-gold font-medium">{user.firstName}</span>
+                </button>
+
+                {/* USER DROPDOWN MENU */}
+                {showUserMenu && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute right-0 mt-2 w-48 bg-black border border-gold/20 rounded-lg shadow-lg shadow-gold/10 overflow-hidden z-50"
+                  >
+                    <div className="px-4 py-3 border-b border-gold/20">
+                      <p className="text-sm font-medium text-white">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      <p className="text-xs text-gray-400">{user.email}</p>
+                    </div>
+
+                    <div className="py-2">
+                      <Link
+                        href="/dashboard"
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <User className="w-4 h-4" />
+                        Dashboard
+                      </Link>
+
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
+            ) : null}
           </div>
         </div>
       </nav>
@@ -175,6 +251,26 @@ export default function Navbar() {
               )}
             </a>
           ))}
+          
+          {/* MOBILE LIST EVENT BUTTON */}
+          <Link
+            href="/dashboard/events"
+            className='flex flex-col items-center justify-center px-3 py-2 relative'
+          >
+            <div className='p-2 rounded-full bg-gradient-to-r from-gold to-yellow-500 border border-gold/30'>
+              <PlusCircle className='w-5 h-5 text-black' />
+            </div>
+            <span className='text-xs mt-1 text-gold font-medium'>List</span>
+            
+            {/* Live indicator - optional */}
+            <div className='absolute top-0 right-2'>
+              <motion.div
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className='w-1.5 h-1.5 bg-red-500 rounded-full'
+              />
+            </div>
+          </Link>
         </div>
       </nav>
 
