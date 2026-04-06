@@ -1,3 +1,4 @@
+// app/context/AuthContext.tsx - Updated to store role properly
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
