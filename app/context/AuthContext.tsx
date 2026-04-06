@@ -87,31 +87,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
 
-      if (data.accessToken || data.token) {
-        const token = data.accessToken || data.token;
-        setToken(token);
-        
-        // Store token in localStorage
-        localStorage.setItem('authToken', token);
-        
-        // Create user object from login response
-        const userData: User = {
-          id: data.user?.id || '',
-          email: email,
-          firstName: data.user?.firstName || 'User',
-          lastName: data.user?.lastName || '',
-          role: data.user?.role === 'Host' ? 'Host' : (data.user?.role === 'Admin' ? 'Admin' : 'User'),
-          profession: data.user?.profession || '',
-          phone: data.user?.phone || '',
-          refId: data.user?.refId || '',
-          emailVerified: data.user?.emailVerified || false,
-          phoneVerified: data.user?.phoneVerified || false,
-        };
-        
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+      if (data.token && data.user) {
+        setToken(data.token);
+        setUser(data.user);
+
+        // Store in localStorage
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
       } else {
-        throw new Error('Invalid response from server - no token provided');
+        throw new Error('Invalid response from server');
       }
     } catch (err: any) {
       const errorMessage = err.message || 'Login failed. Please try again.';

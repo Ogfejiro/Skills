@@ -23,7 +23,7 @@ import {
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import TicketModal from '@/components/TicketModal';
-
+import AdBanner from '@/components/AdBanner';
 
 export default function HomePage() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
@@ -53,6 +53,9 @@ export default function HomePage() {
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <Navbar />
 
+      <div className="container mx-auto px-4">
+        <AdBanner />
+      </div>
       
       {/* Ticket Modal */}
       <TicketModal 

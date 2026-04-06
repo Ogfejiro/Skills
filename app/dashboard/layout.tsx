@@ -1,6 +1,7 @@
 // app/dashboard/layout.tsx - Protected layout for all dashboards
 'use client';
 
+import React, { useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -16,7 +17,7 @@ export default function DashboardLayout({
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push('/auth/login');
+      router.push('/');
     }
   }, [isAuthenticated, loading, router]);
 
