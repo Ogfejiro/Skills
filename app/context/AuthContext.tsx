@@ -1,3 +1,4 @@
+// app/context/AuthContext.tsx - Updated to store role properly
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
@@ -93,13 +94,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Store token in localStorage
         localStorage.setItem('authToken', token);
         
-        // Create user object from login response or minimal user
+        // Create user object from login response
         const userData: User = {
           id: data.user?.id || '',
           email: email,
           firstName: data.user?.firstName || 'User',
           lastName: data.user?.lastName || '',
-          role: (data.user?.role as any) || 'User',
+          role: data.user?.role === 'Host' ? 'Host' : (data.user?.role === 'Admin' ? 'Admin' : 'User'),
           profession: data.user?.profession || '',
           phone: data.user?.phone || '',
           refId: data.user?.refId || '',

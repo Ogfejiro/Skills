@@ -1,48 +1,37 @@
+// app/dashboard/layout.tsx - Protected layout for all dashboards
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import Loader from '@/components/Loader';
+import { useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, loading, token } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
-  const [isVerifying, setIsVerifying] = useState(true);
 
   useEffect(() => {
-    const verifyDashboardAccess = async () => {
-      // Wait for auth to finish loading
-      if (loading) {
-        return;
-      }
+    if (!loading && !isAuthenticated) {
+      router.push('/auth/login');
+    }
+  }, [isAuthenticated, loading, router]);
 
-      // Check if user has valid token
-      if (!isAuthenticated || !token) {
-        router.push('/');
-        return;
-      }
-
-      // Token exists and user is authenticated
-      setIsVerifying(false);
-    };
-
-    verifyDashboardAccess();
-  }, [isAuthenticated, loading, token, router]);
-
-  if (loading || isVerifying) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader />
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-gold animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Loading...</p>
+        </div>
       </div>
     );
   }
 
-  if (!isAuthenticated || !token) {
+  if (!isAuthenticated) {
     return null;
   }
 
