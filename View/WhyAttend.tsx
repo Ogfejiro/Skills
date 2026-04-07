@@ -1,5 +1,139 @@
-// app/why-attend/page.tsx
 'use client';
+
+import { motion } from 'framer-motion';
+import { ChevronRight, Sparkles } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+
+export default function WhyAttendPage() {
+  const reasons = [
+    {
+      id: 1,
+      title: "Elite Networking",
+      description: "Connect with Africa's top Web3 founders, investors, and innovators",
+      icon: '🤝'
+    },
+    {
+      id: 2,
+      title: "Exclusive Community",
+      description: "Join curated experiences with like-minded blockchain enthusiasts",
+      icon: '👑'
+    },
+    {
+      id: 3,
+      title: "Real Opportunities",
+      description: "Access partnerships, investments, and career-changing connections",
+      icon: '💎'
+    },
+    {
+      id: 4,
+      title: "Premium Experiences",
+      description: "VIP treatment, luxury venues, and unforgettable memories",
+      icon: '✨'
+    },
+    {
+      id: 5,
+      title: "Cultural Innovation",
+      description: "Where African culture meets cutting-edge Web3 technology",
+      icon: '🎨'
+    },
+    {
+      id: 6,
+      title: "Proven Results",
+      description: "Attend events that generate real impact and measurable value",
+      icon: '📈'
+    }
+  ];
+
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-black text-white overflow-x-hidden pt-20">
+        {/* HERO */}
+        <section className="relative py-20">
+          <div className="absolute inset-0 flex items-center overflow-hidden">
+            <motion.div
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 20, repeat: Infinity }}
+              className="absolute -top-40 right-0 w-96 h-96 bg-gold/10 rounded-full blur-3xl"
+            />
+          </div>
+
+          <div className="container mx-auto px-4 relative z-10 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="px-4 py-2 rounded-full bg-gold/10 border border-gold/30 text-gold text-sm font-medium inline-block mb-4">
+                Why Choose LOFTE-3
+              </span>
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Experience the 
+                <span className="text-gold"> Premium</span> 
+                <span className="text-gold"> Difference</span>
+              </h1>
+              <p className="text-gray-300 text-xl max-w-3xl mx-auto mb-6">
+                LOFTE-3 isn't just an event platform. It's your gateway to Africa's most influential Web3 community.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* REASONS GRID */}
+        <section className="relative py-20">
+          <div className="container mx-auto px-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {reasons.map((reason, i) => (
+                <motion.div
+                  key={reason.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1, duration: 0.6 }}
+                  viewport={{ once: true }}
+                  className="group p-8 rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/5 to-black hover:border-gold/50 hover:bg-gold/10 transition-all"
+                >
+                  <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">
+                    {reason.icon}
+                  </div>
+                  <h3 className="text-2xl font-bold mb-3">{reason.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">{reason.description}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="relative py-20">
+          <div className="container mx-auto px-4 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                Ready to Join Africa's Premier Web3 Events?
+              </h2>
+              <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                Secure your exclusive spot at our next premium event
+              </p>
+              <motion.a
+                href="/auth/register"
+                whileHover={{ scale: 1.05 }}
+                className="inline-flex items-center gap-2 px-10 py-4 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold rounded-lg hover:shadow-xl hover:shadow-gold/40 transition-all"
+              >
+                <Sparkles className="w-5 h-5" />
+                Get Started Now
+                <ChevronRight className="w-5 h-5" />
+              </motion.a>
+            </motion.div>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useCallback } from 'react';

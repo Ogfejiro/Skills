@@ -1,6 +1,197 @@
-import { Twitter, Disc, MessageCircle, Mail, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Twitter, MessageCircle, Mail, ChevronRight, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  const links = {
+    platform: [
+      { label: 'List Event', href: '/auth/register' },
+      { label: 'Browse Events', href: '/#featured' },
+      { label: 'Dashboard', href: '/dashboard' },
+    ],
+    company: [
+      { label: 'About Us', href: '/#home' },
+      { label: 'Contact', href: 'mailto:support@lofte3.com' },
+      { label: 'Support', href: 'mailto:support@lofte3.com' },
+    ],
+    legal: [
+      { label: 'Privacy Policy', href: '#' },
+      { label: 'Terms of Service', href: '#' },
+      { label: 'Code of Conduct', href: '#' },
+    ]
+  };
+
+  const socials = [
+    { icon: Twitter, href: 'https://x.com/lofte3_', label: 'Twitter' },
+    { icon: MessageCircle, href: 'https://T.me/lofte_live', label: 'Telegram' },
+    { icon: Mail, href: 'mailto:support@lofte3.com', label: 'Email' },
+  ];
+
+  return (
+    <footer className="bg-black text-white border-t border-gold/10">
+      {/* Main Footer Content */}
+      <div className="px-4 md:px-8 py-16">
+        <div className="container mx-auto">
+          {/* Grid Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+            
+            {/* Brand Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="space-y-6"
+            >
+              <div>
+                <h2 className="text-3xl font-bold">
+                  <span className="text-white">LO</span>FTE
+                  <span className="text-gold">-3</span>
+                </h2>
+                <p className="text-gray-400 text-sm mt-2">Africa's Premier Web3 Events</p>
+              </div>
+              
+              <p className="text-gray-400 max-w-xs leading-relaxed">
+                Connecting Africa's Web3 community through unforgettable premium experiences.
+              </p>
+
+              {/* Social Links */}
+              <div className="flex items-center gap-4 pt-4">
+                {socials.map((social, i) => {
+                  const Icon = social.icon;
+                  return (
+                    <motion.a
+                      key={i}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      whileHover={{ scale: 1.2, color: '#D4AF37' }}
+                      className="text-gray-400 hover:text-gold transition-colors"
+                      aria-label={social.label}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </motion.a>
+                  );
+                })}
+              </div>
+            </motion.div>
+
+            {/* Platform Links */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <h4 className="text-lg font-bold text-gold mb-6">Platform</h4>
+              <ul className="space-y-3">
+                {links.platform.map((link, i) => (
+                  <li key={i}>
+                    <Link href={link.href}>
+                      <motion.span
+                        whileHover={{ x: 4 }}
+                        className="text-gray-400 hover:text-gold transition-colors flex items-center gap-2 group"
+                      >
+                        {link.label}
+                        <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </motion.span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Company Links */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <h4 className="text-lg font-bold text-gold mb-6">Company</h4>
+              <ul className="space-y-3">
+                {links.company.map((link, i) => (
+                  <li key={i}>
+                    <a href={link.href}>
+                      <motion.span
+                        whileHover={{ x: 4 }}
+                        className="text-gray-400 hover:text-gold transition-colors flex items-center gap-2 group"
+                      >
+                        {link.label}
+                        <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </motion.span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Newsletter CTA */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              viewport={{ once: true }}
+              className="p-6 rounded-xl border border-gold/20 bg-gold/5"
+            >
+              <h4 className="text-lg font-bold text-gold mb-4 flex items-center gap-2">
+                <Sparkles className="w-5 h-5" />
+                Get Updates
+              </h4>
+              <p className="text-gray-400 text-sm mb-4">
+                Stay updated on our upcoming events and opportunities
+              </p>
+              <motion.a
+                href="https://x.com/lofte3_"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                className="block w-full px-4 py-2 text-center bg-gold text-black font-bold rounded-lg hover:shadow-lg hover:shadow-gold/40 transition-all text-sm"
+              >
+                Follow Us
+              </motion.a>
+            </motion.div>
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-gradient-to-r from-gold/0 via-gold/20 to-gold/0 mb-8" />
+
+          {/* Bottom Section */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400"
+          >
+            <p>
+              © {currentYear} LOFTE-3. All rights reserved.
+            </p>
+            
+            <div className="flex items-center gap-6">
+              {links.legal.map((link, i) => (
+                <a
+                  key={i}
+                  href={link.href}
+                  className="hover:text-gold transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            <p className="text-xs text-gray-500">
+              Built with passion for Africa's Web3 community
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
   return (
     <footer className="bg-black text-white">
       {/* Main Footer Content */}

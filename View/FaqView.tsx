@@ -1,5 +1,163 @@
-// app/faq/page.tsx
 'use client';
+
+import { motion } from 'framer-motion';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import Navbar from '@/components/Navbar';
+import { useState } from 'react';
+
+export default function FAQPage() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const faqs = [
+    {
+      question: "What is LOFTE-3?",
+      answer: "LOFTE-3 is Africa's premier Web3 event platform designed to host strategic, high-impact IRL and virtual experiences. We bring together innovators, investors, and community leaders to create unforgettable moments and real business opportunities."
+    },
+    {
+      question: "Who should attend?",
+      answer: "LOFTE-3 is perfect for Web3 founders, investors, builders, traders, and anyone passionate about blockchain technology and the African innovation ecosystem."
+    },
+    {
+      question: "How do I get tickets?",
+      answer: "Visit our website and click 'Get Tickets' to purchase tickets for upcoming events. You can select your ticket tier based on the experience level you prefer."
+    },
+    {
+      question: "What's included in ticket packages?",
+      answer: "Each ticket tier includes exclusive access to the event, premium networking opportunities, gourmet catering, and VIP perks depending on your ticket level."
+    },
+    {
+      question: "Can I host an event on LOFTE-3?",
+      answer: "Yes! If you're interested in listing or hosting events, sign up on our platform and follow the submission process. Our team will review and guide you through event creation."
+    },
+    {
+      question: "How can I sponsor LOFTE-3 events?",
+      answer: "We offer various sponsorship packages to align with your brand. Contact our sponsorship team to discuss partnership opportunities that best suit your goals."
+    },
+    {
+      question: "Is there networking at the events?",
+      answer: "Absolutely! Networking is core to our events. We facilitate quality connections through curated mixers, round tables, and dedicated networking sessions designed to spark meaningful relationships."
+    },
+    {
+      question: "Can I attend virtually?",
+      answer: "Many of our events offer hybrid experiences. Check the event details for virtual attendance options. Some exclusive events are exclusive to in-person attendees."
+    }
+  ];
+
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-black text-white overflow-x-hidden pt-20">
+        {/* HERO */}
+        <section className="relative py-20">
+          <div className="absolute inset-0 flex items-center overflow-hidden">
+            <motion.div
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 20, repeat: Infinity }}
+              className="absolute -bottom-40 -right-40 w-96 h-96 bg-gold/10 rounded-full blur-3xl"
+            />
+          </div>
+
+          <div className="container mx-auto px-4 relative z-10 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <span className="px-4 py-2 rounded-full bg-gold/10 border border-gold/30 text-gold text-sm font-medium inline-block mb-4">
+                Common Questions
+              </span>
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Frequently Asked 
+                <span className="text-gold"> Questions</span>
+              </h1>
+              <p className="text-gray-300 text-xl max-w-2xl mx-auto">
+                Everything you need to know about LOFTE-3 events
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* FAQ ACCORDION */}
+        <section className="relative py-20">
+          <div className="container mx-auto px-4 max-w-3xl">
+            <div className="space-y-4">
+              {faqs.map((faq, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.6 }}
+                  viewport={{ once: true }}
+                  className="group"
+                >
+                  <button
+                    onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                    className="w-full p-6 rounded-xl border border-gold/20 bg-black hover:border-gold/50 transition-all text-left flex items-center justify-between"
+                  >
+                    <h3 className="text-lg md:text-xl font-bold text-white pr-4">
+                      {faq.question}
+                    </h3>
+                    <motion.div
+                      animate={{ rotate: openIndex === i ? 180 : 0 }}
+                      className="flex-shrink-0"
+                    >
+                      {openIndex === i ? (
+                        <ChevronUp className="w-6 h-6 text-gold" />
+                      ) : (
+                        <ChevronDown className="w-6 h-6 text-gold/50 group-hover:text-gold transition-colors" />
+                      )}
+                    </motion.div>
+                  </button>
+
+                  <motion.div
+                    initial={false}
+                    animate={{
+                      height: openIndex === i ? 'auto' : 0,
+                      opacity: openIndex === i ? 1 : 0,
+                      marginTop: openIndex === i ? 16 : 0
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-6 pb-6 text-gray-300 leading-relaxed">
+                      {faq.answer}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="relative py-20">
+          <div className="container mx-auto px-4 text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                Still have questions?
+              </h2>
+              <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                Get in touch with our team for personalized support
+              </p>
+              <motion.a
+                href="mailto:support@lofte3.com"
+                whileHover={{ scale: 1.05 }}
+                className="inline-flex items-center gap-2 px-10 py-4 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold rounded-lg hover:shadow-xl hover:shadow-gold/40 transition-all"
+              >
+                Contact Support
+              </motion.a>
+            </motion.div>
+          </div>
+        </section>
+      </main>
+    </>
+  );
+}
 
 import { motion } from 'framer-motion';
 import { 
