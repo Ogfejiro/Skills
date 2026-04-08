@@ -14,17 +14,17 @@ export async function registrationService(
 	role,
 	profession,
 ) {
-	const existingUser = await User.findOne({ email, phone })
+	const existingUser = await User.findOne({
+		$or: [{ email }, { phone }],
+	})
 
 	if (existingUser) {
-		throw new AppError('User already exist with the provided details', 401)
-	}
-
-	if (existingUser.phone === phone) {
-		throw new AppError(
-			'User already exist with the provided phone number',
-			401,
-		)
+		if (existingUser.email === email) {
+			throw new AppError('Email already in use', 401)
+		}
+		if (existingUser.phone === phone) {
+			throw new AppError('Phone already in use', 401)
+		}
 	}
 
 	const hashedPassword = await bcrypt.hash(password, 10)
