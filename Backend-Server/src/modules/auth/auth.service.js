@@ -20,6 +20,13 @@ export async function registrationService(
 		throw new AppError('User already exist with the provided details', 401)
 	}
 
+	if ((existingUser.phone = phone)) {
+		throw new AppError(
+			'User already exist with the provided phone number',
+			401,
+		)
+	}
+
 	const hashedPassword = await bcrypt.hash(password, 10)
 
 	const refId = await generateRefId()
