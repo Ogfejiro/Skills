@@ -20,7 +20,7 @@ export async function registrationService(
 		throw new AppError('User already exist with the provided details', 401)
 	}
 
-	if ((existingUser.phone = phone)) {
+	if (existingUser.phone === phone) {
 		throw new AppError(
 			'User already exist with the provided phone number',
 			401,
