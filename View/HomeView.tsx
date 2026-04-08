@@ -1,69 +1,398 @@
-// app/page.tsx - COMPLETE CORRECTED VERSION WITH EXPIRED EVENT COMMENTED OUT
 'use client';
 
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { 
-  Sparkles, 
-  Users, 
-  Home,
-  ExternalLink,
-  Calendar,
-  Clock,
-  MapPin,
-  Heart,
-  ChevronRight,
-  Zap,
-  Coins,
-  Ticket,
-  Droplets,
-  Infinity,
-  History
-} from 'lucide-react';
+import { Calendar, MapPin, Users, ArrowRight, Sparkles, ChevronRight, History, Coins, Home, Clock, Ticket, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import TicketModal from '@/components/TicketModal';
-import AdBanner from '@/components/AdBanner';
 
 export default function HomePage() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   
-  // LINKS
-  const learnMoreLink = "https://x.com/lofte3_/status/2025126808362918267";
-  const xAccountLink = "https://x.com/onomeofweb3/status/2030947775643353242";
-  const lumaLink = "https://luma.com/cbnabuja";
-  const calendlyLink = "https://calendly.com/hidreamsofweb3/30min";
-  
-  // CONFIGURE YOUR IMAGES HERE:
-  const eventImages = {
-    // Valentine event image
-    valentineEvent: "/images/new.jpg",
-    
-    // Other events
-    nftGala: "/images/meta.jpg",
-    mainParty: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop",
+  const openLink = (link: string) => {
+    if (link) {
+      window.open(link, '_blank');
+    }
   };
 
-  // Function to open link
-  const openLink = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+  const xAccountLink = 'https://x.com';
+  const learnMoreLink = 'https://example.com/about';
+  const calendlyLink = 'https://calendly.com';
+
+  const eventImages = {
+    mainParty: '/images/new.jpg',
+    valentineEvent: '/images/valentine.jpg',
   };
+  
+  const featuredEvent = {
+    id: 1,
+    title: 'LOFTE-3 Project Hangout & Dinner',
+    date: 'March 27, 2026',
+    location: 'Eko Hotels & Suites, Lagos',
+    image: '/images/new.jpg',
+    attendees: 500,
+    description: 'An exclusive evening with Web3 elites'
+  };
+
+  const platformStats = [
+    { label: 'Events Today', value: '♾️' },
+    { label: 'Active Members', value: '10K+' },
+    { label: 'Across Africa', value: '♾️' },
+  ];
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <Navbar />
 
-      <div className="container mx-auto px-4">
-        <AdBanner />
-      </div>
-      
-      {/* Ticket Modal */}
       <TicketModal 
         isOpen={isTicketModalOpen} 
         onClose={() => setIsTicketModalOpen(false)} 
       />
-      
-      {/* ========== HERO SECTION ========== */}
+
+      {/* HERO SECTION */}
+      <section className="relative min-h-screen flex items-center pt-20 md:pt-0 overflow-hidden">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.15 }}
+            transition={{ duration: 0.8 }}
+            className="absolute top-0 right-0 w-96 h-96 bg-gold/40 rounded-full blur-3xl"
+          />
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.1 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="absolute bottom-0 left-0 w-96 h-96 bg-gold/30 rounded-full blur-3xl"
+          />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* LEFT: Text Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="inline-block mb-6"
+              >
+                <span className="px-4 py-2 rounded-full bg-gold/10 border border-gold/30 text-gold text-sm font-medium">
+                  ✨ Premium Event Platform
+                </span>
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight"
+              >
+                Where Web3 Meets 
+                <span className="text-gold"> Reality</span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="text-xl text-gray-300 mb-8 max-w-lg leading-relaxed"
+              >
+                Discover, list, and join unforgettable Web3 events across Africa. Connect with innovators, founders, and community leaders in exclusive IRL experiences.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="flex flex-col sm:flex-row gap-4"
+              >
+                <button
+                  onClick={() => setIsTicketModalOpen(true)}
+                  className="group px-8 py-4 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold rounded-lg hover:shadow-xl hover:shadow-gold/40 transition-all flex items-center justify-center gap-2"
+                >
+                  Get Tickets Now
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </button>
+                <a
+                  href="#featured"
+                  className="px-8 py-4 border-2 border-gold text-gold font-bold rounded-lg hover:bg-gold/10 transition-all flex items-center justify-center gap-2"
+                >
+                  Explore Events
+                  <ArrowRight className="w-5 h-5" />
+                </a>
+              </motion.div>
+
+              {/* Stats */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="grid grid-cols-3 gap-4 mt-12 pt-8 border-t border-gold/20"
+              >
+                {platformStats.map((stat, i) => (
+                  <div key={i} className="text-center">
+                    <div className="text-3xl font-bold text-gold mb-1">{stat.value}</div>
+                    <div className="text-sm text-gray-400">{stat.label}</div>
+                  </div>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            {/* RIGHT: Visual */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="relative"
+            >
+              <div className="relative rounded-2xl overflow-hidden border-2 border-gold/30 shadow-2xl shadow-gold/20">
+                <img
+                  src={featuredEvent.image}
+                  alt="Featured Event"
+                  className="w-full h-96 md:h-[500px] object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                
+                {/* Event Info Card */}
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="absolute bottom-0 left-0 right-0 p-6 bg-black/80 backdrop-blur-md"
+                >
+                  <h3 className="text-xl font-bold mb-3">{featuredEvent.title}</h3>
+                  <div className="space-y-2 text-sm text-gray-300">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-gold" />
+                      {featuredEvent.date}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-gold" />
+                      {featuredEvent.location}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-gold" />
+                      {featuredEvent.attendees}+ Attendees
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED EVENTS SECTION */}
+      <section id="featured" className="relative py-20 bg-black/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <span className="px-4 py-2 rounded-full bg-gold/10 border border-gold/30 text-gold text-sm font-medium inline-block mb-4">
+              🔥 Featured Event
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Premium Web3 Experience
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+              Join our flagship event featuring elite networking and exclusive experiences
+            </p>
+          </motion.div>
+
+          {/* Event Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="bg-gradient-to-br from-gold/10 to-gold/5 border border-gold/30 rounded-2xl overflow-hidden p-8 max-w-4xl mx-auto"
+          >
+            <div className="grid md:grid-cols-3 gap-8 items-center">
+              <div className="md:col-span-2">
+                <div className="inline-block px-3 py-1 rounded-full bg-gold/20 text-gold text-xs font-bold mb-4">
+                  MAIN EVENT
+                </div>
+                <h3 className="text-3xl font-bold mb-4">{featuredEvent.title}</h3>
+                <p className="text-gray-300 mb-6">
+                  {featuredEvent.description}. Experience fine dining, premium networking, and exclusive access to Africa's Web3 elite.
+                </p>
+
+                <div className="grid grid-cols-3 gap-4 mb-6">
+                  <div className="space-y-1">
+                    <div className="text-gray-400 text-sm">DATE</div>
+                    <div className="font-semibold">{featuredEvent.date}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-gray-400 text-sm">LOCATION</div>
+                    <div className="font-semibold">{featuredEvent.location}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-gray-400 text-sm">ATTENDEES</div>
+                    <div className="font-semibold">{featuredEvent.attendees}+</div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsTicketModalOpen(true)}
+                  className="px-6 py-3 bg-gold text-black font-bold rounded-lg hover:shadow-lg hover:shadow-gold/40 transition-all"
+                >
+                  Get Tickets
+                </button>
+              </div>
+
+              <div className="md:col-span-1">
+                <div className="relative h-64 rounded-xl overflow-hidden border-2 border-gold/30">
+                  <img
+                    src={featuredEvent.image}
+                    alt={featuredEvent.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* PLATFORM BENEFITS SECTION */}
+      <section className="relative py-20">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Why Join LOFTE-3?
+            </h2>
+            <p className="text-gray-400 text-lg">
+              Premium experiences designed for the Web3 community
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                title: 'Elite Networking',
+                description: 'Connect with top founders, investors, and builders',
+                icon: '🤝'
+              },
+              {
+                title: 'Exclusive Access',
+                description: 'VIP experiences and premium event privileges',
+                icon: '👑'
+              },
+              {
+                title: 'Community Driven',
+                description: 'Authentic connections with like-minded innovators',
+                icon: '🌍'
+              },
+              {
+                title: 'Cultural Blend',
+                description: 'Web3 meets African culture and creativity',
+                icon: '🎨'
+              },
+              {
+                title: 'Real Opportunities',
+                description: 'Partnerships, investments, and real value creation',
+                icon: '💎'
+              },
+              {
+                title: 'Unforgettable',
+                description: 'Curated experiences you\'ll remember forever',
+                icon: '✨'
+              }
+            ].map((benefit, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.6 }}
+                viewport={{ once: true }}
+                className="p-6 rounded-xl border border-gold/20 bg-black/30 backdrop-blur-sm hover:border-gold/50 transition-all group"
+              >
+                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
+                  {benefit.icon}
+                </div>
+                <h3 className="text-xl font-bold mb-2">{benefit.title}</h3>
+                <p className="text-gray-400">{benefit.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA SECTION */}
+      <section className="relative py-20">
+        <div className="absolute inset-0 flex items-center overflow-hidden">
+          <motion.div
+            animate={{ scale: [1, 1.1, 1] }}
+            transition={{ duration: 20, repeat: Infinity }}
+            className="absolute inset-0 bg-gold/5 rounded-full blur-3xl"
+          />
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              Ready to Experience Web3?
+            </h2>
+            <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+              Secure your spot at Africa's premier Web3 events platform
+            </p>
+
+            <button
+              onClick={() => setIsTicketModalOpen(true)}
+              className="px-10 py-4 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold text-lg rounded-lg hover:shadow-2xl hover:shadow-gold/40 transition-all inline-flex items-center gap-3"
+            >
+              <Sparkles className="w-6 h-6" />
+              Claim Your Tickets
+              <ArrowRight className="w-6 h-6" />
+            </button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* PREVIOUS EVENTS BUTTON */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        viewport={{ once: true }}
+        className="text-center pb-20"
+      >
+        <Link href="/previous-events">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 border-gold/50 text-gold font-bold hover:border-gold hover:bg-gold/10 transition-all"
+          >
+            <History className="w-5 h-5" />
+            View Previous Events
+            <ChevronRight className="w-5 h-5" />
+          </motion.button>
+        </Link>
+      </motion.div>
+    </main>
+  );
+}
       <section id="home" className="relative pt-20 pb-20 md:pt-40 md:pb-32">
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
