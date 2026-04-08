@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import Navbar from '@/components/Navbar';
 import { 
   Home, 
   Calendar, 
@@ -30,7 +31,8 @@ import {
   DollarSign,
   Users,
   MessageCircle,
-  MoreVertical
+  MoreVertical,
+  Loader2
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -106,10 +108,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push('/auth/login');
+    } else if (user && user.role !== 'Admin') {
+      router.push('/dashboard/user');
     } else {
       setLoading(false);
     }
-  }, [authLoading, isAuthenticated, router]);
+  }, [authLoading, isAuthenticated, user, router]);
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -159,16 +163,17 @@ export default function AdminDashboard() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+      <main className="min-h-screen bg-black">
+        <Navbar />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="w-12 h-12 text-gold animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Loading admin dashboard...</p>
         </div>
-      </div>
+      </main>
     );
   }
 
-  if (!isAuthenticated) return null;
+  if (!user || user.role !== 'Admin') return null;
 
   return (
     <div className="min-h-screen bg-gray-50">

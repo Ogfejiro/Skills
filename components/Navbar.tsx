@@ -30,6 +30,18 @@ export default function Navbar() {
     router.push('/')
   }
 
+  const handleListEvent = () => {
+    if (!isAuthenticated) {
+      router.push('/auth/register')
+    } else if (user?.role === 'Host') {
+      router.push('/dashboard/host')
+    } else if (user?.role === 'Admin') {
+      router.push('/dashboard/admin')
+    } else {
+      router.push('/dashboard/user')
+    }
+  }
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40)
@@ -144,14 +156,14 @@ export default function Navbar() {
             ))}
 
           {/* LIST EVENT BUTTON */}
-            <Link
-              href="/dashboard/events"
+            <button
+              onClick={handleListEvent}
               className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all text-sm uppercase tracking-wider group relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
               <PlusCircle className="w-4 h-4" />
               <span>List Event</span>
-            </Link>
+            </button>
 
             {/* USER MENU */}
             {isAuthenticated && user ? (
@@ -253,8 +265,8 @@ export default function Navbar() {
           ))}
           
           {/* MOBILE LIST EVENT BUTTON */}
-          <Link
-            href="/dashboard/events"
+          <button
+            onClick={handleListEvent}
             className='flex flex-col items-center justify-center px-3 py-2 relative'
           >
             <div className='p-2 rounded-full bg-gradient-to-r from-gold to-yellow-500 border border-gold/30'>
@@ -270,7 +282,7 @@ export default function Navbar() {
                 className='w-1.5 h-1.5 bg-red-500 rounded-full'
               />
             </div>
-          </Link>
+          </button>
         </div>
       </nav>
 

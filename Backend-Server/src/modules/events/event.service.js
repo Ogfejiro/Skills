@@ -1,4 +1,5 @@
 import Event from '../../models/Event.model.js'
+import EventTicket from '../../models/EventTicket.model.js'
 import AppError from '../../services/shared/appError.js'
 
 export const createEvent = async (hostId, eventData) => {
@@ -50,6 +51,25 @@ export const getEventById = async (id) => {
 export const updateEvent = async (id, hostId, updateData) => {
 	const event = await Event.findOne({ _id: id, hostId })
 	if (!event) throw new AppError('Event not found or not authorized', 404)
+
+	if (
+		updateData.status.includes('live') &&
+		new Date(event.date) < new Date()
+	) {
+		throw new AppError(
+			'Cannot set event to live if the date is in the past',
+			400,
+		)
+	}
+
+	const ticket = await EventTicket.findOne({ eventId: id })
+	if (updateData.status === 'live' && ticket == null) {
+		throw new AppError(
+			'Cannot set event to live without at least one ticket',
+			400,
+		)
+	}
+
 	const updated = await Event.findByIdAndUpdate(id, updateData, {
 		new: true,
 		runValidators: true,

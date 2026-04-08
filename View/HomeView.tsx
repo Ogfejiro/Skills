@@ -1,666 +1,220 @@
-// app/page.tsx - COMPLETE CORRECTED VERSION WITH EXPIRED EVENT COMMENTED OUT
-'use client';
+'use client'
 
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { 
-  Sparkles, 
-  Users, 
-  Home,
-  ExternalLink,
-  Calendar,
-  Clock,
-  MapPin,
-  Heart,
-  ChevronRight,
-  Zap,
-  Coins,
-  Ticket,
-  Droplets,
-  Infinity,
-  History
-} from 'lucide-react';
-import Link from 'next/link';
-import Navbar from '@/components/Navbar';
-import TicketModal from '@/components/TicketModal';
-import AdBanner from '@/components/AdBanner';
+import { motion } from 'framer-motion'
+import { useState } from 'react'
+import {
+	Calendar,
+	MapPin,
+	Users,
+	ArrowRight,
+	Sparkles,
+	ChevronRight,
+	History,
+	Coins,
+	Home,
+	Clock,
+	Ticket,
+	ExternalLink,
+} from 'lucide-react'
+
+import Link from 'next/link'
+import Navbar from '@/components/Navbar'
+import TicketModal from '@/components/TicketModal'
 
 export default function HomePage() {
-  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
-  
-  // LINKS
-  const learnMoreLink = "https://x.com/lofte3_/status/2025126808362918267";
-  const xAccountLink = "https://x.com/onomeofweb3/status/2030947775643353242";
-  const lumaLink = "https://luma.com/cbnabuja";
-  const calendlyLink = "https://calendly.com/hidreamsofweb3/30min";
-  
-  // CONFIGURE YOUR IMAGES HERE:
-  const eventImages = {
-    // Valentine event image
-    valentineEvent: "/images/new.jpg",
-    
-    // Other events
-    nftGala: "/images/meta.jpg",
-    mainParty: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=2070&auto=format&fit=crop",
-  };
+	const [isTicketModalOpen, setIsTicketModalOpen] = useState(false)
 
-  // Function to open link
-  const openLink = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
+	const openLink = (link: string) => {
+		if (link) window.open(link, '_blank')
+	}
 
-  return (
-    <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      <Navbar />
+	const xAccountLink = 'https://x.com'
+	const learnMoreLink = 'https://example.com/about'
+	const calendlyLink = 'https://calendly.com'
 
-      <div className="container mx-auto px-4">
-        <AdBanner />
-      </div>
-      
-      {/* Ticket Modal */}
-      <TicketModal 
-        isOpen={isTicketModalOpen} 
-        onClose={() => setIsTicketModalOpen(false)} 
-      />
-      
-      {/* ========== HERO SECTION ========== */}
-      <section id="home" className="relative pt-20 pb-20 md:pt-40 md:pb-32">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.2 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-            className="absolute top-20 left-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl"
-          />
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
-            className="absolute bottom-20 right-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl"
-          />
-        </div>
+	const eventImages = {
+		mainParty: '/images/new.jpg',
+		valentineEvent: '/images/valentine.jpg',
+	}
 
-        <div className="container mx-auto px-4 relative">
-          {/* HEADING with Split Text Animation */}
-          <div className="text-center mb-16 w-full">
-            {/* WELCOME TO LOFTE-3 with SPLIT ANIMATION and CENTERED GOLD SHADOW */}
-            <div className="relative w-full flex justify-center mb-12">
-              {/* CENTERED GOLD SHADOW - VERY VISIBLE */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <div className="w-[800px] h-48 bg-gold/40 blur-3xl rounded-full"></div>
-                <div className="w-[600px] h-32 bg-gold/50 blur-2xl rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
-                <div className="w-[400px] h-24 bg-gold/60 blur-xl rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
-              </div>
-              
-              <div className="relative z-10">
-                <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-                  {["WELCOME", "TO", "LOFTE-3"].map((word, index) => (
-                    <motion.div
-                      key={word}
-                      initial={{ opacity: 0, y: 40 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ 
-                        delay: 0.1 + (index * 0.3),
-                        duration: 0.7,
-                        ease: "easeOut"
-                      }}
-                      className="inline-block"
-                    >
-                      <span className="text-4xl md:text-5xl lg:text-6xl font-bold text-white whitespace-nowrap">
-                        {word}
-                      </span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            
-            {/* Crypto Coin Beyond Coin Screen with WORKING animations */}
-            <div className="w-full mb-12">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-5 flex-wrap">
-                {/* Crypto */}
-                <motion.div
-                  initial={{ x: -100, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 1.0, duration: 0.6, ease: "easeOut" }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
-                >
-                  Crypto
-                </motion.div>
-                
-                {/* Coin Icon 1 */}
-                <motion.div
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 1.1, type: "spring", stiffness: 200 }}
-                  className="flex items-center"
-                >
-                  <Coins className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold mx-3" />
-                </motion.div>
-                
-                {/* Beyond */}
-                <motion.div
-                  initial={{ x: -50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 1.2, duration: 0.6, ease: "easeOut" }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
-                >
-                  Beyond
-                </motion.div>
-                
-                {/* Coin Icon 2 */}
-                <motion.div
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ delay: 1.3, type: "spring", stiffness: 200 }}
-                  className="flex items-center"
-                >
-                  <Coins className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gold mx-3" />
-                </motion.div>
-                
-                {/* Screen */}
-                <motion.div
-                  initial={{ x: 50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 1.4, duration: 0.6, ease: "easeOut" }}
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-gold font-semibold"
-                >
-                  Screen
-                </motion.div>
-              </div>
-            </div>
+	const featuredEvent = {
+		title: 'LOFTE-3 Project Hangout & Dinner',
+		date: 'March 27, 2026',
+		location: 'Eko Hotels & Suites, Lagos',
+		image: '/images/new.jpg',
+		attendees: 500,
+		description: 'An exclusive evening with Web3 elites',
+	}
 
-            {/* DESCRIPTION with WORKING animation */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.6, duration: 0.7 }}
-              className="w-full max-w-4xl mx-auto"
-            >
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.8, duration: 0.7 }}
-                className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-12 leading-relaxed text-center px-4"
-              >
-                Africa's leading strategic IRL and virtual Web3 
-                event platform; Driving growth, culture, KPIs and lifestyle. Where blockchain meets real-world celebrations, 
-                exclusive networking, and unforgettable moments with the crypto community.
-              </motion.p>
-              
-              {/* GOLD STATS - INFINITY REPLACES 50+, HALL IN BOX */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 max-w-5xl mx-auto">
-                {[
-                  { icon: <Users className="w-8 h-8" />, label: "10K+", value: "Attendees" },
-                  { icon: <Home className="w-8 h-8 text-gold" />, label: "♾️", value: "Events" },
-                  { icon: <Sparkles className="w-8 h-8" />, label: "♾️", value: "Results" },
-                  { icon: <Home className="w-8 h-8 text-gold" />, label: "Africa", value: "Wide Coverage" },
-                ].map((stat, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    transition={{ delay: 2.0 + idx * 0.15, duration: 0.5, type: "spring" }}
-                    className="text-center"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      className="p-4 rounded-xl bg-gold/10 inline-block mb-4 border border-gold/20"
-                    >
-                      <div className="text-gold flex justify-center items-center">
-                        {stat.icon}
-                      </div>
-                    </motion.div>
-                    <div className="text-2xl md:text-3xl font-bold text-white mb-1">{stat.label}</div>
-                    <div className="text-sm text-gray-400">{stat.value}</div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
-          </div>
+	return (
+		<main className='min-h-screen bg-black text-white overflow-x-hidden'>
+			<Navbar />
 
-          {/* MAIN PARTY IMAGE with WORKING animation - MADE CLICKABLE */}
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              delay: 2.5, 
-              duration: 0.8,
-              type: "spring",
-              stiffness: 100,
-              damping: 15
-            }}
-            className="mt-20"
-          >
-            {/* Gold Glow Effect */}
-            <div className="absolute -inset-4 bg-gold/10 rounded-2xl blur-xl" />
-            
-            {/* Image Container - CLICKABLE */}
-            <motion.div
-              onClick={() => openLink(xAccountLink)}
-              className="block cursor-pointer"
-            >
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 200 }}
-                className="relative rounded-xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
-              >
-                {/* Party Image */}
-                <motion.img
-                  initial={{ scale: 1.2 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 2.6, duration: 1, ease: "easeOut" }}
-                  src={eventImages.mainParty}
-                  alt="Young adults partying at LOFTE-3 event"
-                  className="w-full h-64 md:h-96 object-cover"
-                />
-                
-                {/* Overlay Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-                
-                {/* Gold Badge */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 2.7, duration: 0.5 }}
-                  className="absolute top-4 right-4 px-4 py-2 rounded-full bg-black/80 backdrop-blur-sm border border-gold"
-                >
-                  <span className="text-sm font-bold text-gold flex items-center gap-2">
-                    <Sparkles className="w-3 h-3" />
-                    LIVE NOW
-                  </span>
-                </motion.div>
-                
-                {/* Text Overlay */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 2.8, duration: 0.5 }}
-                  className="absolute bottom-6 left-6 text-white"
-                >
-                  <h3 className="text-2xl md:text-3xl font-bold mb-1">LOFTE-3 Africa</h3>
-                  <p className="text-gray-300">500+ People Partying</p>
-                </motion.div>
-              </motion.div>
-            </motion.div>
-          </motion.div>
+			<TicketModal
+				isOpen={isTicketModalOpen}
+				onClose={() => setIsTicketModalOpen(false)}
+			/>
 
-          {/* LEARN MORE BUTTON */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 3.0 }}
-            className="text-center mt-16"
-          >
-            <motion.button
-              whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(212, 175, 55, 0.4)" }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => openLink(learnMoreLink)}
-              className="inline-flex items-center gap-3 px-10 py-4 rounded-full border-2 border-gold text-gold font-bold hover:bg-gold/10 transition-all cursor-pointer text-lg"
-            >
-              <span>Learn More About Us</span>
-              <ExternalLink className="w-6 h-6" />
-            </motion.button>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 3.1 }}
-              className="text-gray-400 mt-4 text-sm"
-            >
-              Follow our X for event updates
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
+			{/* HERO */}
+			<section className='relative min-h-screen flex items-center pt-20'>
+				<div className='container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center'>
+					{/* LEFT */}
+					<div>
+						<h1 className='text-5xl md:text-7xl font-bold mb-6'>
+							Where Web3 Meets{' '}
+							<span className='text-gold'>Reality</span>
+						</h1>
 
-      {/* ========== UPCOMING EVENTS SECTION ========== */}
-      <section id="events" className="py-20 bg-black relative overflow-hidden">
-        {/* Animated Background Elements */}
-        <div className="absolute top-0 left-0 w-full h-px">
-          <motion.div
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="h-full bg-gradient-to-r from-transparent via-gold to-transparent"
-          />
-        </div>
-        
-        {/* Static background elements */}
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
+						<p className='text-gray-300 mb-8'>
+							Discover and join premium Web3 events across Africa.
+						</p>
 
-        <div className="container mx-auto px-4 relative z-10">
-          {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true, amount: 0.5 }}
-            className="text-center mb-16"
-          >
-            <motion.h2
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              viewport={{ once: true }}
-              className="text-4xl md:text-5xl font-bold mb-4"
-            >
-              <span className="text-white">Upcoming</span>
-              <span className="gold-gradient ml-3">Events</span>
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.4 }}
-              viewport={{ once: true }}
-              className="text-gray-400 text-lg"
-            >
-              Scroll to explore our upcoming Web3 celebrations
-            </motion.p>
-          </motion.div>
+						<div className='flex gap-4'>
+							<button
+								onClick={() => setIsTicketModalOpen(true)}
+								className='px-6 py-3 bg-gold text-black font-bold rounded-lg'
+							>
+								Get Tickets
+							</button>
 
-          {/* Scroll Stacking Container */}
-          <div className="relative">
-            {/* Animated Connector Line */}
-            <motion.div
-              initial={{ height: 0 }}
-              whileInView={{ height: "100%" }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-              viewport={{ once: true }}
-              className="absolute left-1/2 transform -translate-x-1/2 h-full w-px bg-gradient-to-b from-gold via-gold/50 to-transparent hidden md:block"
-            />
+							<a
+								href='#events'
+								className='px-6 py-3 border border-gold text-gold rounded-lg'
+							>
+								Explore
+							</a>
+						</div>
+					</div>
 
-            {/* EVENTS STACK */}
-            <div className="space-y-32 md:space-y-48">
-              {/* EVENT 1: LOFTE-3 PROJECT HANGOUT/CT DINNER EVENT - MAIN EVENT */}
-              <motion.div
-                initial={{ opacity: 0, x: -100 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ 
-                  duration: 0.6,
-                  type: "spring",
-                  stiffness: 100,
-                  damping: 15
-                }}
-                viewport={{ once: true, margin: "-100px" }}
-                className="relative"
-              >
-                {/* Animated Connector Dot */}
-                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-4 h-4 rounded-full bg-gold border-4 border-black" />
-                </div>
+					{/* RIGHT IMAGE */}
+					<div>
+						<img
+							src={featuredEvent.image}
+							className='rounded-xl border border-gold'
+						/>
+					</div>
+				</div>
+			</section>
 
-                {/* Card Container */}
-                <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  {/* Image Side - MADE CLICKABLE to X POST */}
-                  <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                    viewport={{ once: true }}
-                    className="md:order-1 mb-8 md:mb-0"
-                  >
-                    <motion.div
-                      onClick={() => openLink(xAccountLink)}
-                      className="block cursor-pointer"
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        className="relative rounded-2xl overflow-hidden border-2 border-gold shadow-2xl shadow-gold/20"
-                      >
-                        {/* Valentine Event Image */}
-                        <img
-                          src={eventImages.valentineEvent}
-                          alt="LOFTE-3 Project Hangout/CT Dinner Event"
-                          className="w-full h-64 md:h-80 object-cover"
-                        />
-                        
-                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                        
-                        {/* Click indicator */}
-                        <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-gold/50">
-                          <span className="text-xs text-gold flex items-center gap-1">
-                            <ExternalLink className="w-3 h-3" />
-                            View Post
-                          </span>
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                  </motion.div>
+			{/* WELCOME SECTION (FIXED POSITION) */}
+			<section id='home' className='py-20 text-center'>
+				<h2 className='text-4xl md:text-6xl font-bold mb-6'>
+					WELCOME TO LOFTE-3
+				</h2>
 
-                  {/* Content Side */}
-                  <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                    viewport={{ once: true }}
-                    className="md:order-2"
-                  >
-                    <div className="bg-black rounded-2xl border border-gold/30 p-6 md:p-8">
-                      <div className="mb-2">
-                        <span className="inline-block px-4 py-1 rounded-full bg-gold/10 border border-gold mb-4">
-                          <span className="text-gold font-bold">MAIN EVENT</span>
-                        </span>
-                      </div>
-                      
-                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                        LOFTE-3 PROJECT HANGOUT/CT DINNER EVENT 
-                      </h3>
-                      
-                      <p className="text-gray-300 mb-6 leading-relaxed">
-                        An unforgettable evening of fine dining and celebrations with web3 elites of crypto twitter Africa. 
-                        Join us for an exclusive Red Carpet experience featuring gourmet cuisine, premium cocktails, and blockchain networking.
-                      </p>
+				<p className='text-gray-400 max-w-2xl mx-auto mb-10'>
+					Africa's leading Web3 IRL event platform.
+				</p>
 
-                      {/* Event Details */}
-                      <div className="space-y-4 mb-8">
-                        {[
-                          { icon: <Calendar className="w-5 h-5 text-gold" />, label: "Date", value: "March 27, 2026" },
-                          { icon: <Clock className="w-5 h-5 text-gold" />, label: "Time", value: "Scheduled on Ticket", subIcon: <Ticket className="w-4 h-4" /> },
-                          { icon: <MapPin className="w-5 h-5 text-gold" />, label: "Location", value: "Scheduled on Ticket" },
-                        ].map((detail, idx) => (
-                          <div key={idx} className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-gold/10 border border-gold/20">
-                              {detail.icon}
-                            </div>
-                            <div>
-                              <p className="text-sm text-gray-400">{detail.label}</p>
-                              <p className="text-white font-medium flex items-center gap-2">
-                                {detail.subIcon && detail.subIcon}
-                                {detail.value}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+				<div className='flex justify-center gap-6 flex-wrap'>
+					<div className='text-gold text-3xl flex items-center gap-2'>
+						Crypto <Coins />
+					</div>
+					<div className='text-gold text-3xl flex items-center gap-2'>
+						Beyond <Coins />
+					</div>
+					<div className='text-gold text-3xl'>Screen</div>
+				</div>
+			</section>
 
-                      {/* Buttons - MAIN EVENT uses TicketModal */}
-                      <div className="flex flex-col sm:flex-row gap-4">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => setIsTicketModalOpen(true)}
-                          className="flex-1 text-center px-6 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition hover:shadow-lg hover:shadow-gold/20 cursor-pointer"
-                        >
-                          Get Tickets
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => openLink(calendlyLink)}
-                          className="flex-1 text-center px-6 py-3 rounded-full bg-gold text-black font-bold hover:shadow-lg hover:shadow-gold/30 transition cursor-pointer"
-                        >
-                          Sponsor Event
-                        </motion.button>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </motion.div>
+			{/* FEATURED EVENT */}
+			<section id='featured' className='py-20'>
+				<div className='container mx-auto px-4 max-w-4xl'>
+					<div className='border border-gold p-8 rounded-xl'>
+						<h3 className='text-3xl font-bold mb-4'>
+							{featuredEvent.title}
+						</h3>
 
-              {/* EVENT 2: METAMASK COMMUNITY BUILDERS NIGHT - EXPIRED - COMMENTED OUT */}
-              {/*
-              <motion.div
-                initial={{ opacity: 0, x: -100 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true, margin: "-100px" }}
-                className="relative"
-              >
-                <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-3 h-3 rounded-full bg-gold border-2 border-black"></div>
-                </div>
+						<p className='text-gray-400 mb-6'>
+							{featuredEvent.description}
+						</p>
 
-                <div className="md:grid md:grid-cols-2 md:gap-12 items-center">
-                  <motion.div
-                    initial={{ opacity: 0, x: -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                    viewport={{ once: true }}
-                    className="md:order-1 mb-8 md:mb-0"
-                  >
-                    <motion.div
-                      onClick={() => openLink(xAccountLink)}
-                      className="block cursor-pointer"
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        className="relative rounded-2xl overflow-hidden border-2 border-gold/50 hover:border-gold transition-all duration-300 shadow-xl hover:shadow-gold/20"
-                      >
-                        <img
-                          src={eventImages.nftGala}
-                          alt="MetaMask Community Builders Night"
-                          className="w-full h-64 md:h-80 object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                        
-                        <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 backdrop-blur-sm border border-gold/50">
-                          <span className="text-xs text-gold flex items-center gap-1">
-                            <ExternalLink className="w-3 h-3" />
-                            View Post
-                          </span>
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                  </motion.div>
+						<div className='grid grid-cols-3 gap-4 mb-6 text-sm'>
+							<div>{featuredEvent.date}</div>
+							<div>{featuredEvent.location}</div>
+							<div>{featuredEvent.attendees}+ Attendees</div>
+						</div>
 
-                  <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                    viewport={{ once: true }}
-                    className="md:order-2"
-                  >
-                    <div className="bg-black/90 rounded-2xl border border-gold/30 p-6 backdrop-blur-sm">
-                      <div className="mb-4">
-                        <span className="inline-block px-4 py-1 rounded-full bg-red-500/20 border border-red-500/50 mb-3">
-                          <span className="text-red-400 text-sm font-bold">EXPIRED</span>
-                        </span>
-                        <h3 className="text-xl md:text-2xl font-bold text-white mb-3">
-                          METAMASK COMMUNITY BUILDERS NIGHT, ABUJA
-                        </h3>
-                        <p className="text-gray-300 mb-6">
-                          Community Builder Night is a community first version of MetaMask's global Builder Nights bringing Web3 education, onboarding, awards and conversations close to local ecosystem.
-                        </p>
-                      </div>
+						<button
+							onClick={() => setIsTicketModalOpen(true)}
+							className='bg-gold text-black px-6 py-3 rounded-lg font-bold'
+						>
+							Get Tickets
+						</button>
+					</div>
+				</div>
+			</section>
 
-                      <div className="space-y-3 mb-6">
-                        <div className="flex items-center gap-3">
-                          <Calendar className="w-5 h-5 text-gold" />
-                          <div>
-                            <p className="text-sm text-gray-400">Date</p>
-                            <p className="text-white line-through">March 14, 2026</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <MapPin className="w-5 h-5 text-gold" />
-                          <div>
-                            <p className="text-sm text-gray-400">Location</p>
-                            <p className="text-white">Abuja, Nigeria</p>
-                          </div>
-                        </div>
-                      </div>
+			{/* UPCOMING EVENTS */}
+			<section id='events' className='py-20'>
+				<div className='container mx-auto px-4'>
+					<h2 className='text-4xl font-bold text-center mb-16'>
+						Upcoming Events
+					</h2>
 
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <div className="flex-1 text-center px-4 py-3 rounded-full bg-gray-800 text-gray-400 text-sm cursor-not-allowed">
-                          Event Ended
-                        </div>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => openLink(xAccountLink)}
-                          className="flex-1 text-center px-4 py-3 rounded-full bg-gold/20 text-gold font-bold hover:bg-gold/30 transition text-sm border border-gold/50"
-                        >
-                          View Recap
-                        </motion.button>
-                      </div>
-                    </div>
-                  </motion.div>
-                </div>
-              </motion.div>
-              */}
+					<div className='grid md:grid-cols-2 gap-10'>
+						<div className='border border-gold p-6 rounded-xl'>
+							<h3 className='text-2xl font-bold mb-4'>
+								LOFTE-3 Dinner Event
+							</h3>
 
-              {/* Add new events here */}
+							<p className='text-gray-400 mb-6'>
+								Premium Web3 networking dinner.
+							</p>
 
-            </div>
-          </div>
+							<div className='space-y-2 mb-6 text-sm'>
+								<div className='flex items-center gap-2'>
+									<Calendar className='w-4' /> March 27, 2026
+								</div>
+								<div className='flex items-center gap-2'>
+									<MapPin className='w-4' /> Lagos
+								</div>
+							</div>
 
-          {/* Animated View Previous Events Button */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            viewport={{ once: true }}
-            className="text-center mt-20"
-          >
-            <Link href="/previous-events">
-              <motion.button
-                initial={{ scale: 1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                animate={{
-                  boxShadow: [
-                    "0 0 0px rgba(212, 175, 55, 0)",
-                    "0 0 20px rgba(212, 175, 55, 0.5)",
-                    "0 0 0px rgba(212, 175, 55, 0)"
-                  ]
-                }}
-                transition={{
-                  boxShadow: {
-                    duration: 2,
-                    repeatType: "loop"
-                  }
-                }}
-                className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-gradient-to-r from-gold/20 to-gold/10 border-2 border-gold text-gold font-bold hover:bg-gold/20 transition-all cursor-pointer group relative overflow-hidden"
-              >
-                {/* Animated background effect */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/10 to-gold/0"
-                  initial={{ x: "-100%" }}
-                  whileHover={{ x: "100%" }}
-                  transition={{ duration: 0.6 }}
-                />
-                
-                {/* Button content */}
-                <span className="relative z-10 flex items-center gap-3">
-                  <History className="w-5 h-5" />
-                  View Previous Events
-                  <motion.div
-                    initial={{ x: 0 }}
-                    whileHover={{ x: 5 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </motion.div>
-                </span>
-              </motion.button>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-    </main>
-  );
+							<div className='flex gap-4'>
+								<button
+									onClick={() => setIsTicketModalOpen(true)}
+									className='flex-1 border border-gold text-gold py-2 rounded-lg'
+								>
+									Tickets
+								</button>
+
+								<button
+									onClick={() => openLink(calendlyLink)}
+									className='flex-1 bg-gold text-black py-2 rounded-lg'
+								>
+									Sponsor
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			{/* CTA */}
+			<section className='py-20 text-center'>
+				<h2 className='text-4xl font-bold mb-6'>
+					Ready to Experience Web3?
+				</h2>
+
+				<button
+					onClick={() => setIsTicketModalOpen(true)}
+					className='px-10 py-4 bg-gold text-black font-bold rounded-lg'
+				>
+					Claim Tickets
+				</button>
+			</section>
+
+			{/* PREVIOUS EVENTS */}
+			<div className='text-center pb-20'>
+				<Link href='/previous-events'>
+					<button className='px-8 py-3 border border-gold text-gold rounded-full flex items-center gap-2 mx-auto'>
+						<History className='w-4' />
+						Previous Events
+						<ChevronRight className='w-4' />
+					</button>
+				</Link>
+			</div>
+		</main>
+	)
 }

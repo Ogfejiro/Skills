@@ -32,6 +32,18 @@ export const createEventController = asyncHandler(async (req, res) => {
 	) {
 		throw new AppError('All fields are required', 403)
 	}
+
+	if (capacity <= 5) {
+		throw new AppError(
+			'Event capacity cannot be less than or equal to 5',
+			400,
+		)
+	}
+
+	if (new Date(date) < new Date()) {
+		throw new AppError('Event date cannot be in the past', 400)
+	}
+
 	const event = await createEvent(id, {
 		title,
 		description,
@@ -42,6 +54,7 @@ export const createEventController = asyncHandler(async (req, res) => {
 		category,
 		tags,
 	})
+
 	res.status(201).json({
 		success: true,
 		message: 'Event created successfully',

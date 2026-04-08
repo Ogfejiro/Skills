@@ -28,7 +28,20 @@ export default function LoginPage() {
     try {
       await login(email, password);
       toast.success('Login successful!');
-      router.push('/dashboard/events');
+      // Get user from localStorage to determine role
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        if (user.role === 'Host') {
+          router.push('/dashboard/host');
+        } else if (user.role === 'Admin') {
+          router.push('/dashboard/admin');
+        } else {
+          router.push('/dashboard/user');
+        }
+      } else {
+        router.push('/dashboard/user');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Login failed. Please check your credentials.');
     } finally {
