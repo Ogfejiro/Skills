@@ -64,7 +64,6 @@ export const createEventController = asyncHandler(async (req, res) => {
 })
 
 export const getHostEventsController = asyncHandler(async (req, res) => {
-	console.log('hostId:', req.user.role)
 	const { page = 1, limit = 10 } = req.query
 	const hostId = req.user.id
 

@@ -7,6 +7,7 @@ import helmet from 'helmet'
 import authRoutes from './modules/auth/auth.route.js'
 import hostRoutes from './modules/host Profile/host.route.js'
 import eventRoutes from './modules/events/event.route.js'
+import publicEventRoutes from './modules/events/event.public.route.js'
 import paymentRoutes from '../src/modules/payments/payment.routes.js'
 import errorMiddle from '../src/services/middleware/error.js'
 import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
@@ -15,41 +16,42 @@ dotenv.config()
 
 const app = express()
 app.use(
-    cors({
-        origin: process.env.FRONTEND_URL,
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: [
-            'Content-Type',
-            'Authorization',
-            'verif-hash',
-            'x-flutterwave-signature',
-            'x-flutterwave-event',
-            'x-flutterwave-timestamp',
-            'x-flutterwave-idempotency-key',
-            'x-flutterwave-signature-256',
-            'x-flutterwave-signature-512',
-        ],
-    }),
+	cors({
+		origin: process.env.FRONTEND_URL,
+		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		allowedHeaders: [
+			'Content-Type',
+			'Authorization',
+			'verif-hash',
+			'x-flutterwave-signature',
+			'x-flutterwave-event',
+			'x-flutterwave-timestamp',
+			'x-flutterwave-idempotency-key',
+			'x-flutterwave-signature-256',
+			'x-flutterwave-signature-512',
+		],
+	}),
 )
 app.use(morgan('dev'))
 app.use(helmet())
 
 app.post(
-    '/api/payments/crypto-webhook',
-    express.raw({ type: 'application/json' }),
-    cryptoWebhook,
+	'/api/payments/crypto-webhook',
+	express.raw({ type: 'application/json' }),
+	cryptoWebhook,
 )
 app.use(express.json())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/host', hostRoutes)
 app.use('/api/events', eventRoutes)
+app.use('/api/event-public', publicEventRoutes)
 app.use('/api/payments', paymentRoutes)
 
 app.use(errorMiddle)
 const PORT = process.env.PORT
 
 app.listen(PORT, async () => {
-    await connectDB()
-    console.log('Server running on port', PORT)
+	await connectDB()
+	console.log('Server running on port', PORT)
 })
