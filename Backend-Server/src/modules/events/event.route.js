@@ -2,8 +2,6 @@ import express from 'express'
 import {
 	createEventController,
 	getHostEventsController,
-	getPublicEventsController,
-	getEventController,
 	updateEventController,
 	deleteEventController,
 	cloudinarySignature,
