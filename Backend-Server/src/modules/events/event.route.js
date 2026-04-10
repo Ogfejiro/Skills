@@ -18,10 +18,6 @@ const router = express.Router()
 
 router.use(profileLimiter)
 
-//// Public
-router.get('/', getPublicEventsController)
-router.get('/:id', getEventController)
-
 // Host protected
 router.use(authenticateToken, authorizeRoles('Host'))
 router.get('/host', getHostEventsController)
