@@ -1,53 +1,323 @@
-// app/dashboard/events/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
-import { 
-  Calendar,
-  MapPin,
-  Clock,
-  Eye,
-  Edit,
-  Trash2,
-  Plus,
-  Search,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Clock as ClockIcon,
-  DollarSign,
-  Users,
-  TrendingUp,
-  Download,
-  MoreVertical,
-  Copy,
-  Share2,
-  Star,
-  MessageCircle
-} from 'lucide-react';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/context/AuthContext';
+import { Loader2, ArrowLeft, Upload } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import Navbar from '@/components/Navbar';
+import eventService, { EventData } from '@/app/services/eventService';
 
-interface DashboardEvent {
-  id: string;
-  title: string;
-  date: string;
-  location: string;
-  bannerImage: string;
-  status: 'pending' | 'review' | 'approved' | 'rejected' | 'published' | 'past';
-  paymentStatus: 'pending' | 'paid' | 'refunded';
-  ticketSales: number;
-  revenue: number;
-  views: number;
-  createdAt: string;
+export default function CreateEventPage() {
+  const router = useRouter();
+  const { user, token } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [bannerPreview, setBannerPreview] = useState<string>('');
+
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    date: '',
+    venue: '',
+    capacity: '',
+    banner: '',
+    category: '',
+    tags: '',
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleBannerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setBannerPreview(result);
+        setFormData(prev => ({
+          ...prev,
+          banner: result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      // Validate required fields
+      if (!formData.title || !formData.description || !formData.date || !formData.venue || !formData.capacity || !formData.banner || !formData.category) {
+        throw new Error('All fields are required');
+      }
+
+      // Validate capacity
+      const capacityNum = parseInt(formData.capacity);
+      if (capacityNum <= 5) {
+        throw new Error('Event capacity must be greater than 5');
+      }
+
+      // Validate date is in future
+      if (new Date(formData.date) < new Date()) {
+        throw new Error('Event date cannot be in the past');
+      }
+
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+
+      const eventData: EventData = {
+        title: formData.title,
+        description: formData.description,
+        date: formData.date,
+        venue: formData.venue,
+        capacity: capacityNum,
+        banner: formData.banner,
+        category: formData.category,
+        tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
+      };
+
+      const response = await eventService.createEvent(eventData, token);
+
+      if (response.success) {
+        setSuccess('Event created successfully! It is now pending review.');
+        setFormData({
+          title: '',
+          description: '',
+          date: '',
+          venue: '',
+          capacity: '',
+          banner: '',
+          category: '',
+          tags: '',
+        });
+        setBannerPreview('');
+
+        // Redirect to host dashboard after 2 seconds
+        setTimeout(() => {
+          router.push('/dashboard/host');
+        }, 2000);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create event');
+      console.error('Error creating event:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="min-h-screen bg-black text-white">
+      <Navbar />
+
+      <div className="container mx-auto px-4 pt-28 pb-12">
+        {/* Header */}
+        <div className="mb-8">
+          <Link
+            href="/dashboard/host"
+            className="flex items-center gap-2 text-gold hover:text-gold/80 transition mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Link>
+          <h1 className="text-3xl md:text-4xl font-bold mb-2">Create New Event</h1>
+          <p className="text-gray-400">Fill in the details below to create your event</p>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 p-4 border border-red-500/30 bg-red-500/10 rounded-lg text-red-400">
+            {error}
+          </div>
+        )}
+
+        {/* Success Alert */}
+        {success && (
+          <div className="mb-6 p-4 border border-green-500/30 bg-green-500/10 rounded-lg text-green-400">
+            {success}
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="max-w-2xl">
+          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-8 space-y-6">
+            {/* Event Title */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Event Title *</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="e.g., Tech Conference 2026"
+                className="w-full px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold transition"
+                required
+              />
+            </div>
+
+            {/* Event Description */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Event Description *</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Describe your event in detail..."
+                rows={4}
+                className="w-full px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold transition"
+                required
+              />
+            </div>
+
+            {/* Event Date and Venue */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Event Date *</label>
+                <input
+                  type="datetime-local"
+                  name="date"
+                  value={formData.date}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg text-white focus:outline-none focus:border-gold transition"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Venue/Location *</label>
+                <input
+                  type="text"
+                  name="venue"
+                  value={formData.venue}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Lagos Convention Centre"
+                  className="w-full px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold transition"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Capacity and Category */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Event Capacity *</label>
+                <input
+                  type="number"
+                  name="capacity"
+                  value={formData.capacity}
+                  onChange={handleInputChange}
+                  placeholder="Minimum 6 attendees"
+                  min="6"
+                  className="w-full px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold transition"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Category *</label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg text-white focus:outline-none focus:border-gold transition"
+                  required
+                >
+                  <option value="">Select a category</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Business">Business</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Education">Education</option>
+                  <option value="Art & Culture">Art & Culture</option>
+                  <option value="Social">Social</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Tags (comma-separated)</label>
+              <input
+                type="text"
+                name="tags"
+                value={formData.tags}
+                onChange={handleInputChange}
+                placeholder="e.g., tech, innovation, networking"
+                className="w-full px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold transition"
+              />
+            </div>
+
+            {/* Banner Image */}
+            <div>
+              <label className="block text-sm font-medium mb-2">Event Banner Image *</label>
+              <div className="border-2 border-dashed border-gold/30 rounded-lg p-6 text-center cursor-pointer hover:border-gold transition">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleBannerChange}
+                  className="hidden"
+                  id="banner-input"
+                  required
+                />
+                <label htmlFor="banner-input" className="cursor-pointer">
+                  {bannerPreview ? (
+                    <div>
+                      <img src={bannerPreview} alt="Banner preview" className="w-full h-48 object-cover rounded-lg mb-2" />
+                      <p className="text-gold text-sm">Click to change image</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <Upload className="w-8 h-8 text-gold mx-auto mb-2" />
+                      <p className="text-gray-300">Click to upload or drag and drop</p>
+                      <p className="text-gray-500 text-sm">PNG, JPG, GIF up to 10MB</p>
+                    </div>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="flex gap-4 pt-4">
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating Event...
+                  </>
+                ) : (
+                  'Create Event'
+                )}
+              </button>
+              <Link
+                href="/dashboard/host"
+                className="flex-1 flex items-center justify-center px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition"
+              >
+                Cancel
+              </Link>
+            </div>
+          </div>
+        </form>
+      </div>
+    </main>
+  );
 }
-
-export default function EventsDashboard() {
-  const [events, setEvents] = useState<DashboardEvent[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [currentPage, setCurrentPage] = useState(1);
