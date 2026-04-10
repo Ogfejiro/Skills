@@ -65,6 +65,52 @@ class EventService {
     }
   }
 
+  // Upload banner to Cloudinary
+  async uploadBanner(file: File): Promise<string> {
+    try {
+      console.log('☁️ Uploading image to Cloudinary...');
+
+      // 1. Get signature from backend
+      const sigRes = await fetch(`${this.baseUrl}/api/events/cloudinary-signature`);
+      if (!sigRes.ok) {
+        throw new Error('Failed to get upload signature');
+      }
+
+      const { signature, timestamp, apiKey, cloudName, folder } = await sigRes.json();
+
+      // 2. Upload to Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('api_key', apiKey);
+      formData.append('timestamp', timestamp);
+      formData.append('signature', signature);
+      formData.append('folder', folder)
+
+      const uploadRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      if (!uploadRes.ok) {
+        const error = await uploadRes.json();
+        console.error('❌ Cloudinary upload error:', error);
+        throw new Error('Image upload failed');
+      }
+
+      const data = await uploadRes.json();
+
+      console.log('✅ Image uploaded:', data.secure_url);
+
+      return data.secure_url;
+    } catch (error) {
+      console.error('❌ Upload banner error:', error);
+      throw error;
+    }
+  }
+
   async getHostEvents(token: string, page: number = 1, limit: number = 10): Promise<GetHostEventsResponse> {
     try {
       console.log('📖 Fetching host events:', { page, limit });

@@ -6,6 +6,7 @@ import {
 	getEventById,
 	updateEvent,
 	deleteEvent,
+	generateBannerSignature,
 } from './event.service.js'
 
 export const createEventController = asyncHandler(async (req, res) => {
@@ -112,4 +113,16 @@ export const deleteEventController = asyncHandler(async (req, res) => {
 		success: true,
 		message: 'Event deleted',
 	})
+})
+
+export const cloudinarySignature = asyncHandler(async (req, res) => {
+	const hostId = req.user.id
+
+	if (!hostId) {
+		throw new AppError('UnAthorized', 409)
+	}
+
+	const result = await generateBannerSignature(hostId)
+
+	res.status(200).json(result)
 })

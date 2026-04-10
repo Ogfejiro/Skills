@@ -224,6 +224,7 @@
 import { useState } from "react";
 import WhyAttendPage from '@/View/WhyAttend';
 import FaqView from '@/View/FaqView';
+import WhyAttend from "@/View/WhyAttend";
 
 
 
@@ -267,6 +268,8 @@ const KEY_FEATURES = [
     desc: "This feature highlights the profiles of keynote speakers, panelists, and workshop leaders.",
   },
 ];
+
+const NAV_LINKS = ["Events", "About", "FAQ", "Contact"];
 
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -678,8 +681,7 @@ function CheckItem({ label, checked }: { label: string; checked: boolean }) {
     </div>
   );
 
-  <FaqView/>
-  <WhyAttend/>
+  <><FaqView /><WhyAttend /></>
 
 
 }

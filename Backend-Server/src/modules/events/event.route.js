@@ -6,6 +6,7 @@ import {
 	getEventController,
 	updateEventController,
 	deleteEventController,
+	cloudinarySignature,
 } from './event.controller.js'
 import {
 	authenticateToken,
@@ -25,6 +26,7 @@ router.get('/:id', getEventController)
 router.use(authenticateToken, authorizeRoles('Host'))
 router.get('/host', getHostEventsController)
 router.post('/', createEventController)
+router.get('/cloudinary-signature', cloudinarySignature)
 router.put('/:id', updateEventController)
 router.delete('/:id', deleteEventController)
 

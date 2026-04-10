@@ -1,6 +1,8 @@
+import User from '../../models/User.model.js'
 import Event from '../../models/Event.model.js'
 import EventTicket from '../../models/EventTicket.model.js'
 import AppError from '../../services/shared/appError.js'
+import cloudinary from './../../config/cloudinary.js'
 
 export const createEvent = async (hostId, eventData) => {
 	const event = await Event.create({ ...eventData, hostId })
@@ -81,4 +83,30 @@ export const deleteEvent = async (id, hostId) => {
 	const event = await Event.findOneAndDelete({ _id: id, hostId })
 	if (!event) throw new AppError('Event not found or not authorized', 404)
 	return { success: true, message: 'Event deleted' }
+}
+
+export const generateBannerSignature = async (hostId) => {
+	const user = await User.findById({ _id: hostId })
+	if (!user || user.role != 'Host') {
+		throw new AppError('Invalid User', 400)
+	}
+
+	const timestamp = Math.round(Date.now() / 1000)
+
+	const paramsToSign = {
+		timestamp,
+		folder: 'event_banner',
+	}
+
+	const signature = cloudinary.utils.api_sign_request(
+		paramsToSign,
+		process.env.CLOUDINARY_API_SECRET,
+	)
+
+	return res.json({
+		...paramsToSign,
+		signature,
+		apiKey: process.env.CLOUDINARY_API_KEY,
+		cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+	})
 }
