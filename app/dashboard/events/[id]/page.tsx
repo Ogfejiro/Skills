@@ -220,6 +220,130 @@ export default function ViewEventPage() {
 			<Navbar />
 
 			{/* Event UI unchanged */}
+			<div className='container mx-auto px-4 pt-28 pb-12'>
+				<Link
+					href='/dashboard/host'
+					className='flex items-center gap-2 text-gold mb-4'
+				>
+					<ArrowLeft className='w-4 h-4' />
+					Back
+				</Link>
+			</div>
+
+			{/* Event Banner */}
+
+			{event.banner && (
+				<div className='mb-8 rounded-xl overflow-hidden border border-gold/20'>
+					<img
+						src={event.banner}
+						alt={event.title}
+						className='w-full h-96 object-cover'
+					/>
+				</div>
+			)}
+
+			{/* Event Details Card */}
+
+			<div className='bg-gray-900/50 border border-gold/20 rounded-xl p-8 space-y-6'>
+				{/* Title and Status */}
+				<div>
+					<h1 className='text-4xl font-bold mb-4'>{event.title}</h1>
+					<div className='flex items-center gap-3 flex-wrap'>
+						{getStatusBadge(event.status)}{' '}
+						{event.category && (
+							<span className='inline-block px-3 py-1 text-sm bg-gray-800 text-gray-300 rounded-lg border border-gold/20'>
+								{event.category}
+							</span>
+						)}
+					</div>
+				</div>
+
+				{/* Key Information */}
+				<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+					<div className='space-y-4'>
+						<div className='flex items-start gap-3'>
+							<Calendar className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
+							<div>
+								<p className='text-gray-400 text-sm'>
+									{' '}
+									Date & Time{' '}
+								</p>
+								<p className='text-white'>
+									{' '}
+									{formatDate(event.date)}{' '}
+								</p>
+							</div>
+						</div>
+						<div className='flex items-start gap-3'>
+							<MapPin className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
+							<div>
+								<p className='text-gray-400 text-sm'>Venue</p>
+								<p className='text-white'>{event.venue}</p>
+							</div>
+						</div>
+						<div className='flex items-start gap-3'>
+							<Users className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
+							<div>
+								<p className='text-gray-400 text-sm'>
+									{' '}
+									Capacity{' '}
+								</p>
+								<p className='text-white'>
+									{' '}
+									{event.ticketsSold} / {event.capacity}{' '}
+									attendees{' '}
+								</p>
+							</div>
+						</div>
+					</div>
+
+					{/* Description */}
+					<div>
+						<p className='text-gray-400 text-sm mb-2'>
+							{' '}
+							Description{' '}
+						</p>
+						<p className='text-white whitespace-pre-wrap'>
+							{' '}
+							{event.description}{' '}
+						</p>
+					</div>
+				</div>
+
+				{/* Tags */}
+				{event.tags && event.tags.length > 0 && (
+					<div>
+						<p className='text-gray-400 text-sm mb-3'>Tags</p>
+						<div className='flex flex-wrap gap-2'>
+							{' '}
+							{event.tags.map((tag, index) => (
+								<span
+									key={index}
+									className='inline-flex items-center gap-1 px-3 py-1 bg-gold/10 text-gold rounded-lg border border-gold/30 text-sm'
+								>
+									<Tag className='w-3 h-3' /> {tag}
+								</span>
+							))}
+						</div>
+					</div>
+				)}
+				<div className='flex gap-4 pt-4'>
+					<Link
+						href={'/dashboard/events/${event._id}/edit'}
+						className='flex-1 px-6 py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition text-center'
+					>
+						{' '}
+						Edit Event{' '}
+					</Link>
+					<Link
+						href='/dashboard/host'
+						className='flex-1 px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center'
+					>
+						{' '}
+						Back to Dashboard{' '}
+					</Link>
+				</div>
+			</div>
 
 			<div className='mt-8 bg-gray-900/50 border border-gold/20 rounded-xl p-8'>
 				<div className='flex justify-between items-center mb-6'>
