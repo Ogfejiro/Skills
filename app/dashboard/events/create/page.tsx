@@ -48,7 +48,7 @@ export default function CreateEventPage() {
     setUploading(true);
 
     try {
-      const imageUrl = await eventService.uploadBanner(file);
+      const imageUrl = await eventService.uploadBanner(file, token!);
 
       setBannerPreview(imageUrl);
       setFormData((prev) => ({
