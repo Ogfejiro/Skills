@@ -399,7 +399,7 @@ export default function WhyAttendPage() {
 													</div>
 												</div>
 												<span className='text-3xl md:text-4xl font-bold text-gray-400'>
-													/{' '}
+													/
 													{reasons.length
 														.toString()
 														.padStart(2, '0')}

@@ -4,7 +4,7 @@ import Event from '../../models/Event.model.js'
 import AppError from './../../services/shared/appError.js'
 
 export async function createEventTicket(hostId, eventId, ticketData) {
-	const eventExist = await Event.findOne({ _id: eventId })
+	const eventExist = await Event.findbyId({ _id: eventId })
 	if (!eventExist) {
 		throw new AppError('Event not found', 404)
 	}
