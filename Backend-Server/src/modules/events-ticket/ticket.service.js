@@ -18,7 +18,7 @@ export async function createEventTicket(hostId, eventId, ticketData) {
 
 	let priceNGN, priceUSD
 
-	if (currency === 'NGN') {
+	if (ticketData.currency === 'NGN') {
 		priceNGN = ticketData.price
 		priceUSD = ticketData.price / rate
 	} else {
@@ -28,7 +28,6 @@ export async function createEventTicket(hostId, eventId, ticketData) {
 
 	const newTicket = new EventTicket({
 		eventId,
-		currency,
 		priceNGN,
 		priceUSD,
 		conversionRate: rate,
