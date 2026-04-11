@@ -1,142 +1,186 @@
+export type Currency = 'NGN' | 'USD'
+
 export interface TicketData {
-  title: string;
-  description?: string;
-  price: number;
-  quantity: number;
-  benefits?: string[];
-  maxPerUser?: number;
+	title: string
+	description?: string
+	price: number
+	quantity: number
+	benefits: string[] // ✅ REQUIRED now (matches backend)
+	maxPerUser?: number
+	currency: Currency // ✅ REQUIRED + supports both
 }
 
-export interface Ticket extends TicketData {
-  _id: string;
-  eventId: string;
-  sold: number;
-  createdAt: string;
-  updatedAt: string;
+export interface Ticket {
+	_id: string
+	eventId: string
+	title: string
+	description?: string
+	price: number
+	quantity: number
+	benefits: string[]
+	maxPerUser?: number
+	currency: Currency // ✅ strict typing
+	sold: number
+	createdAt: string
+	updatedAt: string
 }
 
 export interface CreateTicketResponse {
-  status: string;
-  data: Ticket;
+	status: string
+	data: Ticket
 }
 
 export interface GetTicketsResponse {
-  success: boolean;
-  data: Ticket[];
+	success: boolean
+	data: Ticket[]
 }
 
 class TicketService {
-  private baseUrl = process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com';
+	private baseUrl =
+		process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com'
 
-  async createTicket(eventId: string, ticketData: TicketData, token: string): Promise<CreateTicketResponse> {
-    try {
-      console.log('🎫 Creating ticket for event:', eventId);
+	async createTicket(
+		eventId: string,
+		ticketData: TicketData,
+		token: string,
+	): Promise<CreateTicketResponse> {
+		try {
+			console.log('🎫 Creating ticket for event:', eventId)
 
-      const response = await fetch(`${this.baseUrl}/api/tickets/${eventId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(ticketData),
-      });
+			const response = await fetch(
+				`${this.baseUrl}/api/tickets/${eventId}`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+					body: JSON.stringify(ticketData),
+				},
+			)
 
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('❌ Create ticket error:', error);
-        throw new Error(error.message || 'Failed to create ticket');
-      }
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Create ticket error:', error)
+				throw new Error(error.message || 'Failed to create ticket')
+			}
 
-      const result = await response.json();
-      console.log('✅ Ticket created successfully:', result.data);
-      return result;
-    } catch (error) {
-      console.error('❌ Create ticket service error:', error);
-      throw error;
-    }
-  }
+			const result = await response.json()
+			console.log('✅ Ticket created successfully:', result.data)
+			return result
+		} catch (error) {
+			console.error('❌ Create ticket service error:', error)
+			throw error
+		}
+	}
 
-  async getEventTickets(eventId: string, token: string): Promise<GetTicketsResponse> {
-    try {
-      console.log('🎫 Fetching tickets for event:', eventId);
+	async getEventTickets(
+		eventId: string,
+		token: string,
+	): Promise<GetTicketsResponse> {
+		try {
+			console.log('🎫 Fetching tickets for event:', eventId)
 
-      const response = await fetch(`${this.baseUrl}/api/tickets/${eventId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+			const response = await fetch(
+				`${this.baseUrl}/api/tickets/${eventId}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			)
 
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('❌ Get tickets error:', error);
-        throw new Error(error.message || 'Failed to fetch tickets');
-      }
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Get tickets error:', error)
+				throw new Error(error.message || 'Failed to fetch tickets')
+			}
 
-      const result = await response.json();
-      console.log('✅ Tickets fetched successfully:', result.data);
-      return { success: true, data: result.data || [] };
-    } catch (error) {
-      console.error('❌ Get tickets service error:', error);
-      throw error;
-    }
-  }
+			const result = await response.json()
+			console.log('✅ Tickets fetched successfully:', result.data)
 
-  async updateTicket(ticketId: string, ticketData: Partial<TicketData>, token: string): Promise<CreateTicketResponse> {
-    try {
-      console.log('✏️ Updating ticket:', ticketId);
+			return {
+				success: true,
+				data: result.data || [],
+			}
+		} catch (error) {
+			console.error('❌ Get tickets service error:', error)
+			throw error
+		}
+	}
 
-      const response = await fetch(`${this.baseUrl}/api/tickets/${ticketId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(ticketData),
-      });
+	async updateTicket(
+		ticketId: string,
+		ticketData: Partial<TicketData>,
+		token: string,
+	): Promise<CreateTicketResponse> {
+		try {
+			console.log('✏️ Updating ticket:', ticketId)
 
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('❌ Update ticket error:', error);
-        throw new Error(error.message || 'Failed to update ticket');
-      }
+			const response = await fetch(
+				`${this.baseUrl}/api/tickets/${ticketId}`,
+				{
+					method: 'PUT',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+					body: JSON.stringify(ticketData),
+				},
+			)
 
-      const result = await response.json();
-      console.log('✅ Ticket updated successfully:', result.data);
-      return result;
-    } catch (error) {
-      console.error('❌ Update ticket service error:', error);
-      throw error;
-    }
-  }
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Update ticket error:', error)
+				throw new Error(error.message || 'Failed to update ticket')
+			}
 
-  async deleteTicket(ticketId: string, token: string): Promise<{ success: boolean; message: string }> {
-    try {
-      console.log('🗑️ Deleting ticket:', ticketId);
+			const result = await response.json()
+			console.log('✅ Ticket updated successfully:', result.data)
+			return result
+		} catch (error) {
+			console.error('❌ Update ticket service error:', error)
+			throw error
+		}
+	}
 
-      const response = await fetch(`${this.baseUrl}/api/tickets/${ticketId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+	async deleteTicket(
+		ticketId: string,
+		token: string,
+	): Promise<{ success: boolean; message: string }> {
+		try {
+			console.log('🗑️ Deleting ticket:', ticketId)
 
-      if (!response.ok) {
-        const error = await response.json();
-        console.error('❌ Delete ticket error:', error);
-        throw new Error(error.message || 'Failed to delete ticket');
-      }
+			const response = await fetch(
+				`${this.baseUrl}/api/tickets/${ticketId}`,
+				{
+					method: 'DELETE',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			)
 
-      const result = await response.json();
-      console.log('✅ Ticket deleted successfully');
-      return { success: true, message: 'Ticket deleted' };
-    } catch (error) {
-      console.error('❌ Delete ticket service error:', error);
-      throw error;
-    }
-  }
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Delete ticket error:', error)
+				throw new Error(error.message || 'Failed to delete ticket')
+			}
+
+			console.log('✅ Ticket deleted successfully')
+
+			return {
+				success: true,
+				message: 'Ticket deleted',
+			}
+		} catch (error) {
+			console.error('❌ Delete ticket service error:', error)
+			throw error
+		}
+	}
 }
 
-export default new TicketService();
+export default new TicketService()

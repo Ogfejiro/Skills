@@ -1,46 +1,67 @@
 import mongoose from 'mongoose'
 
 const eventTicketSchema = new mongoose.Schema(
-  {
-    eventId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Event',
-      required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    description: {
-      type: String,
-    },
-    benefits: [
-      {
-        type: String,
-      },
-    ],
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
+	{
+		eventId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Event',
+			required: true,
+		},
+		title: {
+			type: String,
+			required: true,
+			trim: true,
+		},
+		description: {
+			type: String,
+		},
+		benefits: [
+			{
+				type: String,
+			},
+		],
+		price: {
+			type: Number,
+			required: true,
+			min: 0,
+		},
 
-    quantity: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    sold: {
-      type: Number,
-      default: 0,
-    },
-    maxPerUser: {
-      type: Number,
-      default: 10,
-    },
-  },
-  { timestamps: true },
+		currency: {
+			type: String,
+			enum: ['NGN', 'USD'],
+			required: true,
+		},
+
+		priceNGN: {
+			type: Number,
+			required: true,
+		},
+
+		priceUSD: {
+			type: Number,
+			required: true,
+		},
+
+		conversionRate: {
+			type: Number,
+			required: true,
+		},
+
+		quantity: {
+			type: Number,
+			required: true,
+			min: 0,
+		},
+		sold: {
+			type: Number,
+			default: 0,
+		},
+		maxPerUser: {
+			type: Number,
+			default: 10,
+		},
+	},
+	{ timestamps: true },
 )
 
 eventTicketSchema.index({ eventId: 1 })

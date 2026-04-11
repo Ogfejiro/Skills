@@ -9,8 +9,8 @@ import {
 export const createTicket = asyncHandler(async (req, res) => {
 	const hostId = req.user.id
 	const { eventId } = req.params.id
-	const { title, price, quantity, benefits, description } = req.body
-	if (!title || price === undefined || quantity === undefined) {
+	const { title, price, quantity, benefits, description, currency } = req.body
+	if (!title || !currency || price === undefined || quantity === undefined) {
 		throw new AppError('Title, price, and quantity are required', 400)
 	}
 
@@ -45,7 +45,7 @@ export const getTickets = asyncHandler(async (req, res) => {
 
 export const editTicket = asyncHandler(async (req, res) => {
 	const userId = req.user.id
-	const { title, price, quantity, benefits, description } = req.body
+	const { title, price, quantity, benefits, description, currency } = req.body
 	const ticketId = req.params.id
 	if (!ticketId) {
 		throw new AppError('Ticked ID is required', 400)
@@ -57,6 +57,7 @@ export const editTicket = asyncHandler(async (req, res) => {
 		quantity,
 		benefits,
 		description,
+		currency,
 	})
 
 	res.status(201).json(result)

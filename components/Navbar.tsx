@@ -220,6 +220,17 @@ export default function Navbar() {
 												Dashboard
 											</Link>
 
+											<Link
+												href='/dashboard'
+												className='flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all'
+												onClick={() =>
+													setShowUserMenu(false)
+												}
+											>
+												<User className='w-4 h-4' />
+												Settings
+											</Link>
+
 											<button
 												onClick={handleLogout}
 												className='w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all'

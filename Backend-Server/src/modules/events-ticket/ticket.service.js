@@ -1,10 +1,12 @@
 import EventTicket from '../../models/EventTicket.model.js'
 import Event from '../../models/Event.model.js'
+import Host from '../../models/Host.model.js'
 
 import AppError from './../../services/shared/appError.js'
 
 export async function createEventTicket(hostId, eventId, ticketData) {
-	const eventExist = await Event.findbyId({ _id: eventId })
+	const host = await Host.findById(hostId)
+	const eventExist = await Event.findById({ _id: eventId })
 	if (!eventExist) {
 		throw new AppError('Event not found', 404)
 	}
@@ -12,8 +14,24 @@ export async function createEventTicket(hostId, eventId, ticketData) {
 		throw new AppError('Unauthorized to create ticket for this event', 403)
 	}
 
+	const rate = host.conversionRate
+
+	let priceNGN, priceUSD
+
+	if (currency === 'NGN') {
+		priceNGN = ticketData.price
+		priceUSD = ticketData.price / rate
+	} else {
+		priceUSD = ticketData.price
+		priceNGN = ticketData.price * rate
+	}
+
 	const newTicket = new EventTicket({
 		eventId,
+		currency,
+		priceNGN,
+		priceUSD,
+		conversionRate: rate,
 		...ticketData,
 	})
 	await newTicket.save()

@@ -34,13 +34,15 @@ export default function ViewEventPage() {
 
 	const [showModal, setShowModal] = useState(false)
 	const [editingTicket, setEditingTicket] = useState<Ticket | null>(null)
-	const [processing, setProcessing] = useState(false)
+	const [creating, setProcessing] = useState(false)
 
 	const [ticketForm, setTicketForm] = useState({
 		title: '',
 		description: '',
 		price: '',
 		quantity: '',
+		currency: 'NGN',
+		benefits: [''], // ✅ start with one input
 	})
 
 	const isEventLocked =
@@ -72,18 +74,34 @@ export default function ViewEventPage() {
 
 	const openCreateModal = () => {
 		setEditingTicket(null)
-		setTicketForm({ title: '', description: '', price: '', quantity: '' })
+
+		setTicketForm({
+			title: '',
+			description: '',
+			price: '',
+			quantity: '',
+			currency: 'NGN',
+			benefits: [''],
+		})
+
 		setShowModal(true)
 	}
 
 	const openEditModal = (ticket: Ticket) => {
 		setEditingTicket(ticket)
+
 		setTicketForm({
 			title: ticket.title,
 			description: ticket.description || '',
 			price: String(ticket.price),
 			quantity: String(ticket.quantity),
+			currency: ticket.currency || 'NGN',
+			benefits:
+				ticket.benefits && ticket.benefits.length > 0
+					? ticket.benefits
+					: [''],
 		})
+
 		setShowModal(true)
 	}
 
@@ -97,6 +115,8 @@ export default function ViewEventPage() {
 				description: ticketForm.description,
 				price: Number(ticketForm.price),
 				quantity: Number(ticketForm.quantity),
+				benefits: ticketForm.benefits.filter((b) => b.trim() !== ''),
+				currency: ticketForm.currency as 'NGN' | 'USD',
 			}
 
 			if (editingTicket) {
@@ -350,45 +370,180 @@ export default function ViewEventPage() {
 					)}
 				</div>
 			</div>
-			{/* MODAL */}
+
+			{/* ========================= */}
+			{/* 🧾 MODAL */}
+			{/* ========================= */}
 			{showModal && (
-				<div className='fixed inset-0 bg-black/70 flex items-center justify-center'>
-					<div className='bg-gray-900 p-6 rounded-xl w-full max-w-md space-y-4'>
-						<div className='flex justify-between'>
-							<h2>{editingTicket ? 'Edit' : 'Create'} Ticket</h2>
-							<X onClick={() => setShowModal(false)} />
+				<div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50'>
+					<div className='bg-gray-900 p-6 rounded-xl w-full max-w-md space-y-4 border border-gold/20'>
+						{/* Header */}
+						<div className='flex justify-between items-center'>
+							<h2 className='text-xl font-bold'>Create Ticket</h2>
+							<button onClick={() => setShowModal(false)}>
+								<X />
+							</button>
 						</div>
 
+						{/* Title */}
 						<input
 							placeholder='Title'
+							value={ticketForm.title}
 							onChange={(e) =>
 								setTicketForm({
 									...ticketForm,
 									title: e.target.value,
 								})
 							}
+							className='w-full px-4 py-2 bg-gray-800 rounded'
 						/>
+
+						{/* Description */}
+						<textarea
+							placeholder='Description'
+							value={ticketForm.description}
+							onChange={(e) =>
+								setTicketForm({
+									...ticketForm,
+									description: e.target.value,
+								})
+							}
+							className='w-full px-4 py-2 bg-gray-800 rounded'
+						/>
+
+						{/* ✅ Currency Selector */}
+						<div>
+							<label className='text-sm text-gray-400 mb-1 block'>
+								Currency
+							</label>
+							<div className='flex gap-2'>
+								{['NGN', 'USD'].map((cur) => (
+									<button
+										key={cur}
+										type='button'
+										onClick={() =>
+											setTicketForm({
+												...ticketForm,
+												currency: cur,
+											})
+										}
+										className={`flex-1 py-2 rounded-lg border transition ${
+											ticketForm.currency === cur
+												? 'bg-gold text-black border-gold'
+												: 'bg-gray-800 text-gray-300 border-gray-700 hover:border-gold'
+										}`}
+									>
+										{cur === 'NGN' ? '₦ Naira' : '$ USD'}
+									</button>
+								))}
+							</div>
+						</div>
+
+						{/* Price */}
 						<input
-							placeholder='Price'
+							type='number'
+							placeholder={`Price (${ticketForm.currency})`}
+							value={ticketForm.price}
 							onChange={(e) =>
 								setTicketForm({
 									...ticketForm,
 									price: e.target.value,
 								})
 							}
+							className='w-full px-4 py-2 bg-gray-800 rounded'
 						/>
+
+						{/* Quantity */}
 						<input
+							type='number'
 							placeholder='Quantity'
+							value={ticketForm.quantity}
 							onChange={(e) =>
 								setTicketForm({
 									...ticketForm,
 									quantity: e.target.value,
 								})
 							}
+							className='w-full px-4 py-2 bg-gray-800 rounded'
 						/>
 
-						<button onClick={handleSubmitTicket}>
-							{processing ? 'Saving...' : 'Save'}
+						{/* ========================= */}
+						{/* ✅ Benefits Input (Dynamic) */}
+						{/* ========================= */}
+						<div>
+							<label className='text-sm text-gray-400 mb-2 block'>
+								Benefits
+							</label>
+
+							<div className='space-y-2'>
+								{ticketForm.benefits.map(
+									(benefit: string, index: number) => (
+										<div key={index} className='flex gap-2'>
+											<input
+												type='text'
+												placeholder={`Benefit ${index + 1}`}
+												value={benefit}
+												onChange={(e) => {
+													const updated = [
+														...ticketForm.benefits,
+													]
+													updated[index] =
+														e.target.value
+													setTicketForm({
+														...ticketForm,
+														benefits: updated,
+													})
+												}}
+												className='flex-1 px-4 py-2 bg-gray-800 rounded'
+											/>
+
+											{/* Remove button */}
+											<button
+												type='button'
+												onClick={() => {
+													const updated =
+														ticketForm.benefits.filter(
+															(
+																_: string,
+																i: number,
+															) => i !== index,
+														)
+													setTicketForm({
+														...ticketForm,
+														benefits: updated,
+													})
+												}}
+												className='px-3 bg-red-500/20 text-red-400 rounded'
+											>
+												✕
+											</button>
+										</div>
+									),
+								)}
+							</div>
+
+							{/* Add Benefit Button */}
+							<button
+								type='button'
+								onClick={() =>
+									setTicketForm({
+										...ticketForm,
+										benefits: [...ticketForm.benefits, ''],
+									})
+								}
+								className='mt-3 w-full py-2 border border-dashed border-gold/40 text-gold rounded-lg hover:bg-gold/10 transition'
+							>
+								+ Add Benefit
+							</button>
+						</div>
+
+						{/* Submit */}
+						<button
+							onClick={handleSubmitTicket}
+							disabled={creating}
+							className='w-full py-2 bg-gold text-black rounded-lg'
+						>
+							{creating ? 'Creating...' : 'Create Ticket'}
 						</button>
 					</div>
 				</div>
