@@ -9,6 +9,7 @@ import hostRoutes from './modules/host Profile/host.route.js'
 import eventRoutes from './modules/events/event.route.js'
 import publicEventRoutes from './modules/events/event.public.route.js'
 import paymentRoutes from '../src/modules/payments/payment.routes.js'
+import ticketRoutes from '../src/modules/events-ticket/ticket.route.js'
 import errorMiddle from '../src/services/middleware/error.js'
 import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
 
@@ -47,6 +48,7 @@ app.use('/api/host', hostRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/event-public', publicEventRoutes)
 app.use('/api/payments', paymentRoutes)
+app.use('/api/tickets', ticketRoutes)
 
 app.use(errorMiddle)
 const PORT = process.env.PORT
