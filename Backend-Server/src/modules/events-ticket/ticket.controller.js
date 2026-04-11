@@ -8,7 +8,8 @@ import {
 
 export const createTicket = asyncHandler(async (req, res) => {
 	const hostId = req.user.id
-	const { eventId } = req.params.id
+	const { eventId } = req.params
+	console.log('Event ID', eventId)
 	const { title, price, quantity, benefits, description, currency } = req.body
 	if (!title || !currency || price === undefined || quantity === undefined) {
 		throw new AppError('Title, price, and quantity are required', 400)

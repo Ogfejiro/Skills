@@ -13,7 +13,7 @@ router.get('/public/:id', getTickets)
 
 router.use(authenticateToken, authorizeRoles('Host'))
 router.get('/:id', getTickets)
-router.post('/:id', createTicket)
+router.post('/:eventId', createTicket)
 router.put('/:id', editTicket)
 
 export default router
