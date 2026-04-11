@@ -81,12 +81,16 @@ export default function EditEventPage() {
   const handleBannerChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!token) {
+    setError('Authentication required');
+      return;
+    }
 
     setError('');
     setUploading(true);
 
     try {
-      const imageUrl = await eventService.uploadBanner(file);
+      const imageUrl = await eventService.uploadBanner(file, token!);
 
       setBannerPreview(imageUrl);
       setFormData((prev) => ({
