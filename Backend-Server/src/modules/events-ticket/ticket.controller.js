@@ -25,6 +25,7 @@ export const createTicket = asyncHandler(async (req, res) => {
 		quantity,
 		benefits,
 		description,
+		currency,
 	})
 
 	res.status(201).json({
