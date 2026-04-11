@@ -103,10 +103,10 @@ export const generateBannerSignature = async (hostId) => {
 		process.env.CLOUDINARY_API_SECRET,
 	)
 
-	return res.json({
+	return {
 		...paramsToSign,
 		signature,
 		apiKey: process.env.CLOUDINARY_API_KEY,
 		cloudName: process.env.CLOUDINARY_CLOUD_NAME,
-	})
+	}
 }
