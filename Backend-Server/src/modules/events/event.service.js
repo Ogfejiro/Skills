@@ -55,7 +55,7 @@ export const updateEvent = async (id, hostId, updateData) => {
 	if (!event) throw new AppError('Event not found or not authorized', 404)
 
 	if (
-		updateData.status.includes('live') &&
+		updateData.status?.includes('live') &&
 		new Date(event.date) < new Date()
 	) {
 		throw new AppError(
