@@ -86,8 +86,8 @@ export const deleteEvent = async (id, hostId) => {
 }
 
 export const generateBannerSignature = async (hostId) => {
-	const user = await User.findById({ _id: hostId })
-	if (!user || user.role != 'Host') {
+	const user = await User.findById(hostId)
+	if (!user) {
 		throw new AppError('Invalid User', 400)
 	}
 

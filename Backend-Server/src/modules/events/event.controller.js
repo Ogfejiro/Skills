@@ -1,4 +1,5 @@
 import asyncHandler from '../../services/shared/asyncHandler.js'
+import AppError from '../../services/shared/appError.js'
 import {
 	createEvent,
 	getHostEvents,
@@ -118,7 +119,7 @@ export const cloudinarySignature = asyncHandler(async (req, res) => {
 	const hostId = req.user.id
 
 	if (!hostId) {
-		throw new AppError('UnAthorized', 409)
+		throw new AppError('Unauthorized', 409)
 	}
 
 	const result = await generateBannerSignature(hostId)
