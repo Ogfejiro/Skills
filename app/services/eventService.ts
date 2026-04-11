@@ -76,9 +76,9 @@ class EventService {
         {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         }
       );
 
