@@ -183,7 +183,7 @@ export default function LoginPage() {
 						className='mt-6 pt-6 border-t border-gold/20 text-center'
 					>
 						<p className='text-gray-400 text-sm'>
-							Don't have an account?{' '}
+							Don't have an account?
 							<Link
 								href='/auth/register'
 								className='text-gold hover:text-yellow-400 font-medium transition-colors'
