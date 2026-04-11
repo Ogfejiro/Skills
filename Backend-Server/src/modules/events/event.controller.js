@@ -118,10 +118,6 @@ export const deleteEventController = asyncHandler(async (req, res) => {
 export const cloudinarySignature = asyncHandler(async (req, res) => {
 	const hostId = req.user.id
 
-	if (!hostId) {
-		throw new AppError('Unauthorized', 409)
-	}
-
 	const result = await generateBannerSignature(hostId)
 
 	res.status(200).json(result)
