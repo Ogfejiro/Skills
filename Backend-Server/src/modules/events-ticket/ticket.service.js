@@ -5,7 +5,7 @@ import Host from '../../models/Host.model.js'
 import AppError from './../../services/shared/appError.js'
 
 export async function createEventTicket(hostId, eventId, ticketData) {
-	const host = await Host.findById(hostId)
+	const host = await Host.findOne({ hostId }).populate('hostId')
 	const eventExist = await Event.findById(eventId)
 	if (!eventExist) {
 		throw new AppError('Event not found', 404)
