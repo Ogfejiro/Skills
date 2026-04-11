@@ -1,238 +1,316 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useAuth } from '@/app/context/AuthContext';
-import { Loader2, ArrowLeft, Calendar, MapPin, Users, Tag } from 'lucide-react';
+import {
+  Loader2,
+  ArrowLeft,
+  X,
+  Pencil,
+  Trash2,
+} from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import eventService, { Event } from '@/app/services/eventService';
+import ticketService, {
+  Ticket,
+  TicketData,
+} from '@/app/services/ticketService';
 
 export default function ViewEventPage() {
-  const router = useRouter();
   const params = useParams();
   const eventId = params.id as string;
   const { token } = useAuth();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [event, setEvent] = useState<Event | null>(null);
 
-  // Fetch event data
+  const [loading, setLoading] = useState(true);
+  const [ticketsLoading, setTicketsLoading] = useState(true);
+  const [event, setEvent] = useState<Event | null>(null);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [error, setError] = useState('');
+
+  const [showModal, setShowModal] = useState(false);
+  const [editingTicket, setEditingTicket] = useState<Ticket | null>(null);
+  const [processing, setProcessing] = useState(false);
+
+  const [ticketForm, setTicketForm] = useState({
+    title: '',
+    description: '',
+    price: '',
+    quantity: '',
+  });
+
+  const isEventLocked =
+    event?.status === 'ended' || event?.status === 'cancelled';
+
+  // Fetch
   useEffect(() => {
-    const fetchEvent = async () => {
+    const fetchData = async () => {
       try {
-        if (!token) throw new Error('Authentication required');
-        
-        const response = await eventService.getEventById(eventId, token);
-        if (response.success && response.data) {
-          setEvent(response.data);
-        }
+        if (!token) throw new Error('Auth required');
+
+        const [eventRes, ticketRes] = await Promise.all([
+          eventService.getEventById(eventId, token),
+          ticketService.getEventTickets(eventId, token),
+        ]);
+
+        if (eventRes.success) setEvent(eventRes.data);
+        if (ticketRes.success) setTickets(ticketRes.data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load event');
-        console.error('Error fetching event:', err);
+        setError('Failed to load');
       } finally {
         setLoading(false);
+        setTicketsLoading(false);
       }
     };
 
-    if (eventId && token) {
-      fetchEvent();
-    }
+    if (eventId && token) fetchData();
   }, [eventId, token]);
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'live':
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-500/20 text-green-400 border border-green-500/30">
-            🔴 Live
-          </span>
+  // Open modal
+  const openCreateModal = () => {
+    setEditingTicket(null);
+    setTicketForm({
+      title: '',
+      description: '',
+      price: '',
+      quantity: '',
+    });
+    setShowModal(true);
+  };
+
+  const openEditModal = (ticket: Ticket) => {
+    setEditingTicket(ticket);
+    setTicketForm({
+      title: ticket.title,
+      description: ticket.description || '',
+      price: String(ticket.price),
+      quantity: String(ticket.quantity),
+    });
+    setShowModal(true);
+  };
+
+  // Create / Update
+  const handleSubmit = async () => {
+    if (!token) return;
+
+    setProcessing(true);
+    try {
+      const payload: TicketData = {
+        title: ticketForm.title,
+        description: ticketForm.description,
+        price: Number(ticketForm.price),
+        quantity: Number(ticketForm.quantity),
+      };
+
+      if (editingTicket) {
+        const res = await ticketService.updateTicket(
+          editingTicket._id,
+          payload,
+          token
         );
-      case 'draft':
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
-            ⏳ Draft
-          </span>
+
+        setTickets((prev) =>
+          prev.map((t) =>
+            t._id === editingTicket._id ? res.data : t
+          )
         );
-      case 'Auditing':
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-            🔍 Auditing
-          </span>
+      } else {
+        const res = await ticketService.createTicket(
+          eventId,
+          payload,
+          token
         );
-      case 'ended':
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-500/20 text-gray-400 border border-gray-500/30">
-            ✓ Ended
-          </span>
-        );
-      case 'cancelled':
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-red-500/20 text-red-400 border border-red-500/30">
-            ✕ Cancelled
-          </span>
-        );
-      default:
-        return (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-gray-500/20 text-gray-400 border border-gray-500/30">
-            Unknown
-          </span>
-        );
+        setTickets((prev) => [...prev, res.data]);
+      }
+
+      setShowModal(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setProcessing(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'long', 
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  // Delete
+  const handleDelete = async (ticketId: string) => {
+    if (!token) return;
+
+    if (!confirm('Delete this ticket?')) return;
+
+    try {
+      await ticketService.deleteTicket(ticketId, token);
+      setTickets((prev) => prev.filter((t) => t._id !== ticketId));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-black text-white">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-12 h-12 text-gold animate-spin" />
-          <p className="text-gray-400 ml-4">Loading event details...</p>
-        </div>
+      <main className="min-h-screen bg-black flex items-center justify-center text-white">
+        <Loader2 className="animate-spin" />
       </main>
     );
   }
 
-  if (error || !event) {
-    return (
-      <main className="min-h-screen bg-black text-white">
-        <Navbar />
-        <div className="container mx-auto px-4 pt-28 pb-12">
-          <Link
-            href="/dashboard/host"
-            className="flex items-center gap-2 text-gold hover:text-gold/80 transition mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Link>
-          <div className="p-6 border border-red-500/30 bg-red-500/10 rounded-lg text-red-400">
-            {error || 'Event not found'}
-          </div>
-        </div>
-      </main>
-    );
-  }
+  if (!event) return null;
 
   return (
     <main className="min-h-screen bg-black text-white">
       <Navbar />
 
-      <div className="container mx-auto px-4 pt-28 pb-12">
-        {/* Header */}
-        <div className="mb-8">
-          <Link
-            href="/dashboard/host"
-            className="flex items-center gap-2 text-gold hover:text-gold/80 transition mb-4"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Link>
+      <div className="container mx-auto px-4 pt-28 pb-12 space-y-8">
+        {/* BACK */}
+        <Link href="/dashboard/host" className="flex items-center gap-2 text-gold">
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </Link>
+
+        {/* EVENT */}
+        <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-8">
+          <h1 className="text-3xl font-bold">{event.title}</h1>
+          <p className="text-gray-400 mt-2">{event.description}</p>
         </div>
 
-        {/* Event Banner */}
-        {event.banner && (
-          <div className="mb-8 rounded-xl overflow-hidden border border-gold/20">
-            <img 
-              src={event.banner} 
-              alt={event.title}
-              className="w-full h-96 object-cover"
-            />
-          </div>
-        )}
-
-        {/* Event Details Card */}
+        {/* TICKETS */}
         <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-8 space-y-6">
-          {/* Title and Status */}
-          <div>
-            <h1 className="text-4xl font-bold mb-4">{event.title}</h1>
-            <div className="flex items-center gap-3 flex-wrap">
-              {getStatusBadge(event.status)}
-              {event.category && (
-                <span className="inline-block px-3 py-1 text-sm bg-gray-800 text-gray-300 rounded-lg border border-gold/20">
-                  {event.category}
-                </span>
-              )}
-            </div>
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold">Tickets</h2>
+
+            <button
+              onClick={openCreateModal}
+              disabled={isEventLocked}
+              className="px-4 py-2 bg-gold text-black rounded-lg disabled:opacity-40"
+            >
+              + Add Ticket
+            </button>
           </div>
 
-          {/* Key Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <Calendar className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
-                <div>
-                  <p className="text-gray-400 text-sm">Date & Time</p>
-                  <p className="text-white">{formatDate(event.date)}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
-                <div>
-                  <p className="text-gray-400 text-sm">Venue</p>
-                  <p className="text-white">{event.venue}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Users className="w-5 h-5 text-gold flex-shrink-0 mt-1" />
-                <div>
-                  <p className="text-gray-400 text-sm">Capacity</p>
-                  <p className="text-white">{event.ticketsSold} / {event.capacity} attendees</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div>
-              <p className="text-gray-400 text-sm mb-2">Description</p>
-              <p className="text-white whitespace-pre-wrap">{event.description}</p>
-            </div>
-          </div>
-
-          {/* Tags */}
-          {event.tags && event.tags.length > 0 && (
-            <div>
-              <p className="text-gray-400 text-sm mb-3">Tags</p>
-              <div className="flex flex-wrap gap-2">
-                {event.tags.map((tag, index) => (
-                  <span key={index} className="inline-flex items-center gap-1 px-3 py-1 bg-gold/10 text-gold rounded-lg border border-gold/30 text-sm">
-                    <Tag className="w-3 h-3" />
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
+          {isEventLocked && (
+            <p className="text-red-400 text-sm">
+              Ticket actions disabled (event ended/cancelled)
+            </p>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex gap-4 pt-4">
-            <Link
-              href={`/dashboard/events/${event._id}/edit`}
-              className="flex-1 px-6 py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition text-center"
-            >
-              Edit Event
-            </Link>
-            <Link
-              href="/dashboard/host"
-              className="flex-1 px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center"
-            >
-              Back to Dashboard
-            </Link>
-          </div>
+          {ticketsLoading ? (
+            <Loader2 className="animate-spin" />
+          ) : tickets.length === 0 ? (
+            <div className="text-center text-gray-400 py-10">
+              <p>No tickets yet</p>
+              {!isEventLocked && (
+                <button
+                  onClick={openCreateModal}
+                  className="mt-4 px-6 py-2 bg-gold text-black rounded-lg"
+                >
+                  Create Event Ticket
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {tickets.map((ticket) => (
+                <div
+                  key={ticket._id}
+                  className="p-4 border border-gold/20 rounded-lg flex justify-between items-center"
+                >
+                  <div>
+                    <h3 className="font-bold">{ticket.title}</h3>
+                    <p className="text-sm text-gray-400">
+                      ₦{ticket.price} • {ticket.sold}/{ticket.quantity}
+                    </p>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => openEditModal(ticket)}
+                      disabled={isEventLocked}
+                    >
+                      <Pencil className="w-4 h-4 text-gold" />
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(ticket._id)}
+                      disabled={isEventLocked}
+                    >
+                      <Trash2 className="w-4 h-4 text-red-400" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* MODAL */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
+          <div className="bg-gray-900 p-6 rounded-xl w-full max-w-md space-y-4 border border-gold/20">
+            <div className="flex justify-between">
+              <h2 className="font-bold">
+                {editingTicket ? 'Edit Ticket' : 'Create Ticket'}
+              </h2>
+              <button onClick={() => setShowModal(false)}>
+                <X />
+              </button>
+            </div>
+
+            <input
+              placeholder="Title"
+              value={ticketForm.title}
+              onChange={(e) =>
+                setTicketForm({ ...ticketForm, title: e.target.value })
+              }
+              className="w-full px-4 py-2 bg-gray-800 rounded"
+            />
+
+            <textarea
+              placeholder="Description"
+              value={ticketForm.description}
+              onChange={(e) =>
+                setTicketForm({
+                  ...ticketForm,
+                  description: e.target.value,
+                })
+              }
+              className="w-full px-4 py-2 bg-gray-800 rounded"
+            />
+
+            <input
+              type="number"
+              placeholder="Price"
+              value={ticketForm.price}
+              onChange={(e) =>
+                setTicketForm({ ...ticketForm, price: e.target.value })
+              }
+              className="w-full px-4 py-2 bg-gray-800 rounded"
+            />
+
+            <input
+              type="number"
+              placeholder="Quantity"
+              value={ticketForm.quantity}
+              onChange={(e) =>
+                setTicketForm({ ...ticketForm, quantity: e.target.value })
+              }
+              className="w-full px-4 py-2 bg-gray-800 rounded"
+            />
+
+            <button
+              onClick={handleSubmit}
+              disabled={processing}
+              className="w-full py-2 bg-gold text-black rounded-lg"
+            >
+              {processing
+                ? 'Processing...'
+                : editingTicket
+                ? 'Update Ticket'
+                : 'Create Ticket'}
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
