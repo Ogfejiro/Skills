@@ -66,17 +66,37 @@ class EventService {
   }
 
   // Upload banner to Cloudinary
-  async uploadBanner(file: File): Promise<string> {
+  async uploadBanner(file: File, token: string): Promise<string> {
     try {
       console.log('☁️ Uploading image to Cloudinary...');
 
-      // 1. Get signature from backend
-      const sigRes = await fetch(`${this.baseUrl}/api/events/cloudinary-signature`);
+      // 1. Get signature (AUTH REQUIRED)
+      const sigRes = await fetch(
+        `${this.baseUrl}/api/events/cloudinary-signature`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
       if (!sigRes.ok) {
+        const err = await sigRes.json();
+        console.error('❌ Signature error:', err);
         throw new Error('Failed to get upload signature');
       }
 
-      const { signature, timestamp, apiKey, cloudName, folder } = await sigRes.json();
+      const data = await sigRes.json();
+
+      const {
+        signature,
+        timestamp,
+        apiKey,
+        cloudName,
+        folder = 'event_banner',
+      } = data;
 
       // 2. Upload to Cloudinary
       const formData = new FormData();
@@ -84,7 +104,7 @@ class EventService {
       formData.append('api_key', apiKey);
       formData.append('timestamp', timestamp);
       formData.append('signature', signature);
-      formData.append('folder', folder)
+      formData.append('folder', folder);
 
       const uploadRes = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
@@ -96,21 +116,20 @@ class EventService {
 
       if (!uploadRes.ok) {
         const error = await uploadRes.json();
-        console.error('❌ Cloudinary upload error:', error);
+        console.error('❌ Cloudinary error:', error);
         throw new Error('Image upload failed');
       }
 
-      const data = await uploadRes.json();
+      const uploaded = await uploadRes.json();
 
-      console.log('✅ Image uploaded:', data.secure_url);
+      console.log('✅ Uploaded:', uploaded.secure_url);
 
-      return data.secure_url;
+      return uploaded.secure_url;
     } catch (error) {
       console.error('❌ Upload banner error:', error);
       throw error;
     }
   }
-
   async getHostEvents(token: string, page: number = 1, limit: number = 10): Promise<GetHostEventsResponse> {
     try {
       console.log('📖 Fetching host events:', { page, limit });
