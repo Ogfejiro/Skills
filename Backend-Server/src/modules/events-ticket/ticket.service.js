@@ -31,7 +31,11 @@ export async function getTicketsByEvent(eventId) {
 	return tickets
 }
 
-export async function editTicketById(ticketId, updateData) {
+export async function editTicketById(ticketId, userId, updateData) {
+	const userEvent = await Event.findOne({ hostId: userId })
+	if (!userEvent) {
+		throw new AppError('Not Authorized to access this route', 401)
+	}
 	const ticket = await EventTicket.findByIdAndUpdate(ticketId, updateData, {
 		new: true,
 		runValidators: true,
@@ -39,5 +43,5 @@ export async function editTicketById(ticketId, updateData) {
 	if (!ticket) {
 		throw new AppError('Ticket not found', 404)
 	}
-	return ticket
+	return 'ticket updated'
 }
