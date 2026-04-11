@@ -273,25 +273,34 @@ export default function CreateEventPage() {
 
             {/* Banner Upload */}
             <div>
-              <label className="block text-sm mb-2">Event Banner *</label>
+              <label className="block text-sm mb-2">Event Banner</label>
 
+              {/* Hidden input */}
               <input
+                id="banner-upload"
                 type="file"
                 accept="image/*"
                 onChange={handleBannerChange}
-                className="mb-2"
-                required
+                className="hidden"
               />
 
-              {uploading && (
-                <p className="text-sm text-gray-400">Uploading image...</p>
-              )}
+              {/* Styled button */}
+              <label
+                htmlFor="banner-upload"
+                className="flex items-center justify-center gap-2 w-full px-4 py-3 
+                          border border-gold/30 rounded-lg bg-gray-800 
+                          text-gray-200 cursor-pointer 
+                          hover:border-gold hover:bg-gray-700 transition"
+              >
+                <Upload className="w-4 h-4 text-gold" />
+                <span>{uploading ? 'Uploading...' : 'Choose Banner Image'}</span>
+              </label>
 
+              {/* Preview */}
               {bannerPreview && (
                 <img
                   src={bannerPreview}
-                  alt="Banner preview"
-                  className="mt-4 h-40 w-full object-cover rounded-lg"
+                  className="mt-4 h-40 w-full object-cover rounded-lg border border-gold/20"
                 />
               )}
             </div>
