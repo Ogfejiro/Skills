@@ -319,68 +319,12 @@ export default function Navbar() {
 						</span>
 
 						{/* Live indicator - optional */}
-						<div className='relative'>
-							{isAuthenticated && user && (
-								<button
-									onClick={() =>
-										setShowUserMenu(!showUserMenu)
-									}
-									className='flex items-center gap-2'
-								>
-									<div className='w-8 h-8 bg-gradient-to-br from-gold to-yellow-600 rounded-full flex items-center justify-center text-black font-bold text-sm'>
-										{user.firstName.charAt(0)}
-										{user.lastName.charAt(0)}
-									</div>
-								</button>
-							)}
-
-							{/* MOBILE USER DROPDOWN */}
-							{showUserMenu && user && (
-								<div className='absolute right-0 mt-2 w-48 bg-black border border-gold/20 rounded-lg shadow-lg shadow-gold/10 overflow-hidden z-50'>
-									{/* USER INFO */}
-									<div className='px-4 py-3 border-b border-gold/20'>
-										<p className='text-sm font-medium text-white'>
-											{user.firstName} {user.lastName}
-										</p>
-										<p className='text-xs text-gray-400'>
-											{user.email}
-										</p>
-									</div>
-
-									{/* MENU ITEMS */}
-									<div className='py-2'>
-										<Link
-											href='/dashboard'
-											className='flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all'
-											onClick={() =>
-												setShowUserMenu(false)
-											}
-										>
-											<User className='w-4 h-4' />
-											Dashboard
-										</Link>
-
-										<Link
-											href='/dashboard/profile'
-											className='flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all'
-											onClick={() =>
-												setShowUserMenu(false)
-											}
-										>
-											<User className='w-4 h-4' />
-											Settings / Profile
-										</Link>
-
-										<button
-											onClick={handleLogout}
-											className='w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all'
-										>
-											<LogOut className='w-4 h-4' />
-											Logout
-										</button>
-									</div>
-								</div>
-							)}
+						<div className='absolute top-0 right-2'>
+							<motion.div
+								animate={{ scale: [1, 1.3, 1] }}
+								transition={{ duration: 2, repeat: Infinity }}
+								className='w-1.5 h-1.5 bg-red-500 rounded-full'
+							/>
 						</div>
 					</button>
 				</div>
@@ -424,7 +368,7 @@ export default function Navbar() {
 			</div>
 
 			{/* Spacer for mobile bottom nav */}
-			<div className='md:hidden h-35' />
+			<div className='md:hidden h-20' />
 		</>
 	)
 }
