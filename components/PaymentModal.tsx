@@ -28,6 +28,7 @@ interface Props {
 export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 	const [currency, setCurrency] = useState<'NGN' | 'USD'>('NGN')
 	const [quantity, setQuantity] = useState(1)
+	const [email, setEmail] = useState('')
 	const [loading, setLoading] = useState(false)
 
 	// reset modal state when ticket changes
@@ -38,32 +39,32 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 			setCurrency('NGN')
 		}
 		setQuantity(1)
+		setEmail('')
 	}, [ticket])
 
+	// ✅ SAFE EARLY RETURN (after hooks)
 	if (!isOpen || !ticket) return null
-
-	const [email, setEmail] = useState('')
 
 	const unitPrice = currency === 'USD' ? ticket.priceUSD : ticket.priceNGN
 
 	const totalPrice = unitPrice * quantity
 
 	const handlePayment = async () => {
+		if (!email) {
+			alert('Please enter your email')
+			return
+		}
+
 		try {
 			setLoading(true)
 
 			const payload: PaymentPayload = {
 				amount: totalPrice,
-				email: email,
+				email,
 				userId: crypto.randomUUID(),
 				ticketName: ticket.title,
 				ticketId: ticket.ticketId,
 				quantity,
-			}
-
-			if (!email) {
-				alert('Please enter your email')
-				return
 			}
 
 			let res
@@ -98,7 +99,7 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 					✕
 				</button>
 
-				{/* CURRENCY TOGGLE */}
+				{/* CURRENCY */}
 				<div className='flex gap-2 mb-6'>
 					<button
 						onClick={() => setCurrency('NGN')}
@@ -167,7 +168,7 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 					/>
 				</div>
 
-				{/* PAY BUTTON */}
+				{/* BUTTON */}
 				<button
 					onClick={handlePayment}
 					disabled={loading}
