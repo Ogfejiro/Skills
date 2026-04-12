@@ -19,6 +19,29 @@ const LOGOS = [
 	'Humaans',
 ]
 
+const FEATURES = [
+	{
+		icon: '📅',
+		title: 'Interactive Schedule',
+		desc: 'Easily navigate and plan your day with interactive schedule.',
+	},
+	{
+		icon: '🔒',
+		title: 'Exclusive Content',
+		desc: 'Gain access to exclusive sessions that will elevate your knowledge.',
+	},
+	{
+		icon: '🔔',
+		title: 'Event Updates',
+		desc: 'Stay informed with real-time updates and announcements.',
+	},
+	{
+		icon: '📡',
+		title: 'Live Streaming',
+		desc: 'Experience the event from anywhere with seamless live streaming.',
+	},
+]
+
 const LOFTE3_BENEFITS = [
 	{ icon: '🌐', title: 'Web3 Networking', desc: 'Connect with innovators.' },
 	{ icon: '⭐', title: 'Premium Events', desc: 'Exclusive curated events.' },
@@ -104,33 +127,142 @@ export default function HomePage() {
 		<div className='min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden'>
 			<Navbar />
 
-			{/* HERO */}
-			<section className='relative flex flex-col items-center justify-center text-center px-4 sm:px-6 pt-28 pb-16'>
-				{/* stars */}
+			{/* ── Hero ── */}
+			<section className='relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 overflow-hidden'>
+				{/* Stars background */}
 				<div className='absolute inset-0 pointer-events-none'>
-					{stars.map((s, i) => (
+					{Array.from({ length: 80 }).map((_, i) => (
 						<div
 							key={i}
-							className='absolute bg-white rounded-full'
+							className='absolute rounded-full bg-white'
 							style={{
-								width: s.size,
-								height: s.size,
-								top: `${s.top}%`,
-								left: `${s.left}%`,
-								opacity: s.opacity,
+								width: Math.random() > 0.8 ? '2px' : '1px',
+								height: Math.random() > 0.8 ? '2px' : '1px',
+								top: `${Math.random() * 100}%`,
+								left: `${Math.random() * 100}%`,
+								opacity: Math.random() * 0.6 + 0.1,
 							}}
 						/>
 					))}
 				</div>
 
-				<h1 className='text-3xl sm:text-5xl md:text-6xl font-black text-center max-w-3xl'>
-					Unforgettable <span className='text-[#c9a227]'>Events</span>{' '}
-					Experience
+				{/* Glow orbs */}
+				<div className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#c9a227]/10 rounded-full blur-[120px] pointer-events-none' />
+				<div className='absolute bottom-0 left-1/4 w-[300px] h-[200px] bg-purple-900/20 rounded-full blur-[100px] pointer-events-none' />
+
+				<p className='text-xs text-gray-500 tracking-widest mb-6 uppercase'>
+					✦ This is an unforgettable experience
+				</p>
+
+				<h1 className='text-4xl md:text-6xl lg:text-7xl font-black leading-tight max-w-4xl mb-4'>
+					<span className='text-white'>Join the Celebration</span>
+					<br />
+					<span className='text-white'>Unforgettable </span>
+					<span className='text-[#c9a227]'>Event Experience</span>
 				</h1>
 
-				<p className='text-gray-400 max-w-xl mt-4 text-sm sm:text-base'>
-					Discover premium Web3 events and connect globally.
+				<p className='text-gray-400 max-w-xl text-sm md:text-base mt-4 mb-8 leading-relaxed'>
+					Embark on a journey of sophistication and joy, where each
+					moment is designed to inspire and delight. Join us and
+					discover the perfect fusion.
 				</p>
+
+				<div className='flex flex-col sm:flex-row items-center gap-4'>
+					<button className='px-6 py-3 rounded-full bg-[#c9a227] text-black font-bold text-sm hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-900/40'>
+						Register Now Today →
+					</button>
+					<div className='flex items-center gap-3'>
+						<div className='flex -space-x-2'>
+							{['🧑', '👩', '🧔', '👱'].map((emoji, i) => (
+								<div
+									key={i}
+									className='w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border-2 border-[#0a0a0f] flex items-center justify-center text-xs'
+								>
+									{emoji}
+								</div>
+							))}
+						</div>
+						<div className='text-left'>
+							<p className='text-xs text-white font-semibold'>
+								Relied upon by more
+							</p>
+							<p className='text-xs text-gray-500'>
+								than 20,000 Users
+							</p>
+						</div>
+					</div>
+				</div>
+
+				{/* LOFTE-3 Benefits Cards */}
+				<div className='relative mt-16 w-full max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+					{LOFTE3_BENEFITS.map((benefit, idx) => (
+						<div
+							key={idx}
+							className='bg-[#10101e] rounded-xl border border-white/10 p-6 hover:border-white/20 hover:shadow-lg hover:shadow-[#c9a227]/10 transition-all hover:scale-105'
+						>
+							<div className='text-4xl mb-3'>{benefit.icon}</div>
+							<h3 className='text-sm font-bold text-white mb-2'>
+								{benefit.title}
+							</h3>
+							<p className='text-xs text-gray-400 leading-relaxed'>
+								{benefit.desc}
+							</p>
+						</div>
+					))}
+				</div>
+			</section>
+
+			{/* ── Logo Marquee ── */}
+			<section className='py-12 border-y border-white/5 overflow-hidden'>
+				<div className='flex gap-12 animate-marquee whitespace-nowrap'>
+					{[...LOGOS, ...LOGOS].map((logo, i) => (
+						<span
+							key={i}
+							className='text-gray-500 font-semibold text-sm tracking-wide hover:text-[#c9a227] transition-colors cursor-default'
+						>
+							{logo}
+						</span>
+					))}
+				</div>
+			</section>
+
+			{/* ── Explore Our Event Website Offers ── */}
+			<section className='py-24 px-4 max-w-6xl mx-auto'>
+				<div className='grid md:grid-cols-2 gap-12 items-start'>
+					<div>
+						<span className='text-[10px] text-[#c9a227] tracking-widest uppercase font-semibold'>
+							✦ Website Features
+						</span>
+						<h2 className='text-3xl md:text-4xl font-black mt-3 mb-4 leading-tight'>
+							Explore Our Event
+							<br />
+							Website Offers
+						</h2>
+						<p className='text-gray-400 text-sm leading-relaxed mb-10 max-w-md'>
+							Our interactive schedule allows attendees to easily
+							view and plan their day. It offers a user-friendly
+							interface where participants can explore session
+							details, speakers, and event locations.
+						</p>
+						<div className='grid grid-cols-2 gap-6'>
+							{FEATURES.map((f) => (
+								<div key={f.title}>
+									<div className='flex items-center gap-2 mb-1'>
+										<span className='text-[#c9a227]'>
+											{f.icon}
+										</span>
+										<p className='text-sm font-semibold text-white'>
+											{f.title}
+										</p>
+									</div>
+									<p className='text-xs text-gray-500 leading-relaxed'>
+										{f.desc}
+									</p>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
 			</section>
 
 			{/* EVENTS */}
