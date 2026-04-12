@@ -40,11 +40,11 @@ export const getHostEvents = async (hostId, page, limit) => {
 }
 
 export const getPublicEvents = async (query) => {
-	const events = await Event.find({ status: { $in: ['live'] } })
+	const events = await Event.find({ status: { $in: ['live'] }, approvalStatus: 'approved' })
 		.sort({ date: 1 })
 		.limit(query.limit * 1 || 10)
 		.skip((query.page - 1) * query.limit)
-	const total = await Event.countDocuments({ status: 'live' })
+	const total = await Event.countDocuments({ status: 'live', approvalStatus: 'approved' })
 	return {
 		page: query.page,
 		limit: query.limit,
@@ -119,3 +119,57 @@ export const generateBannerSignature = async (hostId) => {
 		cloudName: process.env.CLOUDINARY_CLOUD_NAME,
 	}
 }
+
+export const getPendingEvents = async (page, limit) => {
+	const skip = (page - 1) * limit
+	const events = await Event.find({ approvalStatus: 'pending' })
+		.populate('hostId', 'firstName lastName organization email')
+		.sort({ createdAt: -1 })
+		.skip(skip)
+		.limit(Number(limit))
+	
+	const total = await Event.countDocuments({ approvalStatus: 'pending' })
+	
+	return {
+		events,
+		page: Number(page),
+		totalPages: Math.ceil(total / limit),
+		totalEvents: total,
+	}
+}
+
+export const approveEvent = async (eventId) => {
+	const event = await Event.findById(eventId)
+	if (!event) throw new AppError('Event not found', 404)
+	
+	const updated = await Event.findByIdAndUpdate(
+		eventId,
+		{
+			approvalStatus: 'approved',
+			isApproved: true,
+			approvalDate: new Date(),
+		},
+		{ new: true }
+	).populate('hostId', 'firstName lastName')
+	
+	return updated
+}
+
+export const rejectEvent = async (eventId, rejectionReason) => {
+	const event = await Event.findById(eventId)
+	if (!event) throw new AppError('Event not found', 404)
+	
+	const updated = await Event.findByIdAndUpdate(
+		eventId,
+		{
+			approvalStatus: 'rejected',
+			isApproved: false,
+			approvalDate: new Date(),
+			rejectionReason,
+		},
+		{ new: true }
+	).populate('hostId', 'firstName lastName')
+	
+	return updated
+}
+

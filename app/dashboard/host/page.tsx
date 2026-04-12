@@ -159,10 +159,10 @@ export default function HostDashboard() {
     <main className="min-h-screen bg-black text-white">
       <Navbar />
       
-      <div className="container mx-auto px-4 pt-28 pb-12">
-        <div className="flex justify-between items-center mb-8">
+      <div className="container mx-auto px-4 pt-20 sm:pt-24 md:pt-28 pb-12">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
               Host Dashboard, <span className="text-gold">{user.firstName}</span>
             </h1>
             <p className="text-gray-400 mt-1">Manage your events and earnings</p>
@@ -229,13 +229,13 @@ export default function HostDashboard() {
           ) : (
             <div className="divide-y divide-gold/10">
               {events.map((event) => (
-                <div key={event._id} className="p-6 hover:bg-gray-800/50 transition">
-                  <div className="flex items-start justify-between gap-6">
-                    <div className="flex-1">
+                <div key={event._id} className="p-4 sm:p-6 hover:bg-gray-800/50 transition">
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6">
+                    <div className="flex-1 w-full">
                       <div className="flex items-center gap-4 mb-3">
-                        <div>
-                          <h3 className="text-lg font-bold text-white mb-2">{event.title}</h3>
-                          <div className="space-y-1 text-sm text-gray-400">
+                        <div className="flex-1">
+                          <h3 className="text-base sm:text-lg font-bold text-white mb-2">{event.title}</h3>
+                          <div className="space-y-1 text-xs sm:text-sm text-gray-400">
                             <p className="flex items-center gap-2">
                               <Calendar className="w-4 h-4" />
                               {formatDate(event.date)}
@@ -260,10 +260,10 @@ export default function HostDashboard() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 flex-wrap w-full sm:w-auto">
                       <Link
                         href={`/dashboard/events/${event._id}`}
-                        className="flex items-center gap-2 px-3 py-2 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/40 transition text-sm"
+                        className="flex items-center justify-center gap-1 flex-1 sm:flex-none px-2 py-2 sm:px-3 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/40 transition text-xs sm:text-sm"
                         title="View Event"
                       >
                         <Eye className="w-4 h-4" />
@@ -271,7 +271,7 @@ export default function HostDashboard() {
                       </Link>
                       <Link
                         href={`/dashboard/events/${event._id}/edit`}
-                        className="flex items-center gap-2 px-3 py-2 bg-gold/20 text-gold rounded-lg hover:bg-gold/40 transition text-sm"
+                        className="flex items-center justify-center gap-1 flex-1 sm:flex-none px-2 py-2 sm:px-3 bg-gold/20 text-gold rounded-lg hover:bg-gold/40 transition text-xs sm:text-sm"
                         title="Edit Event"
                       >
                         <Edit className="w-4 h-4" />
@@ -280,7 +280,7 @@ export default function HostDashboard() {
                       <button
                         onClick={() => handleDeleteEvent(event._id)}
                         disabled={deleteLoading === event._id}
-                        className="flex items-center gap-2 px-3 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/40 transition text-sm disabled:opacity-50"
+                        className="flex items-center justify-center gap-1 flex-1 sm:flex-none px-2 py-2 sm:px-3 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/40 transition text-xs sm:text-sm disabled:opacity-50"
                         title="Delete Event"
                       >
                         {deleteLoading === event._id ? (

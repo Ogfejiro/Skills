@@ -145,51 +145,7 @@
 // 				</div>
 // 			</section>
 
-// 			{/* UPCOMING EVENTS */}
-// 			<section id='events' className='py-20'>
-// 				<div className='container mx-auto px-4'>
-// 					<h2 className='text-4xl font-bold text-center mb-16'>
-// 						Upcoming Events
-// 					</h2>
-
-// 					<div className='grid md:grid-cols-2 gap-10'>
-// 						<div className='border border-gold p-6 rounded-xl'>
-// 							<h3 className='text-2xl font-bold mb-4'>
-// 								LOFTE-3 Dinner Event
-// 							</h3>
-
-// 							<p className='text-gray-400 mb-6'>
-// 								Premium Web3 networking dinner.
-// 							</p>
-
-// 							<div className='space-y-2 mb-6 text-sm'>
-// 								<div className='flex items-center gap-2'>
-// 									<Calendar className='w-4' /> March 27, 2026
-// 								</div>
-// 								<div className='flex items-center gap-2'>
-// 									<MapPin className='w-4' /> Lagos
-// 								</div>
-// 							</div>
-
-// 							<div className='flex gap-4'>
-// 								<button
-// 									onClick={() => setIsTicketModalOpen(true)}
-// 									className='flex-1 border border-gold text-gold py-2 rounded-lg'
-// 								>
-// 									Tickets
-// 								</button>
-
-// 								<button
-// 									onClick={() => openLink(calendlyLink)}
-// 									className='flex-1 bg-gold text-black py-2 rounded-lg'
-// 								>
-// 									Sponsor
-// 								</button>
-// 							</div>
-// 						</div>
-// 					</div>
-// 				</div>
-// 			</section>
+// 			
 
 // 			{/* CTA */}
 // 			<section className='py-20 text-center'>
@@ -221,10 +177,12 @@
 
 "use client";
 
-import { useState } from "react";
-import WhyAttendPage from '@/View/WhyAttend';
-import FaqView from '@/View/FaqView';
-import WhyAttend from "@/View/WhyAttend";
+import { useState, useEffect } from "react";
+import { Calendar, MapPin, Users, Ticket, AlertCircle } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import eventService from "@/app/services/eventService";
+import WhyAttendPage from "./WhyAttend";
+import FAQPage from "./FaqView";
 
 
 
@@ -271,64 +229,65 @@ const KEY_FEATURES = [
 
 const NAV_LINKS = ["Events", "About", "FAQ", "Contact"];
 
-export default function HomePage() {
-  const [menuOpen, setMenuOpen] = useState(false);
+const LOFTE3_BENEFITS = [
+  {
+    icon: "🌐",
+    title: "Web3 Networking",
+    desc: "Connect with crypto innovators and blockchain enthusiasts from across Africa.",
+  },
+  {
+    icon: "⭐",
+    title: "Premium Events",
+    desc: "Access exclusive, carefully curated Web3 events with top-tier speakers and experiences.",
+  },
+  {
+    icon: "🎟️",
+    title: "Easy Ticketing",
+    desc: "Seamless ticket purchasing with crypto and fiat payment options.",
+  },
+  {
+    icon: "🌍",
+    title: "Global Reach",
+    desc: "Connect with Web3 communities across Africa and beyond in one platform.",
+  },
+];
 
+export default function HomePage() {
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [publicEvents, setPublicEvents] = useState<any[]>([]);
+  const [eventsLoading, setEventsLoading] = useState(true);
+  const [eventsError, setEventsError] = useState('');
+  const calendlyLink = 'https://calendly.com';
+  
+  const openLink = (link: string) => {
+    if (link) window.open(link, '_blank');
+  };
+
+  // Fetch public events on component mount
+  useEffect(() => {
+    const fetchPublicEvents = async () => {
+      try {
+        setEventsLoading(true);
+        setEventsError('');
+        const response = await eventService.getPublicEvents(1, 6);
+        if (response.success && response.data.events) {
+          setPublicEvents(response.data.events);
+        }
+      } catch (error: any) {
+        console.error('Error fetching public events:', error);
+        setEventsError(error.message || 'Failed to load events');
+      } finally {
+        setEventsLoading(false);
+      }
+    };
+
+    fetchPublicEvents();
+  }, []);
+  
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white font-sans">
-      {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3 bg-[#0d0d18]/80 backdrop-blur border-b border-white/5">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg overflow-hidden bg-gradient-to-br from-yellow-500 to-yellow-800 flex items-center justify-center">
-            <span className="text-xs font-black text-black">L3</span>
-          </div>
-          <div className="leading-tight">
-            <span className="font-black text-sm tracking-tight">
-              <span className="text-white">LO</span>
-              <span className="text-[#c9a227]">FTE-3</span>
-            </span>
-            <p className="text-[10px] text-gray-400 tracking-widest">WEB3 EVENTS</p>
-          </div>
-        </div>
-
-        {/* Links */}
-        <div className="hidden md:flex items-center gap-6 text-sm text-gray-400">
-          {NAV_LINKS.map((link) => (
-            <a key={link} href="#" className="hover:text-white transition-colors">
-              {link}
-            </a>
-          ))}
-          <a href="#" className="flex items-center gap-1 text-white font-medium">
-            <span className="w-2 h-2 rounded-full bg-[#c9a227] inline-block" />
-            Ngstarz Today
-          </a>
-        </div>
-
-        <button className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full border border-white/20 text-sm hover:border-[#c9a227] hover:text-[#c9a227] transition-all">
-          Sign In ↗
-        </button>
-
-        {/* Mobile hamburger */}
-        <button
-          className="md:hidden text-white"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? "✕" : "☰"}
-        </button>
-      </nav>
-
-      {menuOpen && (
-        <div className="fixed top-14 left-0 right-0 z-40 bg-[#0d0d18] border-b border-white/10 p-6 flex flex-col gap-4 md:hidden">
-          {NAV_LINKS.map((link) => (
-            <a key={link} href="#" className="text-gray-300 hover:text-white">
-              {link}
-            </a>
-          ))}
-          <a href="#" className="text-[#c9a227] font-semibold">Ngstarz Today</a>
-          <a href="#" className="border border-white/20 rounded-full px-4 py-2 text-center text-sm">Sign In</a>
-        </div>
-      )}
+      {/* Import Navbar Component */}
+      <Navbar />
 
       {/* ── Hero ── */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 overflow-hidden">
@@ -391,69 +350,18 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Dashboard Preview Cards */}
-        <div className="relative mt-16 w-full max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
-          {/* Upload Card */}
-          <DashCard title="Upload" accent="#c9a227">
-            <div className="space-y-2 mt-2">
-              {[{ label: "25 Videos", size: "2.5GB" }, { label: "25 Videos", size: "1.2GB" }, { label: "25 Videos", size: "3.1GB" }].map((item, i) => (
-                <div key={i} className="flex items-center justify-between text-xs text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-[#c9a227]/20 flex items-center justify-center text-[8px]">🎬</div>
-                    <span>{item.label}</span>
-                  </div>
-                  <span className="text-gray-600">{item.size}</span>
-                </div>
-              ))}
+        {/* LOFTE-3 Benefits Cards */}
+        <div className="relative mt-16 w-full max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {LOFTE3_BENEFITS.map((benefit, idx) => (
+            <div
+              key={idx}
+              className="bg-[#10101e] rounded-xl border border-white/10 p-6 hover:border-white/20 hover:shadow-lg hover:shadow-[#c9a227]/10 transition-all hover:scale-105"
+            >
+              <div className="text-4xl mb-3">{benefit.icon}</div>
+              <h3 className="text-sm font-bold text-white mb-2">{benefit.title}</h3>
+              <p className="text-xs text-gray-400 leading-relaxed">{benefit.desc}</p>
             </div>
-          </DashCard>
-
-          {/* Create Event Card */}
-          <DashCard title="Create an Event" accent="#8b5cf6">
-            <div className="mt-2 space-y-2">
-              <div className="w-full bg-white/5 rounded px-2 py-1 text-xs text-gray-300">Title</div>
-              <div className="flex gap-1">
-                <span className="px-2 py-0.5 rounded-full bg-purple-600/30 text-purple-300 text-[10px]">Event</span>
-                <span className="px-2 py-0.5 rounded-full bg-[#c9a227]/20 text-yellow-400 text-[10px]">Reminder</span>
-              </div>
-              <div className="flex gap-1">
-                {["#ef4444","#f97316","#eab308","#22c55e","#3b82f6","#8b5cf6"].map(c => (
-                  <div key={c} className="w-3.5 h-3.5 rounded-full" style={{ background: c }} />
-                ))}
-              </div>
-              <div className="text-[10px] text-gray-500">Friday, 14 Oct 2022</div>
-            </div>
-          </DashCard>
-
-          {/* Checklist Card */}
-          <DashCard title="Checklist" accent="#06b6d4">
-            <div className="mt-2 space-y-2 text-xs">
-              <p className="text-gray-300 text-[11px] font-semibold">Business</p>
-              <CheckItem label="Turn on chat during session" checked={false} />
-              <CheckItem label="Turn on chat during session" checked={true} />
-              <p className="text-gray-300 text-[11px] font-semibold mt-1">Private</p>
-              <CheckItem label="Turn on chat during session" checked={false} />
-              <CheckItem label="Turn on chat during session" checked={true} />
-            </div>
-          </DashCard>
-
-          {/* Settings / Share */}
-          <div className="flex flex-col gap-3">
-            <DashCard title="Settings" accent="#10b981">
-              <div className="mt-2 space-y-1 text-[10px] text-gray-400">
-                <div className="flex justify-between"><span>Sound</span><span className="text-green-400">40%</span></div>
-                <div className="w-full bg-white/10 rounded-full h-1"><div className="bg-green-400 h-1 rounded-full w-2/5" /></div>
-                <div className="flex justify-between mt-1"><span>Chat</span><div className="w-6 h-3 bg-green-500 rounded-full" /></div>
-                <div className="mt-1 text-gray-600">logo-rename.gif</div>
-              </div>
-            </DashCard>
-            <DashCard title="Share" accent="#f43f5e">
-              <div className="mt-2">
-                <div className="w-full bg-white/5 rounded px-2 py-1 text-[10px] text-gray-500">Enter your message...</div>
-                <button className="mt-2 w-full py-1 rounded bg-[#c9a227] text-black text-[10px] font-bold">Share now</button>
-              </div>
-            </DashCard>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -492,109 +400,151 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Checklist Preview */}
-          <div className="bg-[#10101e] rounded-2xl border border-white/10 p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-white">Checklist</h3>
-              <div className="w-8 h-8 rounded-full bg-[#c9a227]/20 flex items-center justify-center text-sm">📋</div>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-cyan-500/20 flex items-center justify-center text-xs">🏢</div>
-                  <span className="text-sm font-semibold">Business</span>
-                </div>
-                <div className="ml-8 space-y-2">
-                  <CheckItem label="Turn on chat during session" checked={false} />
-                  <CheckItem label="Turn on chat during session" checked={true} />
-                </div>
-              </div>
-              <div className="border-t border-white/5 pt-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-xs">🔒</div>
-                  <span className="text-sm font-semibold">Private</span>
-                </div>
-                <div className="ml-8 space-y-2">
-                  <CheckItem label="Turn on chat during session" checked={false} />
-                  <CheckItem label="Turn on chat during session" checked={true} />
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* ── Key Features + Create Event ── */}
+      {/* ── Current Events ── */}
       <section className="py-24 px-4 max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-12 items-start">
-          {/* Create an Event Card */}
-          <div className="bg-[#10101e] rounded-2xl border border-white/10 p-6 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-white">Create an Event</h3>
-              <div className="w-8 h-8 rounded-full bg-[#c9a227]/20 flex items-center justify-center text-sm">✏️</div>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <input
-                  type="text"
-                  placeholder="Title"
-                  className="flex-1 bg-white/5 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 outline-none focus:ring-1 focus:ring-[#c9a227]/50 mr-3"
-                />
-                <span className="text-xs text-gray-500">46</span>
-              </div>
-              <div className="flex gap-2">
-                <span className="px-3 py-1 rounded-full bg-purple-600/30 text-purple-300 text-xs font-medium">Event</span>
-                <span className="px-3 py-1 rounded-full bg-[#c9a227]/20 text-yellow-400 text-xs font-medium">Reminder</span>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-2">Color</p>
-                <div className="flex gap-2">
-                  {["#ef4444","#f97316","#eab308","#22c55e","#3b82f6","#8b5cf6"].map(c => (
-                    <div key={c} className="w-5 h-5 rounded-full cursor-pointer hover:scale-110 transition-transform" style={{ background: c }} />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 mb-2">Date</p>
-                <div className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2">
-                  <span className="text-sm text-gray-300">Friday, 14 Oct 2022</span>
-                  <span className="text-gray-500">📅</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                {["19:00", "20:00"].map(t => (
-                  <div key={t} className="bg-white/5 rounded-lg px-3 py-2 text-sm text-gray-300 flex items-center justify-between">
-                    <span>{t}</span>
-                    <span className="text-gray-600">∨</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Key Features */}
-          <div>
-            <span className="text-[10px] text-[#c9a227] tracking-widest uppercase font-semibold">✦ Website Features</span>
-            <h2 className="text-3xl md:text-4xl font-black mt-3 mb-4 leading-tight">
-              Key Features of Our<br />Event Website
-            </h2>
-            <p className="text-gray-400 text-sm leading-relaxed mb-8">
-              Easily navigate and plan your day with our interactive schedule. Attendees can view session details, speaker information, and event locations, personalise their agenda, and receive notifications for upcoming sessions.
-            </p>
-            <div className="space-y-6">
-              {KEY_FEATURES.map((f) => (
-                <div key={f.title} className="flex gap-4">
-                  <div className="w-9 h-9 rounded-xl bg-[#c9a227]/10 flex items-center justify-center text-lg flex-shrink-0">{f.icon}</div>
-                  <div>
-                    <p className="text-sm font-semibold text-white mb-1">{f.title}</p>
-                    <p className="text-xs text-gray-500 leading-relaxed">{f.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="text-center mb-16">
+          <span className="text-[10px] text-[#c9a227] tracking-widest uppercase font-semibold">✦ Now Happening</span>
+          <h2 className="text-3xl md:text-4xl font-black mt-3">Current Events</h2>
+          <p className="text-gray-400 text-sm mt-2">Discover the best Web3 events happening now</p>
         </div>
+
+        {/* Display status */}
+        {eventsError && (
+          <div className="mb-8 p-4 bg-red-500/20 border border-red-500 rounded-lg flex items-center gap-3">
+            <AlertCircle className="text-red-500" size={20} />
+            <p className="text-red-300">Error loading events: {eventsError}</p>
+          </div>
+        )}
+
+        {/* Events Grid */}
+        {eventsLoading ? (
+          <div className="text-center py-12">
+            <p className="text-gray-400">Loading events...</p>
+          </div>
+        ) : publicEvents.length === 0 ? (
+          <div className="text-center py-12 bg-[#10101e] rounded-xl border border-white/10 p-8">
+            <Ticket className="w-12 h-12 text-[#c9a227]/50 mx-auto mb-4" />
+            <p className="text-gray-400">No approved events available at the moment</p>
+            <p className="text-sm text-gray-500 mt-2">Check back soon for upcoming Web3 events!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {publicEvents.map((event: any) => (
+              <div
+                key={event._id}
+                className="bg-[#10101e] rounded-xl border border-white/10 overflow-hidden hover:border-white/20 transition-all hover:shadow-lg hover:shadow-[#c9a227]/10"
+              >
+                {event.banner && (
+                  <div className="h-48 bg-gradient-to-br from-[#c9a227]/20 to-purple-900/20 overflow-hidden">
+                    <img
+                      src={event.banner}
+                      alt={event.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="p-6">
+                  <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
+                    {event.title}
+                  </h3>
+                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">
+                    {event.description}
+                  </p>
+                  <div className="space-y-2 mb-6">
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <Calendar className="w-4 h-4 text-[#c9a227]" />
+                      <span>
+                        {new Date(event.date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <MapPin className="w-4 h-4 text-[#c9a227]" />
+                      <span className="truncate">{event.venue}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                      <Users className="w-4 h-4 text-[#c9a227]" />
+                      <span>{event.capacity} Capacity</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setIsTicketModalOpen(true)}
+                    className="w-full px-4 py-2 rounded-lg bg-[#c9a227] text-black font-bold text-sm hover:bg-yellow-400 transition-all"
+                  >
+                    Get Tickets
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* View All Events Button */}
+        {publicEvents.length > 0 && (
+          <div className="text-center mt-12">
+            <button className="px-8 py-3 rounded-full border border-[#c9a227] text-[#c9a227] font-bold hover:bg-[#c9a227]/10 transition-all">
+              View All Events →
+            </button>
+          </div>
+        )}
       </section>
+// 			<section id='events' className='py-20'>
+// 				<div className='container mx-auto px-4'>
+// 					<h2 className='text-4xl font-bold text-center mb-16'>
+// 						Upcoming Events
+// 					</h2>
+
+// 					<div className='grid md:grid-cols-2 gap-10'>
+// 						<div className='border border-gold p-6 rounded-xl'>
+// 							<h3 className='text-2xl font-bold mb-4'>
+// 								MELISSA NFT LAUNCH PARTY
+// 							</h3>
+
+// 							<p className='text-gray-400 mb-6'>
+// 								All White Beach Party.
+// 							</p>
+
+// 							<div className='space-y-2 mb-6 text-sm'>
+// 								<div className='flex items-center gap-2'>
+// 									<Calendar className='w-4' /> April 16, 2026
+// 								</div>
+// 								<div className='flex items-center gap-2'>
+// 									<MapPin className='w-4' /> Lagos
+// 								</div>
+// 							</div>
+
+// 							<div className='flex gap-4'>
+// 								<button
+									onClick={() => setIsTicketModalOpen(true)}
+									className='flex-1 border border-gold text-gold py-2 rounded-lg'
+								>
+									Tickets
+								</button>
+
+								<button
+									onClick={() => openLink(calendlyLink)}
+									className='flex-1 bg-gold text-black py-2 rounded-lg'
+								>
+									Sponsor
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+      <WhyAttendPage/>
+      <FAQPage/>
 
       {/* ── CTA Footer Banner ── */}
       <section className="py-20 px-4 text-center relative overflow-hidden">
@@ -611,19 +561,7 @@ export default function HomePage() {
         </button>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="border-t border-white/5 px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-gradient-to-br from-yellow-500 to-yellow-800 flex items-center justify-center text-[8px] font-black text-black">L3</div>
-          <span><span className="text-white font-bold">LO</span><span className="text-[#c9a227] font-bold">FTE-3</span> — Africa's leading Web3 IRL event platform</span>
-        </div>
-        <div className="flex gap-6">
-          {["Privacy", "Terms", "Contact"].map(l => (
-            <a key={l} href="#" className="hover:text-white transition-colors">{l}</a>
-          ))}
-        </div>
-        <span>© 2024 LOFTE-3. All rights reserved.</span>
-      </footer>
+      
 
       <style jsx global>{`
         @keyframes marquee {
@@ -636,52 +574,4 @@ export default function HomePage() {
       `}</style>
     </div>
   );
-}
-
-/* ── Sub-components ── */
-
-function DashCard({
-  title,
-  accent,
-  children,
-}: {
-  title: string;
-  accent: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="bg-[#10101e] rounded-xl border border-white/10 p-4 hover:border-white/20 transition-colors">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold text-gray-300">{title}</p>
-        <div
-          className="w-5 h-5 rounded flex items-center justify-center text-[10px]"
-          style={{ background: `${accent}22`, color: accent }}
-        >
-          ⚡
-        </div>
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function CheckItem({ label, checked }: { label: string; checked: boolean }) {
-  return (
-    <div className="flex items-center gap-2">
-      <div
-        className={`w-3.5 h-3.5 rounded flex items-center justify-center flex-shrink-0 ${
-          checked
-            ? "bg-[#c9a227] text-black"
-            : "border border-white/20"
-        }`}
-      >
-        {checked && <span className="text-[8px] font-black">✓</span>}
-      </div>
-      <span className="text-[11px] text-gray-400">{label}</span>
-    </div>
-  );
-
-  <><FaqView /><WhyAttend /></>
-
-
 }

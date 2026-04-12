@@ -8,6 +8,9 @@ import {
 	updateEvent,
 	deleteEvent,
 	generateBannerSignature,
+	getPendingEvents,
+	approveEvent,
+	rejectEvent,
 } from './event.service.js'
 
 export const createEventController = asyncHandler(async (req, res) => {
@@ -121,4 +124,44 @@ export const cloudinarySignature = asyncHandler(async (req, res) => {
 	const result = await generateBannerSignature(hostId)
 
 	res.status(200).json(result)
+})
+
+export const getPendingEventsController = asyncHandler(async (req, res) => {
+	const { page = 1, limit = 10 } = req.query
+	
+	const eventsData = await getPendingEvents(page, limit)
+
+	res.status(200).json({
+		success: true,
+		data: eventsData,
+	})
+})
+
+export const approveEventController = asyncHandler(async (req, res) => {
+	const { eventId } = req.params
+	
+	const event = await approveEvent(eventId)
+
+	res.status(200).json({
+		success: true,
+		message: 'Event approved successfully',
+		data: event,
+	})
+})
+
+export const rejectEventController = asyncHandler(async (req, res) => {
+	const { eventId } = req.params
+	const { rejectionReason } = req.body
+
+	if (!rejectionReason) {
+		throw new AppError('Rejection reason is required', 400)
+	}
+
+	const event = await rejectEvent(eventId, rejectionReason)
+
+	res.status(200).json({
+		success: true,
+		message: 'Event rejected successfully',
+		data: event,
+	})
 })

@@ -1,382 +1,474 @@
-// app/dashboard/admin/page.tsx - Complete Admin Dashboard
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
 import Navbar from '@/components/Navbar';
 import { 
-  Home, 
-  Calendar, 
-  Settings, 
-  HelpCircle,
-  TrendingUp,
-  TrendingDown,
-  Search,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Copy,
-  Check,
-  Key,
-  RefreshCw,
-  Eye,
-  Edit,
-  Trash2,
+  Loader2,
   CheckCircle,
   XCircle,
   Clock,
-  DollarSign,
-  Users,
-  MessageCircle,
-  MoreVertical,
-  Loader2
+  Search,
+  Filter,
+  AlertCircle,
+  Eye,
+  Trash2,
+  MoreVertical
 } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { showNotification } from '@/lib/showNotification';
 
-// Mock data for events
-const mockEvents = [
-  {
-    id: '1',
-    title: 'LOFTE-3 Dinner Night',
-    date: '2026-03-27',
-    location: 'Eko Hotels & Suites, Lagos',
-    bannerImage: '/images/new.jpg',
-    status: 'published',
-    paymentStatus: 'paid',
-    ticketSales: 342,
-    revenue: 1250000,
-    views: 15420,
-    createdAt: '2026-02-15'
-  },
-  {
-    id: '2',
-    title: 'METAMASK COMMUNITY BUILDERS NIGHT',
-    date: '2026-03-14',
-    location: 'Abuja, Nigeria',
-    bannerImage: '/images/meta.jpg',
-    status: 'past',
-    paymentStatus: 'paid',
-    ticketSales: 156,
-    revenue: 450000,
-    views: 8900,
-    createdAt: '2026-02-20'
-  },
-  {
-    id: '3',
-    title: 'NFT Art Gala Night',
-    date: '2026-04-05',
-    location: 'Digital Gallery, Lagos',
-    bannerImage: '/images/event2.jpg',
-    status: 'review',
-    paymentStatus: 'paid',
-    ticketSales: 0,
-    revenue: 0,
-    views: 0,
-    createdAt: '2026-02-25'
-  },
-  {
-    id: '4',
-    title: 'Crypto Trading Summit',
-    date: '2026-05-10',
-    location: 'Landmark Centre, Lagos',
-    bannerImage: '/images/event3.jpg',
-    status: 'pending',
-    paymentStatus: 'pending',
-    ticketSales: 0,
-    revenue: 0,
-    views: 0,
-    createdAt: '2026-02-10'
-  }
-];
+interface Event {
+  _id: string;
+  title: string;
+  date: string;
+  venue: string;
+  banner: string;
+  description: string;
+  capacity: number;
+  category: string;
+  approvalStatus: 'pending' | 'approved' | 'rejected';
+  rejectionReason?: string;
+  createdAt: string;
+  hostId: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    organization: string;
+  };
+}
 
 export default function AdminDashboard() {
-  const { user, isAuthenticated, loading: authLoading } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, token } = useAuth();
   const router = useRouter();
-  const [events, setEvents] = useState(mockEvents);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
-  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState('pending');
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
-  const [reviewComments, setReviewComments] = useState('');
-  const [reviewAction, setReviewAction] = useState<'approve' | 'reject' | 'changes'>('approve');
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [actionLoading, setActionLoading] = useState(false);
+  const [currentAction, setCurrentAction] = useState<'approve' | 'reject' | null>(null);
+  const [stats, setStats] = useState({
+    totalPending: 0,
+    viewingPage: 1,
+    totalPages: 1
+  });
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       router.push('/auth/login');
     } else if (user && user.role !== 'Admin') {
       router.push('/dashboard/user');
-    } else {
+    } else if (token) {
+      fetchPendingEvents();
+    }
+  }, [authLoading, isAuthenticated, user, router, token]);
+
+  const fetchPendingEvents = async (page = 1) => {
+    try {
+      setLoading(true);
+      if (!token) throw new Error('No authentication token');
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com'}/api/events/admin/pending?page=${page}&limit=10`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to fetch events');
+      }
+
+      const result = await response.json();
+      setEvents(result.data.events || []);
+      setStats({
+        totalPending: result.data.totalEvents || 0,
+        viewingPage: page,
+        totalPages: result.data.totalPages || 1
+      });
+    } catch (err: any) {
+      showNotification(err.message || 'Failed to load pending events', 'error');
+      console.error('Error fetching events:', err);
+    } finally {
       setLoading(false);
     }
-  }, [authLoading, isAuthenticated, user, router]);
-
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: Clock, label: 'Pending Payment' },
-      review: { bg: 'bg-blue-100', text: 'text-blue-800', icon: Eye, label: 'Under Review' },
-      approved: { bg: 'bg-purple-100', text: 'text-purple-800', icon: CheckCircle, label: 'Approved' },
-      rejected: { bg: 'bg-red-100', text: 'text-red-800', icon: XCircle, label: 'Rejected' },
-      published: { bg: 'bg-green-100', text: 'text-green-800', icon: CheckCircle, label: 'Published' },
-      past: { bg: 'bg-gray-100', text: 'text-gray-800', icon: Clock, label: 'Past Event' }
-    };
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    const Icon = config.icon;
-    return (
-      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
-        <Icon size={12} />
-        {config.label}
-      </span>
-    );
   };
 
-  const handleReview = (eventId: string, action: 'approve' | 'reject' | 'changes') => {
-    setSelectedEvent(eventId);
-    setReviewAction(action);
+  const handleApproveEvent = async (eventId: string) => {
+    try {
+      setActionLoading(true);
+      setCurrentAction('approve');
+      if (!token) throw new Error('No authentication token');
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com'}/api/events/admin/approve/${eventId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to approve event');
+      }
+
+      setEvents(events.filter(e => e._id !== eventId));
+      setShowReviewModal(false);
+      showNotification('Event approved successfully! It will now appear on the home page.', 'success');
+      fetchPendingEvents(stats.viewingPage);
+    } catch (err: any) {
+      showNotification(err.message || 'Failed to approve event', 'error');
+    } finally {
+      setActionLoading(false);
+      setCurrentAction(null);
+    }
+  };
+
+  const handleRejectEvent = async (eventId: string) => {
+    try {
+      if (!rejectionReason.trim()) {
+        showNotification('Please provide a reason for rejection', 'error');
+        return;
+      }
+
+      setActionLoading(true);
+      setCurrentAction('reject');
+      if (!token) throw new Error('No authentication token');
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com'}/api/events/admin/reject/${eventId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ rejectionReason }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to reject event');
+      }
+
+      setEvents(events.filter(e => e._id !== eventId));
+      setShowReviewModal(false);
+      setRejectionReason('');
+      showNotification('Event rejected. The host will be notified.', 'success');
+      fetchPendingEvents(stats.viewingPage);
+    } catch (err: any) {
+      showNotification(err.message || 'Failed to reject event', 'error');
+    } finally {
+      setActionLoading(false);
+      setCurrentAction(null);
+    }
+  };
+
+  const openReviewModal = (event: Event, action: 'approve' | 'reject') => {
+    setSelectedEvent(event);
+    setCurrentAction(action);
+    setRejectionReason('');
     setShowReviewModal(true);
   };
 
-  const submitReview = () => {
-    if (selectedEvent) {
-      setEvents(prev => prev.map(event => 
-        event.id === selectedEvent 
-          ? { ...event, status: reviewAction === 'approve' ? 'published' : reviewAction === 'reject' ? 'rejected' : 'review' }
-          : event
-      ));
-    }
+  const closeReviewModal = () => {
     setShowReviewModal(false);
-    setReviewComments('');
+    setSelectedEvent(null);
+    setCurrentAction(null);
+    setRejectionReason('');
   };
 
-  const stats = {
-    totalEvents: events.length,
-    publishedEvents: events.filter(e => e.status === 'published').length,
-    pendingReview: events.filter(e => e.status === 'review').length,
-    pendingPayment: events.filter(e => e.paymentStatus === 'pending').length,
-    totalRevenue: events.reduce((sum, e) => sum + e.revenue, 0),
-    totalTickets: events.reduce((sum, e) => sum + e.ticketSales, 0)
-  };
+  const filteredEvents = events.filter(event =>
+    event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    event.hostId.firstName.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   if (authLoading || loading) {
     return (
-      <main className="min-h-screen bg-black">
+      <div className="min-h-screen bg-black">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-12 h-12 text-gold animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Loading admin dashboard...</p>
+          <div className="text-center">
+            <Loader2 className="animate-spin text-blue-500 mx-auto mb-4" size={32} />
+            <p className="text-gray-400">Loading admin dashboard...</p>
+          </div>
         </div>
-      </main>
+      </div>
     );
   }
 
-  if (!user || user.role !== 'Admin') return null;
+  if (!user || user.role !== 'Admin') {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-              <p className="text-sm text-gray-500">Manage events, users, and platform settings</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center text-white font-semibold">
-                {user?.firstName?.charAt(0) || 'A'}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-black">
+      <Navbar />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <div className="bg-white rounded-xl shadow-sm p-4">
-            <p className="text-sm text-gray-500 mb-1">Total Events</p>
-            <p className="text-2xl font-bold text-gray-900">{stats.totalEvents}</p>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4">
-            <p className="text-sm text-gray-500 mb-1">Published</p>
-            <p className="text-2xl font-bold text-green-600">{stats.publishedEvents}</p>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4">
-            <p className="text-sm text-gray-500 mb-1">Under Review</p>
-            <p className="text-2xl font-bold text-blue-600">{stats.pendingReview}</p>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4">
-            <p className="text-sm text-gray-500 mb-1">Pending Payment</p>
-            <p className="text-2xl font-bold text-yellow-600">{stats.pendingPayment}</p>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4">
-            <p className="text-sm text-gray-500 mb-1">Total Revenue</p>
-            <p className="text-2xl font-bold text-emerald-600">₦{(stats.totalRevenue / 1000).toFixed(1)}k</p>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-4">
-            <p className="text-sm text-gray-500 mb-1">Tickets Sold</p>
-            <p className="text-2xl font-bold text-purple-600">{stats.totalTickets}</p>
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            Admin Dashboard
+          </h1>
+          <p className="text-gray-400">
+            Review and manage pending events for the platform
+          </p>
+        </div>
+
+        {/* Stats Card */}
+        <div className="bg-neutral-900 rounded-lg p-6 border border-neutral-800 mb-8">
+          <h2 className="text-xl font-bold text-white mb-4">Pending Review</h2>
+          <p className="text-4xl font-bold text-blue-400">{stats.totalPending}</p>
+          <p className="text-gray-400 text-sm mt-2">Events awaiting approval</p>
+        </div>
+
+        {/* Search and Filter */}
+        <div className="flex flex-col gap-4 mb-8">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
+            <input
+              type="text"
+              placeholder="Search by event title, location, or host name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-3 bg-neutral-900 border border-neutral-800 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            />
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-8">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="text"
-                placeholder="Search events by title or location..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-            </div>
-            <div className="flex gap-2">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        {/* Events List */}
+        {filteredEvents.length === 0 ? (
+          <div className="bg-neutral-900 rounded-lg border border-neutral-800 p-12 text-center">
+            {events.length === 0 ? (
+              <>
+                <CheckCircle className="mx-auto mb-4 text-green-500" size={48} />
+                <h3 className="text-xl font-bold text-white mb-2">All Caught Up!</h3>
+                <p className="text-gray-400">No pending events to review at the moment</p>
+              </>
+            ) : (
+              <>
+                <AlertCircle className="mx-auto mb-4 text-yellow-500" size={48} />
+                <h3 className="text-xl font-bold text-white mb-2">No Results</h3>
+                <p className="text-gray-400">No events match your search query</p>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredEvents.map((event) => (
+              <div
+                key={event._id}
+                className="bg-neutral-900 rounded-lg border border-neutral-800 overflow-hidden hover:border-neutral-700 transition-colors"
               >
-                <option value="all">All Status</option>
-                <option value="pending">Pending Payment</option>
-                <option value="review">Under Review</option>
-                <option value="published">Published</option>
-                <option value="past">Past Events</option>
-              </select>
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2">
-                <Filter size={18} />
-                Filters
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Events Table */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Event</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Date & Location</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Performance</th>
-                  <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {events.map((event) => (
-                  <tr key={event.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gray-200 rounded-lg overflow-hidden">
-                          <img src={event.bannerImage} alt={event.title} className="w-full h-full object-cover" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-gray-900">{event.title}</p>
-                          <p className="text-xs text-gray-500">ID: {event.id}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-1 text-sm text-gray-600">
-                          <Calendar size={14} />
-                          <span>{new Date(event.date).toLocaleDateString()}</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
-                          <span className="truncate max-w-[200px]">{event.location}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      {getStatusBadge(event.status)}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <Users size={14} className="text-gray-400" />
-                          <span className="text-sm text-gray-600">{event.ticketSales} tickets</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <DollarSign size={14} className="text-gray-400" />
-                          <span className="text-sm text-gray-600">₦{(event.revenue / 1000).toFixed(1)}k</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        {event.status === 'review' && (
-                          <button
-                            onClick={() => handleReview(event.id, 'approve')}
-                            className="p-1 text-green-600 hover:bg-green-50 rounded-lg"
-                            title="Review Event"
-                          >
-                            <MessageCircle size={18} />
-                          </button>
+                <div className="p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    {/* Event Info */}
+                    <div className="sm:col-span-2">
+                      <div className="flex gap-4">
+                        {event.banner && (
+                          <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                            <img
+                              src={event.banner}
+                              alt={event.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = '/images/placeholder.jpg';
+                              }}
+                            />
+                          </div>
                         )}
-                        <button className="p-1 text-blue-600 hover:bg-blue-50 rounded-lg" title="View Details">
-                          <Eye size={18} />
-                        </button>
-                        <button className="p-1 text-gray-600 hover:bg-gray-50 rounded-lg" title="Edit">
-                          <Edit size={18} />
-                        </button>
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-white mb-1">
+                            {event.title}
+                          </h3>
+                          <p className="text-sm text-gray-400 mb-1">{event.venue}</p>
+                          <div className="flex items-center gap-2 text-xs text-gray-400">
+                            <Clock size={14} />
+                            {new Date(event.date).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                        </div>
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+
+                    {/* Host Info */}
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">HOST</p>
+                      <p className="text-white font-semibold">
+                        {event.hostId.firstName} {event.hostId.lastName}
+                      </p>
+                      <p className="text-xs text-gray-400 truncate">
+                        {event.hostId.email}
+                      </p>
+                    </div>
+
+                    {/* Submission Date */}
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">SUBMITTED</p>
+                      <p className="text-white font-semibold">
+                        {new Date(event.createdAt).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric'
+                        })}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {event.category}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <p className="text-sm text-gray-300 mb-4 line-clamp-2">
+                    {event.description}
+                  </p>
+
+                  {/* Event Details */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 py-4 border-t border-neutral-800 mb-4">
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Capacity</p>
+                      <p className="font-semibold text-white">{event.capacity} seats</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Category</p>
+                      <p className="font-semibold text-white">{event.category}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-400 mb-1">Status</p>
+                      <p className="font-semibold text-yellow-400">Pending Review</p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={() => openReviewModal(event, 'approve')}
+                      className="flex-1 min-w-[120px] px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
+                    >
+                      <CheckCircle size={16} />
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => openReviewModal(event, 'reject')}
+                      className="flex-1 min-w-[120px] px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors text-sm"
+                    >
+                      <XCircle size={16} />
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+
+        {/* Pagination */}
+        {stats.totalPages > 1 && (
+          <div className="mt-8 flex justify-center gap-2">
+            <button
+              onClick={() => fetchPendingEvents(Math.max(1, stats.viewingPage - 1))}
+              disabled={stats.viewingPage === 1}
+              className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 disabled:opacity-50 text-white rounded-lg transition-colors"
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-gray-400">
+              Page {stats.viewingPage} of {stats.totalPages}
+            </span>
+            <button
+              onClick={() => fetchPendingEvents(Math.min(stats.totalPages, stats.viewingPage + 1))}
+              disabled={stats.viewingPage === stats.totalPages}
+              className="px-4 py-2 bg-neutral-800 hover:bg-neutral-700 disabled:opacity-50 text-white rounded-lg transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Review Modal */}
-      {showReviewModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">
-              {reviewAction === 'approve' && 'Approve Event'}
-              {reviewAction === 'reject' && 'Reject Event'}
-              {reviewAction === 'changes' && 'Request Changes'}
+      {showReviewModal && selectedEvent && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+          <div className="bg-neutral-900 rounded-lg border border-neutral-800 max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-white mb-4">
+              {currentAction === 'approve' ? 'Approve Event' : 'Reject Event'}
             </h3>
-            <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {reviewAction === 'approve' && 'Approval Comments (Optional)'}
-                {reviewAction === 'reject' && 'Reason for Rejection'}
-                {reviewAction === 'changes' && 'Changes Required'}
-              </label>
-              <textarea
-                value={reviewComments}
-                onChange={(e) => setReviewComments(e.target.value)}
-                rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                placeholder="Enter comments..."
-              />
+
+            <div className="mb-6 p-4 bg-neutral-800 rounded-lg">
+              <p className="text-sm text-white font-semibold mb-1">{selectedEvent.title}</p>
+              <p className="text-xs text-gray-400">
+                {selectedEvent.hostId.firstName} {selectedEvent.hostId.lastName}
+              </p>
             </div>
+
+            {currentAction === 'reject' && (
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Reason for Rejection
+                </label>
+                <textarea
+                  value={rejectionReason}
+                  onChange={(e) => setRejectionReason(e.target.value)}
+                  rows={4}
+                  placeholder="Explain why you're rejecting this event..."
+                  className="w-full px-3 py-2 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                />
+              </div>
+            )}
+
             <div className="flex gap-3">
               <button
-                onClick={() => setShowReviewModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                onClick={closeReviewModal}
+                disabled={actionLoading}
+                className="flex-1 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 disabled:opacity-50 text-white rounded-lg font-medium transition-colors"
               >
                 Cancel
               </button>
               <button
-                onClick={submitReview}
-                className={`flex-1 px-4 py-2 text-white rounded-lg ${
-                  reviewAction === 'approve' ? 'bg-green-500 hover:bg-green-600' :
-                  reviewAction === 'reject' ? 'bg-red-500 hover:bg-red-600' :
-                  'bg-blue-500 hover:bg-blue-600'
+                onClick={() => {
+                  if (currentAction === 'approve') {
+                    handleApproveEvent(selectedEvent._id);
+                  } else {
+                    handleRejectEvent(selectedEvent._id);
+                  }
+                }}
+                disabled={actionLoading || (currentAction === 'reject' && !rejectionReason.trim())}
+                className={`flex-1 px-4 py-2 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors disabled:opacity-50 ${
+                  currentAction === 'approve'
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-600 hover:bg-red-700'
                 }`}
               >
-                {reviewAction === 'approve' && 'Approve'}
-                {reviewAction === 'reject' && 'Reject'}
-                {reviewAction === 'changes' && 'Request Changes'}
+                {actionLoading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={16} />
+                    {currentAction === 'approve' ? 'Approving...' : 'Rejecting...'}
+                  </>
+                ) : (
+                  <>
+                    {currentAction === 'approve' ? <CheckCircle size={16} /> : <XCircle size={16} />}
+                    {currentAction === 'approve' ? 'Approve' : 'Reject'}
+                  </>
+                )}
               </button>
             </div>
           </div>

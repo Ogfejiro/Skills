@@ -238,6 +238,32 @@ class EventService {
       throw error;
     }
   }
+
+  async getPublicEvents(page: number = 1, limit: number = 10): Promise<{ success: boolean; data: { events: Event[]; total: number; page: number; limit: number } }> {
+    try {
+      console.log('📖 Fetching public events:', { page, limit });
+
+      const response = await fetch(`${this.baseUrl}/api/events/public?page=${page}&limit=${limit}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('❌ Get public events error:', error);
+        throw new Error(error.message || 'Failed to fetch public events');
+      }
+
+      const result = await response.json();
+      console.log('✅ Public events fetched successfully:', result.data);
+      return result;
+    } catch (error) {
+      console.error('❌ Get public events service error:', error);
+      throw error;
+    }
+  }
 }
 
 export default new EventService();
