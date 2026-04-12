@@ -5,6 +5,7 @@ import { Calendar, MapPin, Users, Ticket, AlertCircle } from 'lucide-react'
 import Navbar from '@/components/Navbar'
 import eventService from '@/app/services/eventService'
 import ticketService from '@/app/services/ticketService'
+import PaymentModal from '@/components/PaymentModal'
 
 const LOGOS = [
 	'Sorare',
@@ -59,6 +60,8 @@ export default function HomePage() {
 	const [modalTickets, setModalTickets] = useState<any[]>([])
 	const [ticketLoading, setTicketLoading] = useState(false)
 	const [ticketError, setTicketError] = useState('')
+	const [selectedTicket, setSelectedTicket] = useState<any>(null)
+	const [isPaymentOpen, setIsPaymentOpen] = useState(false)
 
 	const stars = useMemo(
 		() =>
@@ -120,7 +123,15 @@ export default function HomePage() {
 
 	// BUY BUTTON (PLACEHOLDER)
 	const handleBuyTicket = (ticket: any) => {
-		alert(`Buying ticket: ${ticket.title} - Feature coming soon 🚀`)
+		setSelectedTicket({
+			ticketId: ticket._id,
+			title: ticket.title,
+			priceUSD: ticket.price,
+			priceNGN: ticket.priceNGN,
+			currency: ticket.currency,
+		})
+
+		setIsPaymentOpen(true)
 	}
 
 	return (
@@ -272,13 +283,13 @@ export default function HomePage() {
 			</section>
 
 			{/* EVENTS */}
-			<section className='py-20 px-4 sm:px-6 max-w-6xl mx-auto'>
-				<h2 className='text-2xl sm:text-4xl font-black text-center mb-10'>
+			<section className='py-24 px-6 lg:px-12 max-w-7xl xl:max-w-[1400px] mx-auto'>
+				<h2 className='text-3xl sm:text-4xl lg:text-5xl font-black text-center mb-14'>
 					Current Events
 				</h2>
 
 				{eventsError && (
-					<div className='bg-red-500/20 p-3 rounded mb-6 text-sm flex gap-2 items-center'>
+					<div className='bg-red-500/20 p-4 rounded mb-8 text-sm flex gap-2 items-center max-w-xl mx-auto'>
 						<AlertCircle size={16} />
 						{eventsError}
 					</div>
@@ -291,31 +302,31 @@ export default function HomePage() {
 						No events available
 					</p>
 				) : (
-					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 lg:gap-10'>
 						{publicEvents.map((event: any) => (
 							<div
 								key={event._id}
-								className='bg-[#10101e] rounded-xl border border-white/10 overflow-hidden'
+								className='bg-[#10101e] rounded-2xl border border-white/10 overflow-hidden hover:scale-[1.02] transition'
 							>
 								{event.banner && (
 									<img
 										src={event.banner}
-										className='h-40 w-full object-cover'
+										className='h-48 lg:h-56 w-full object-cover'
 									/>
 								)}
 
-								<div className='p-4'>
-									<h3 className='font-bold text-sm'>
+								<div className='p-5 lg:p-6'>
+									<h3 className='font-bold text-base lg:text-lg'>
 										{event.title}
 									</h3>
 
-									<p className='text-xs text-gray-400 mt-1 line-clamp-2'>
+									<p className='text-sm text-gray-400 mt-2 line-clamp-2'>
 										{event.description}
 									</p>
 
-									<div className='mt-3 text-xs text-gray-400 space-y-1'>
+									<div className='mt-4 text-sm text-gray-400 space-y-2'>
 										<div className='flex gap-2 items-center'>
-											<Calendar size={14} />
+											<Calendar size={16} />
 											{event.date
 												? new Date(
 														event.date,
@@ -324,17 +335,16 @@ export default function HomePage() {
 										</div>
 
 										<div className='flex gap-2 items-center'>
-											<MapPin size={14} />
+											<MapPin size={16} />
 											{event.venue || 'TBA'}
 										</div>
 									</div>
 
-									{/* GET TICKETS */}
 									<button
 										onClick={() =>
 											handleGetTickets(event._id)
 										}
-										className='mt-4 w-full bg-[#c9a227] text-black py-2 rounded text-sm font-bold'
+										className='mt-5 w-full bg-[#c9a227] text-black py-3 rounded-md text-sm font-bold hover:opacity-90 transition'
 									>
 										Get Tickets
 									</button>
@@ -347,15 +357,17 @@ export default function HomePage() {
 
 			{/* TICKET MODAL */}
 			{isTicketModalOpen && (
-				<div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4'>
-					<div className='bg-[#10101e] w-full max-w-md rounded-xl border border-white/10 p-6'>
+				<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4'>
+					<div className='bg-[#10101e] w-full max-w-2xl lg:max-w-4xl rounded-2xl border border-white/10 p-6 lg:p-10'>
 						{/* HEADER */}
-						<div className='flex justify-between items-center mb-4'>
-							<h2 className='font-bold'>Event Tickets</h2>
+						<div className='flex justify-between items-center mb-6'>
+							<h2 className='font-bold text-xl lg:text-2xl'>
+								Event Tickets
+							</h2>
 
 							<button
 								onClick={() => setIsTicketModalOpen(false)}
-								className='text-gray-400'
+								className='text-gray-400 text-lg hover:text-white'
 							>
 								✕
 							</button>
@@ -363,46 +375,73 @@ export default function HomePage() {
 
 						{/* LOADING */}
 						{ticketLoading && (
-							<p className='text-gray-400 text-sm'>
+							<p className='text-gray-400 text-center'>
 								Loading tickets...
 							</p>
 						)}
 
-						{/* ERROR / EMPTY */}
+						{/* ERROR */}
 						{!ticketLoading && ticketError && (
-							<p className='text-red-400 text-sm'>
+							<p className='text-red-400 text-center'>
 								{ticketError}
 							</p>
 						)}
 
 						{/* TICKETS */}
 						{!ticketLoading && modalTickets.length > 0 && (
-							<div className='space-y-3'>
+							<div className='grid sm:grid-cols-2 gap-6'>
 								{modalTickets.map((ticket: any) => (
 									<div
 										key={ticket._id}
-										className='border border-white/10 rounded-lg p-3'
+										className='border border-white/10 rounded-xl p-5 lg:p-6 bg-[#0c0c18] flex flex-col justify-between hover:border-[#c9a227] transition'
 									>
-										<h3 className='font-bold text-sm'>
-											{ticket.title}
-										</h3>
+										{/* TOP */}
+										<div>
+											<h3 className='font-bold text-lg mb-1'>
+												{ticket.title}
+											</h3>
 
-										<p className='text-xs text-gray-400'>
-											{ticket.description}
-										</p>
+											<p className='text-sm text-gray-400 mb-4'>
+												{ticket.description}
+											</p>
 
-										<div className='mt-2 flex justify-between items-center'>
-											<span className='text-[#c9a227] font-bold text-sm'>
+											{/* BENEFITS */}
+											{ticket.benefits &&
+												ticket.benefits.length > 0 && (
+													<ul className='space-y-2 mb-4'>
+														{ticket.benefits.map(
+															(
+																benefit: string,
+																index: number,
+															) => (
+																<li
+																	key={index}
+																	className='text-sm text-gray-300 flex gap-2 items-start'
+																>
+																	<span className='text-[#c9a227]'>
+																		✔
+																	</span>
+																	{benefit}
+																</li>
+															),
+														)}
+													</ul>
+												)}
+										</div>
+
+										{/* BOTTOM */}
+										<div className='mt-4'>
+											<p className='text-[#c9a227] font-bold text-lg mb-3'>
 												{ticket.currency} {ticket.price}
-											</span>
+											</p>
 
 											<button
 												onClick={() =>
 													handleBuyTicket(ticket)
 												}
-												className='px-3 py-1 text-xs bg-green-500 text-black rounded'
+												className='w-full bg-[#c9a227] hover:bg-[#b8921f] text-black py-3 rounded-lg font-bold transition'
 											>
-												Buy
+												Buy Ticket
 											</button>
 										</div>
 									</div>
@@ -410,11 +449,18 @@ export default function HomePage() {
 							</div>
 						)}
 
+						{/* ✅ ADD PAYMENT MODAL HERE */}
+						<PaymentModal
+							isOpen={isPaymentOpen}
+							onClose={() => setIsPaymentOpen(false)}
+							ticket={selectedTicket}
+						/>
+
 						{/* EMPTY */}
 						{!ticketLoading &&
 							modalTickets.length === 0 &&
 							!ticketError && (
-								<p className='text-gray-400 text-sm'>
+								<p className='text-gray-400 text-center'>
 									No tickets available.
 								</p>
 							)}
