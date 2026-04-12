@@ -8,7 +8,10 @@ export async function createEventTicket(hostId, eventId, ticketData) {
 	const host = await Host.findOne({ hostId })
 
 	if (!host) {
-		throw new AppError('Host not found', 404)
+		throw new AppError(
+			'Please Setup your Profile before creating ticket',
+			404,
+		)
 	}
 
 	const eventExist = await Event.findById(eventId)
