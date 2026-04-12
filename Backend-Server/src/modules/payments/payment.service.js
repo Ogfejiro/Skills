@@ -158,10 +158,10 @@ export async function verifyPay(tx_ref) {
 		payment.status === 'paid' ||
 		payment.status === 'completed'
 	) {
-		return { success: true, message: 'Payment successful' }
-	} else {
-		throw new AppError('Payment not successful', 200)
+		return { status: 'success', message: 'Payment successful' }
 	}
+
+	throw new AppError('Payment not successful', 400)
 }
 
 export async function TicketByRef(tx_ref) {
