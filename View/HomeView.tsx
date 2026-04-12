@@ -227,40 +227,46 @@ export default function HomePage() {
 			</section>
 
 			{/* ── Explore Our Event Website Offers ── */}
-			<section className='py-24 px-4 max-w-6xl mx-auto'>
-				<div className='grid md:grid-cols-2 gap-12 items-start'>
+			<section className='py-24 px-4'>
+				<div className='max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-start'>
+					{/* LEFT SIDE */}
 					<div>
 						<span className='text-[10px] text-[#c9a227] tracking-widest uppercase font-semibold'>
 							✦ Website Features
 						</span>
-						<h2 className='text-3xl md:text-4xl font-black mt-3 mb-4 leading-tight'>
+
+						<h2 className='text-3xl md:text-4xl lg:text-5xl font-black mt-3 mb-6 leading-tight'>
 							Explore Our Event
 							<br />
 							Website Offers
 						</h2>
-						<p className='text-gray-400 text-sm leading-relaxed mb-10 max-w-md'>
+
+						<p className='text-gray-400 text-base leading-relaxed max-w-md'>
 							Our interactive schedule allows attendees to easily
 							view and plan their day. It offers a user-friendly
 							interface where participants can explore session
 							details, speakers, and event locations.
 						</p>
-						<div className='grid grid-cols-2 gap-6'>
-							{FEATURES.map((f) => (
-								<div key={f.title}>
-									<div className='flex items-center gap-2 mb-1'>
-										<span className='text-[#c9a227]'>
-											{f.icon}
-										</span>
-										<p className='text-sm font-semibold text-white'>
-											{f.title}
-										</p>
-									</div>
-									<p className='text-xs text-gray-500 leading-relaxed'>
-										{f.desc}
+					</div>
+
+					{/* RIGHT SIDE */}
+					<div className='grid grid-cols-1 sm:grid-cols-2 gap-8'>
+						{FEATURES.map((f) => (
+							<div key={f.title}>
+								<div className='flex items-center gap-3 mb-2'>
+									<span className='text-[#c9a227] text-xl'>
+										{f.icon}
+									</span>
+									<p className='text-lg font-semibold text-white'>
+										{f.title}
 									</p>
 								</div>
-							))}
-						</div>
+
+								<p className='text-sm text-gray-400 leading-relaxed'>
+									{f.desc}
+								</p>
+							</div>
+						))}
 					</div>
 				</div>
 			</section>
