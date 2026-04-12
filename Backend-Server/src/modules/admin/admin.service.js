@@ -26,6 +26,11 @@ export async function getAllEventsWithStats(page, limit) {
 				0,
 			)
 
+			const payments = await paymentModel.find({
+				ticketName: { $in: tickets.map((t) => t.title) },
+				status: 'successful',
+			})
+
 			const EXCHANGE_RATE = 1350
 
 			const totalRevenue = payments.reduce((sum, payment) => {
