@@ -4,218 +4,307 @@ import { randomUUID } from 'crypto'
 import crypto from 'crypto'
 import Ticket from '../../models/ticket.model.js'
 import { sendVerificationEmail } from '../../services/shared/sendVerificationEmail.js'
-import { generateTicket } from '../../services/shared/ticket.service.js'
+import {
+	generateRegularTicket,
+	generateTicket,
+} from '../../services/shared/ticket.service.js'
 import nowPaymentsService from '../../config/heleket.js'
 import AppError from '../../services/shared/appError.js'
+import {
+	isWebhookProcessed,
+	logWebhookPending,
+	markWebhookProcessed,
+	markWebhookFailed,
+} from '../../services/shared/webhookIdempotency.js'
 
 export async function initiateInvoice(amount, email, userId, ticketName) {
-  const tx_ref = 'tx-' + Date.now()
+	const tx_ref = 'tx-' + Date.now()
 
-  await Payment.create({
-    userId,
-    tx_ref,
-    amount,
-    currency: 'NGN',
-    status: 'pending',
-    customerEmail: email,
-    ticketName,
-  })
+	await Payment.create({
+		userId,
+		tx_ref,
+		amount,
+		currency: 'NGN',
+		status: 'pending',
+		customerEmail: email,
+		ticketName,
+	})
 
-  const response = await flwClient.post('/payments', {
-    tx_ref,
-    amount,
-    currency: 'NGN',
-    redirect_url: `https://www.lofte.live/payment-status?tx_ref=${tx_ref}`,
-    customer: { email },
-    customizations: {
-      title: `${ticketName} Ticket Payment`,
-      description: 'Payment for ticket purchase',
-    },
-  })
+	const response = await flwClient.post('/payments', {
+		tx_ref,
+		amount,
+		currency: 'NGN',
+		redirect_url: `https://www.lofte.live/payment-status?tx_ref=${tx_ref}`,
+		customer: { email },
+		customizations: {
+			title: `${ticketName} Ticket Payment`,
+			description: 'Payment for ticket purchase',
+		},
+	})
 
-  return { paymentLink: response.data.data.link }
+	return { paymentLink: response.data.data.link }
 }
 
 export async function handleFlutterwaveWebhook(payload) {
-  try {
-    if (!payload) {
-      return { status: 'ignored' }
-    }
+	try {
+		if (!payload) {
+			return { status: 'ignored' }
+		}
 
-    const status = payload.status?.toLowerCase()
+		const tx_ref = payload.tx_ref
+		const externalId = payload.id
 
-    // Only process successful payments
-    if (!['successful', 'completed', 'success'].includes(status)) {
-      return { status: 'ignored' }
-    }
+		// Check if already processed (idempotency)
+		const alreadyProcessed = await isWebhookProcessed('flutterwave', externalId)
+		if (alreadyProcessed) {
+			console.log('✅ Webhook already processed:', externalId)
+			return { status: 'already_processed' }
+		}
 
-    const existingPayment = await Payment.findOne({
-      tx_ref: payload.tx_ref,
-    })
+		// Log webhook as pending
+		await logWebhookPending('flutterwave', externalId, payload)
 
-    if (!existingPayment) {
-      console.log('Payment not found:', payload.tx_ref)
-      return { status: 'not_found' }
-    }
+		const status = payload.status?.toLowerCase()
 
-    if (existingPayment.status === 'successful') {
-      console.log('Payment already processed:', payload.tx_ref)
-      return { status: 'already_processed' }
-    }
+		// Only process successful payments
+		if (!['successful', 'completed', 'success'].includes(status)) {
+			console.log('⏭️ Webhook ignored - status not successful:', status)
+			return { status: 'ignored' }
+		}
 
-    const updatedPayment = await Payment.findOneAndUpdate(
-      { tx_ref: payload.tx_ref },
-      {
-        status: 'successful',
-        transactionId: payload.id,
-      },
-      { returnDocument: 'after' },
-    )
+		const existingPayment = await Payment.findOne({
+			tx_ref: tx_ref,
+		})
 
-    // Generate ticket
-    await generateTicket(payload.tx_ref)
+		if (!existingPayment) {
+			console.error('❌ Payment not found:', tx_ref)
+			await markWebhookFailed('flutterwave', externalId, 'Payment not found')
+			return { status: 'not_found' }
+		}
 
-    // Send email
-    await sendVerificationEmail(
-      updatedPayment.customerEmail,
-      updatedPayment.amount,
-      `https://www.lofte.live/tickets?tx_ref=${payload.tx_ref}`,
-      updatedPayment.ticketName,
-      payload.tx_ref,
-    )
+		// Update payment status
+		const updatedPayment = await Payment.findOneAndUpdate(
+			{ tx_ref: tx_ref },
+			{
+				status: 'successful',
+				transactionId: externalId,
+			},
+			{ new: true },
+		)
 
-    console.log('Payment successfully processed:', payload.tx_ref)
+		// Generate ticket
+		try {
+			await generateTicket(tx_ref)
+		} catch (ticketError) {
+			console.error('❌ Ticket generation failed:', ticketError)
+			await markWebhookFailed('flutterwave', externalId, `Ticket generation: ${ticketError.message}`)
+			throw ticketError
+		}
 
-    return { status: 'processed' }
-  } catch (error) {
-    console.error('Service error:', error)
-    throw error
-  }
+		// Send email
+		try {
+			const emailResult = await sendVerificationEmail(
+				updatedPayment.customerEmail,
+				updatedPayment.ticketName,
+			)
+
+			if (!emailResult.success) {
+				console.warn(
+					`⚠️ Email sending failed but payment processed. PaymentID: ${updatedPayment._id}, Error: ${emailResult.error}`,
+				)
+				// Email failure is not fatal - ticket already generated
+			}
+		} catch (emailError) {
+			console.warn(
+				`⚠️ Email error for payment ${updatedPayment._id}:`,
+				emailError,
+			)
+			// Continue even if email fails - ticket was already generated
+		}
+
+		// Mark webhook as processed
+		await markWebhookProcessed('flutterwave', externalId)
+
+		console.log('✅ Payment successfully processed:', tx_ref)
+
+		return { status: 'processed' }
+	} catch (error) {
+		console.error('❌ Webhook processing error:', error)
+		throw error
+	}
 }
 
 export async function verifyPay(tx_ref) {
-  const payment = await Payment.findOne({ tx_ref })
+	const payment = await Payment.findOne({ tx_ref })
 
-  if (!payment) {
-    throw new AppError('Payment not found', 404)
-  }
+	if (!payment) {
+		throw new AppError('Payment not found', 404)
+	}
 
-  if (
-    payment.status === 'successful' ||
-    payment.status === 'paid' ||
-    payment.status === 'completed'
-  ) {
-    return { success: true, message: 'Payment successful' }
-  } else {
-    throw new AppError('Payment not successful', 200)
-  }
+	if (
+		payment.status === 'successful' ||
+		payment.status === 'paid' ||
+		payment.status === 'completed'
+	) {
+		return { success: true, message: 'Payment successful' }
+	} else {
+		throw new AppError('Payment not successful', 200)
+	}
 }
 
 export async function TicketByRef(tx_ref) {
-  const ticket = await Ticket.findOne({ tx_ref })
-  if (!ticket) {
-    throw new AppError('Ticket not found', 404)
-  }
-  return ticket
+	const ticket = await Ticket.findOne({ tx_ref })
+	if (!ticket) {
+		throw new AppError('Ticket not found', 404)
+	}
+	return ticket
 }
 
 export async function createCryptoInvoice(amount, email, userId, ticketName) {
-  const tx_ref = `tx-${randomUUID()}`
+	const tx_ref = `tx-${randomUUID()}`
 
-  let invoice
+	let invoice
 
-  try {
-    invoice = await nowPaymentsService.createInvoice({
-      price_amount: amount,
-      price_currency: 'USD',
-      order_id: tx_ref,
-      order_description: `Payment for ${ticketName} ticket`,
-      ipn_callback_url: `${process.env.BACKEND_URL}/api/payments/crypto-webhook`,
-      success_url: `${process.env.FRONTEND_URL}/payment-status?tx_ref=${tx_ref}`,
-      cancel_url: `${process.env.FRONTEND_URL}/payment-status?tx_ref=${tx_ref}`,
-    })
-  } catch (err) {
-    console.error(err)
-    throw new Error('Failed to create crypto invoice')
-  }
+	try {
+		invoice = await nowPaymentsService.createInvoice({
+			price_amount: amount,
+			price_currency: 'USD',
+			order_id: tx_ref,
+			order_description: `Payment for ${ticketName} ticket`,
+			ipn_callback_url: `${process.env.BACKEND_URL}/api/payments/crypto-webhook`,
+			success_url: `${process.env.FRONTEND_URL}/payment-status?tx_ref=${tx_ref}`,
+			cancel_url: `${process.env.FRONTEND_URL}/payment-status?tx_ref=${tx_ref}`,
+		})
+	} catch (err) {
+		console.error(err)
+		throw new Error('Failed to create crypto invoice')
+	}
 
-  await Payment.create({
-    userId,
-    tx_ref,
-    amount,
-    currency: 'USD',
-    status: 'pending',
-    customerEmail: email,
-    ticketName,
-    provider: 'nowpayments',
-  })
+	await Payment.create({
+		userId,
+		tx_ref,
+		amount,
+		currency: 'USD',
+		status: 'pending',
+		customerEmail: email,
+		ticketName,
+		provider: 'nowpayments',
+	})
 
-  return { paymentLink: invoice.invoice_url }
+	return { paymentLink: invoice.invoice_url }
 }
 
 export async function handleCryptoWebhook(rawBody, signature) {
-  // Verify signature
-  const hmac = crypto
-    .createHmac('sha512', process.env.NOWPAYMENTS_IPN_SECRET)
-    .update(rawBody)
-    .digest('hex')
+	try {
+		// Verify signature
+		const hmac = crypto
+			.createHmac('sha512', process.env.NOWPAYMENTS_IPN_SECRET)
+			.update(rawBody)
+			.digest('hex')
 
-  if (hmac !== signature) {
-    throw new AppError('Invalid signature', 400)
-  }
+		if (hmac !== signature) {
+			throw new AppError('Invalid signature', 400)
+		}
 
-  const paymentData = JSON.parse(rawBody.toString())
+		const paymentData = JSON.parse(rawBody.toString())
+		const externalId = paymentData.payment_id
 
-  // Ignore non-final states
-  if (paymentData.payment_status !== 'finished') {
-    return { status: 'ignored' }
-  }
+		// Check if already processed (idempotency)
+		const alreadyProcessed = await isWebhookProcessed('crypto', externalId)
+		if (alreadyProcessed) {
+			console.log('✅ Crypto webhook already processed:', externalId)
+			return { status: 'already_processed' }
+		}
 
-  const existingPayment = await Payment.findOne({
-    tx_ref: paymentData.order_id,
-  })
+		// Log webhook as pending
+		await logWebhookPending('crypto', externalId, paymentData)
 
-  if (!existingPayment) {
-    console.log('Payment not found:', paymentData.order_id)
-    return { status: 'not_found' }
-  }
+		// Ignore non-final states
+		if (paymentData.payment_status !== 'finished') {
+			console.log('⏭️ Crypto webhook ignored - status not finished:', paymentData.payment_status)
+			return { status: 'ignored' }
+		}
 
-  // Idempotency protection
-  if (existingPayment.status === 'successful') {
-    return { status: 'already_processed' }
-  }
+		const existingPayment = await Payment.findOne({
+			tx_ref: paymentData.order_id,
+		})
 
-  // Validate fiat amount
-  if (Number(paymentData.price_amount) !== Number(existingPayment.amount)) {
-    console.log('Amount mismatch!')
-    throw new AppError('Amount mismatch', 400)
-  }
+		if (!existingPayment) {
+			console.error('❌ Payment not found:', paymentData.order_id)
+			await markWebhookFailed('crypto', externalId, 'Payment not found')
+			return { status: 'not_found' }
+		}
 
-  // 🪙 Validate crypto outcome
-  if (!paymentData.pay_amount || !paymentData.pay_currency) {
-    console.log('Missing crypto outcome data')
-    throw new AppError('Invalid payment data', 400)
-  }
+		// Validate fiat amount
+		if (Number(paymentData.price_amount) !== Number(existingPayment.amount)) {
+			console.error('❌ Amount mismatch! Expected:', existingPayment.amount, 'Got:', paymentData.price_amount)
+			await markWebhookFailed('crypto', externalId, 'Amount mismatch')
+			throw new AppError('Amount mismatch', 400)
+		}
 
-  //  Update payment
-  existingPayment.status = 'successful'
-  existingPayment.transactionId = paymentData.payment_id
-  existingPayment.paidAmountCrypto = paymentData.pay_amount
-  existingPayment.currency = paymentData.pay_currency
+		// Validate crypto outcome
+		if (!paymentData.pay_amount || !paymentData.pay_currency) {
+			console.error('❌ Missing crypto outcome data')
+			await markWebhookFailed('crypto', externalId, 'Missing crypto outcome data')
+			throw new AppError('Invalid payment data', 400)
+		}
 
-  await existingPayment.save()
+		// Update payment
+		const updatedPayment = await Payment.findOneAndUpdate(
+			{ tx_ref: paymentData.order_id },
+			{
+				status: 'successful',
+				transactionId: externalId,
+				paidAmountCrypto: paymentData.pay_amount,
+				network: paymentData.pay_currency,
+			},
+			{ new: true },
+		)
 
-  // Generate ticket
-  await generateTicket(existingPayment.tx_ref)
+		// Generate ticket
+		try {
+			await generateTicket(existingPayment.tx_ref)
+		} catch (ticketError) {
+			console.error('❌ Ticket generation failed:', ticketError)
+			await markWebhookFailed('crypto', externalId, `Ticket generation: ${ticketError.message}`)
+			throw ticketError
+		}
 
-  // Send email
-  await sendVerificationEmail(
-    existingPayment.customerEmail,
-    existingPayment.amount,
-    `https://www.lofte.live/tickets?tx_ref=${existingPayment.tx_ref}`,
-    existingPayment.ticketName,
-    existingPayment.tx_ref,
-  )
+		// Send email
+		try {
+			const emailResult = await sendVerificationEmail(
+				updatedPayment.customerEmail,
+				updatedPayment.ticketName,
+			)
 
-  return { status: 'processed' }
+			if (!emailResult.success) {
+				console.warn(
+					`⚠️ Email sending failed but crypto payment processed. PaymentID: ${updatedPayment._id}, Error: ${emailResult.error}`,
+				)
+			}
+		} catch (emailError) {
+			console.warn(
+				`⚠️ Email error for crypto payment ${updatedPayment._id}:`,
+				emailError,
+			)
+		}
+
+		// Mark webhook as processed
+		await markWebhookProcessed('crypto', externalId)
+
+		console.log('✅ Crypto payment successfully processed:', paymentData.order_id)
+
+		return { status: 'processed' }
+	} catch (error) {
+		console.error('❌ Crypto webhook processing error:', error)
+		throw error
+	}
+}
+
+export async function regularTicketService(email, ticketName, eventName) {
+	const ticket = await generateRegularTicket(email, ticketName, eventName)
+
+	await sendVerificationEmail(email, ticketName, eventName)
+
+	return 'Ticket has been sent to your email'
 }

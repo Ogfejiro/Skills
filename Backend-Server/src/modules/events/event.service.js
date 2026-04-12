@@ -3,9 +3,18 @@ import Event from '../../models/Event.model.js'
 import EventTicket from '../../models/EventTicket.model.js'
 import AppError from '../../services/shared/appError.js'
 import cloudinary from './../../config/cloudinary.js'
+import { sendEventEmail } from '../../services/shared/sendVerificationEmail.js'
 
 export const createEvent = async (hostId, eventData) => {
+	const user = await User.findById(hostId)
 	const event = await Event.create({ ...eventData, hostId })
+
+	await sendEventEmail({
+		customerEmail: user.email,
+		title: eventData.title,
+		date: eventData.date,
+	})
+
 	return event.populate('hostId', 'firstName lastName')
 }
 

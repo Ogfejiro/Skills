@@ -2,7 +2,7 @@ import Payment from '../../models/payment.model.js'
 import Ticket from '../../models/ticket.model.js'
 import { nanoid } from 'nanoid'
 
-export async function generateTicket(tx_ref) {
+export async function generatePaymentTicket(tx_ref) {
 	const payment = await Payment.findOne({ tx_ref })
 
 	if (!payment) {
@@ -35,6 +35,33 @@ export async function generateTicket(tx_ref) {
 		currency: payment.currency,
 		status: 'active',
 		customerEmail: payment.customerEmail,
+	})
+
+	return newTicket
+}
+
+export async function generateRegularTicket(email, ticketName, eventName) {
+	const existingTicket = await Ticket.findOne({ customerEmail: email })
+	if (existingTicket) {
+		return existingTicket
+	}
+
+	const monthYear =
+		String(now.getMonth() + 1).padStart(2, '0') +
+		String(now.getFullYear()).slice(-2)
+
+	const ticketId = `LOFTE-${monthYear}-${nanoid(6)}`
+	const tx_ref = `REGULAR-${monthYear}-${nanoid(6)}`
+
+	const newTicket = await Ticket.create({
+		paymentId: 0,
+		ticketId,
+		tx_ref: tx_ref,
+		ticketName: ticketName,
+		amount: 0,
+		status: 'active',
+		customerEmail: email,
+		eventName: eventName,
 	})
 
 	return newTicket

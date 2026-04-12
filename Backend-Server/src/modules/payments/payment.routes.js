@@ -1,17 +1,19 @@
 // payment.routes.js - COMPLETE CORRECTED VERSION
 import express from 'express'
 import {
-  initiatePayment,
-  verifyPayment,
-  flutterwaveWebhook,
-  getTicketByTxRef,
-  createInvoice,
-  cryptoWebhook,
+	initiatePayment,
+	verifyPayment,
+	flutterwaveWebhook,
+	getTicketByTxRef,
+	createInvoice,
+	cryptoWebhook,
+	regularTicket,
 } from './payment.controller.js'
 
 const router = express.Router()
 
 // Payment routes
+router.post('/regular', regularTicket)
 router.post('/initiate', initiatePayment)
 router.post('/pay-usdt', createInvoice)
 router.post('/crypto-webhook', cryptoWebhook)

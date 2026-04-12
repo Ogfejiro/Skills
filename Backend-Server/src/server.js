@@ -10,10 +10,15 @@ import eventRoutes from './modules/events/event.route.js'
 import publicEventRoutes from './modules/events/event.public.route.js'
 import paymentRoutes from '../src/modules/payments/payment.routes.js'
 import ticketRoutes from '../src/modules/events-ticket/ticket.route.js'
+import adminRoutes from './modules/admin/admin.route.js'
+import healthRoutes from './modules/health/health.route.js'
 import errorMiddle from '../src/services/middleware/error.js'
 import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
+import { validateEnvironment } from '../src/services/shared/validateEnv.js'
+import { schedulePaymentCleanup } from '../src/services/shared/paymentCleanup.js'
 
 dotenv.config()
+validateEnvironment()
 
 const app = express()
 app.use(
@@ -43,17 +48,32 @@ app.post(
 )
 app.use(express.json())
 
+app.use('/api/health', healthRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/host', hostRoutes)
 app.use('/api/events', eventRoutes)
 app.use('/api/event-public', publicEventRoutes)
 app.use('/api/payments', paymentRoutes)
 app.use('/api/tickets', ticketRoutes)
+app.use('/api/admin', adminRoutes)
 
 app.use(errorMiddle)
 const PORT = process.env.PORT
 
-app.listen(PORT, async () => {
+const server = app.listen(PORT, async () => {
 	await connectDB()
-	console.log('Server running on port', PORT)
+	console.log('✅ Server running on port', PORT)
+
+	schedulePaymentCleanup()
+})
+
+process.on('unhandledRejection', (err) => {
+	console.error('❌ Unhandled Rejection:', err)
+	server.close(() => process.exit(1))
+})
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+	console.error('❌ Uncaught Exception:', err)
+	process.exit(1)
 })
