@@ -128,7 +128,7 @@ class TicketService {
 			console.log('🎫 Fetching tickets for event:', eventId)
 
 			const response = await fetch(
-				`${this.baseUrl}/api/tickets/${eventId}`,
+				`${this.baseUrl}/api/tickets/public/${eventId}`,
 				{
 					method: 'GET',
 					headers: {
