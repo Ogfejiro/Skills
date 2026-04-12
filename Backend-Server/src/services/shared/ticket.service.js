@@ -2,7 +2,7 @@ import Payment from '../../models/payment.model.js'
 import Ticket from '../../models/ticket.model.js'
 import { nanoid } from 'nanoid'
 
-export async function generatePaymentTicket(tx_ref) {
+export async function generateTicket(tx_ref) {
 	const payment = await Payment.findOne({ tx_ref })
 
 	if (!payment) {

@@ -1,4 +1,4 @@
-import asyncHandler from '../shared/asyncHandler.js'
+import asyncHandler from '../../services/shared/asyncHandler.js'
 import mongoose from 'mongoose'
 
 export const healthCheckController = asyncHandler(async (req, res) => {
