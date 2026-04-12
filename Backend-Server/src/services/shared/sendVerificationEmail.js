@@ -1,4 +1,4 @@
-export async function sendVerificationEmail(customerEmail, ticketName) {
+export async function sendVerificationEmail(customerEmail, ticketName, link) {
 	try {
 		const response = await fetch('https://api.brevo.com/v3/smtp/email', {
 			method: 'POST',
@@ -15,7 +15,8 @@ export async function sendVerificationEmail(customerEmail, ticketName) {
 				templateId: Number(process.env.BREVO_TEMPLATE_ID),
 				params: {
 					EMAIL: customerEmail,
-					ticketName,
+					Ticket: ticketName,
+					link,
 				},
 			}),
 		})

@@ -55,7 +55,10 @@ export async function handleFlutterwaveWebhook(payload) {
 		const externalId = payload.id
 
 		// Check if already processed (idempotency)
-		const alreadyProcessed = await isWebhookProcessed('flutterwave', externalId)
+		const alreadyProcessed = await isWebhookProcessed(
+			'flutterwave',
+			externalId,
+		)
 		if (alreadyProcessed) {
 			console.log('✅ Webhook already processed:', externalId)
 			return { status: 'already_processed' }
@@ -78,7 +81,11 @@ export async function handleFlutterwaveWebhook(payload) {
 
 		if (!existingPayment) {
 			console.error('❌ Payment not found:', tx_ref)
-			await markWebhookFailed('flutterwave', externalId, 'Payment not found')
+			await markWebhookFailed(
+				'flutterwave',
+				externalId,
+				'Payment not found',
+			)
 			return { status: 'not_found' }
 		}
 
@@ -97,7 +104,11 @@ export async function handleFlutterwaveWebhook(payload) {
 			await generateTicket(tx_ref)
 		} catch (ticketError) {
 			console.error('❌ Ticket generation failed:', ticketError)
-			await markWebhookFailed('flutterwave', externalId, `Ticket generation: ${ticketError.message}`)
+			await markWebhookFailed(
+				'flutterwave',
+				externalId,
+				`Ticket generation: ${ticketError.message}`,
+			)
 			throw ticketError
 		}
 
@@ -106,6 +117,7 @@ export async function handleFlutterwaveWebhook(payload) {
 			const emailResult = await sendVerificationEmail(
 				updatedPayment.customerEmail,
 				updatedPayment.ticketName,
+				`https://www.lofte.live/payment-status?tx_ref=${tx_ref}`,
 			)
 
 			if (!emailResult.success) {
@@ -221,7 +233,10 @@ export async function handleCryptoWebhook(rawBody, signature) {
 
 		// Ignore non-final states
 		if (paymentData.payment_status !== 'finished') {
-			console.log('⏭️ Crypto webhook ignored - status not finished:', paymentData.payment_status)
+			console.log(
+				'⏭️ Crypto webhook ignored - status not finished:',
+				paymentData.payment_status,
+			)
 			return { status: 'ignored' }
 		}
 
@@ -236,8 +251,15 @@ export async function handleCryptoWebhook(rawBody, signature) {
 		}
 
 		// Validate fiat amount
-		if (Number(paymentData.price_amount) !== Number(existingPayment.amount)) {
-			console.error('❌ Amount mismatch! Expected:', existingPayment.amount, 'Got:', paymentData.price_amount)
+		if (
+			Number(paymentData.price_amount) !== Number(existingPayment.amount)
+		) {
+			console.error(
+				'❌ Amount mismatch! Expected:',
+				existingPayment.amount,
+				'Got:',
+				paymentData.price_amount,
+			)
 			await markWebhookFailed('crypto', externalId, 'Amount mismatch')
 			throw new AppError('Amount mismatch', 400)
 		}
@@ -245,7 +267,11 @@ export async function handleCryptoWebhook(rawBody, signature) {
 		// Validate crypto outcome
 		if (!paymentData.pay_amount || !paymentData.pay_currency) {
 			console.error('❌ Missing crypto outcome data')
-			await markWebhookFailed('crypto', externalId, 'Missing crypto outcome data')
+			await markWebhookFailed(
+				'crypto',
+				externalId,
+				'Missing crypto outcome data',
+			)
 			throw new AppError('Invalid payment data', 400)
 		}
 
@@ -266,7 +292,11 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			await generateTicket(existingPayment.tx_ref)
 		} catch (ticketError) {
 			console.error('❌ Ticket generation failed:', ticketError)
-			await markWebhookFailed('crypto', externalId, `Ticket generation: ${ticketError.message}`)
+			await markWebhookFailed(
+				'crypto',
+				externalId,
+				`Ticket generation: ${ticketError.message}`,
+			)
 			throw ticketError
 		}
 
@@ -275,6 +305,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			const emailResult = await sendVerificationEmail(
 				updatedPayment.customerEmail,
 				updatedPayment.ticketName,
+				`https://www.lofte.live/payment-status?tx_ref=${updatedPayment.tx_ref}`,
 			)
 
 			if (!emailResult.success) {
@@ -292,7 +323,10 @@ export async function handleCryptoWebhook(rawBody, signature) {
 		// Mark webhook as processed
 		await markWebhookProcessed('crypto', externalId)
 
-		console.log('✅ Crypto payment successfully processed:', paymentData.order_id)
+		console.log(
+			'✅ Crypto payment successfully processed:',
+			paymentData.order_id,
+		)
 
 		return { status: 'processed' }
 	} catch (error) {
@@ -304,7 +338,8 @@ export async function handleCryptoWebhook(rawBody, signature) {
 export async function regularTicketService(email, ticketName, eventName) {
 	const ticket = await generateRegularTicket(email, ticketName, eventName)
 
-	await sendVerificationEmail(email, ticketName, eventName)
+	const link = `https://www.lofte.live/payment-status?tx_ref=${ticket.tx_ref}`
+	await sendVerificationEmail(email, ticketName, link)
 
 	return 'Ticket has been sent to your email'
 }

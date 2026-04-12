@@ -34,12 +34,6 @@ export async function logWebhookPending(provider, externalId, payload) {
 	}
 }
 
-/**
- * Mark webhook as processed
- * @param {string} provider - Payment provider
- * @param {string} externalId - External transaction ID
- * @returns {Promise<Object>} Updated webhook log
- */
 export async function markWebhookProcessed(provider, externalId) {
 	const log = await WebhookLog.findOneAndUpdate(
 		{ provider, externalId },
@@ -49,13 +43,6 @@ export async function markWebhookProcessed(provider, externalId) {
 	return log
 }
 
-/**
- * Mark webhook as failed
- * @param {string} provider - Payment provider
- * @param {string} externalId - External transaction ID
- * @param {string} error - Error message
- * @returns {Promise<Object>} Updated webhook log
- */
 export async function markWebhookFailed(provider, externalId, error) {
 	const log = await WebhookLog.findOneAndUpdate(
 		{ provider, externalId },
