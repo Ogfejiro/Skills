@@ -124,7 +124,7 @@ export default function HomePage() {
 	// BUY BUTTON (PLACEHOLDER)
 	const handleBuyTicket = (ticket: any) => {
 		setSelectedTicket({
-			ticketId: ticket._id,
+			eventId: ticket.eventId,
 			title: ticket.title,
 			priceUSD: ticket.price,
 			priceNGN: ticket.priceNGN,

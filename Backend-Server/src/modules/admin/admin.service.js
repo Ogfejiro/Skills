@@ -21,14 +21,21 @@ export async function getAllEventsWithStats(page, limit) {
 	const eventsWithStats = await Promise.all(
 		events.map(async (event) => {
 			const tickets = await EventTicket.find({ eventId: event._id })
-			const ticketsSold = tickets.reduce((sum, ticket) => sum + ticket.sold, 0)
+			const ticketsSold = tickets.reduce(
+				(sum, ticket) => sum + ticket.sold,
+				0,
+			)
 
-			const payments = await paymentModel.find({
-				ticketName: { $in: tickets.map((t) => t.title) },
-				status: 'successful',
-			})
+			const EXCHANGE_RATE = 1350
 
-			const totalRevenue = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0)
+			const totalRevenue = payments.reduce((sum, payment) => {
+				const amount = payment.amount || 0
+
+				const normalizedAmount =
+					payment.currency === 'NGN' ? amount : amount * EXCHANGE_RATE
+
+				return sum + normalizedAmount
+			}, 0)
 
 			return {
 				_id: event._id,
@@ -116,7 +123,9 @@ export async function getAdminAnalytics() {
 }
 
 export async function updateEventStatusAdmin(eventId, newStatus) {
-	if (!['draft', 'Auditing', 'live', 'ended', 'cancelled'].includes(newStatus)) {
+	if (
+		!['draft', 'Auditing', 'live', 'ended', 'cancelled'].includes(newStatus)
+	) {
 		throw new AppError(
 			'Invalid status. Must be one of: draft, Auditing, live, ended, cancelled',
 			400,
@@ -131,11 +140,17 @@ export async function updateEventStatusAdmin(eventId, newStatus) {
 	if (newStatus === 'live') {
 		const tickets = await EventTicket.findOne({ eventId })
 		if (!tickets) {
-			throw new AppError('Cannot set event to live without at least one ticket', 400)
+			throw new AppError(
+				'Cannot set event to live without at least one ticket',
+				400,
+			)
 		}
 
 		if (new Date(event.date) < new Date()) {
-			throw new AppError('Cannot set event to live if the date is in the past', 400)
+			throw new AppError(
+				'Cannot set event to live if the date is in the past',
+				400,
+			)
 		}
 	}
 

@@ -41,6 +41,7 @@ export interface GetAllEventsResponse {
 	data: AdminEvent[]
 	page: number
 	limit: number
+	Total: number
 	totalEvents: number
 	totalPages: number
 }

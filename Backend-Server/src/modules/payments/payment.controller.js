@@ -11,9 +11,9 @@ import {
 } from './payment.service.js'
 
 export const initiatePayment = asyncHandler(async (req, res) => {
-	const { amount, email, userId, ticketName } = req.body
+	const { amount, email, userId, ticketName, eventId, quantity } = req.body
 
-	if (!amount || !email || !userId || !ticketName) {
+	if (!amount || !email || !userId || !ticketName || !eventId || !quantity) {
 		throw new AppError('Missing required fields', 400)
 	}
 
@@ -22,6 +22,8 @@ export const initiatePayment = asyncHandler(async (req, res) => {
 		email,
 		userId,
 		ticketName,
+		eventId,
+		quantity,
 	)
 
 	res.json({ paymentLink })
@@ -68,13 +70,20 @@ export const getTicketByTxRef = asyncHandler(async (req, res) => {
 })
 
 export const createInvoice = asyncHandler(async (req, res) => {
-	const { amount, email, userId, ticketName } = req.body
+	const { amount, email, userId, ticketName, eventId, quantity } = req.body
 
-	if (!amount || !email || !userId || !ticketName) {
+	if (!amount || !email || !userId || !ticketName || !eventId || !quantity) {
 		throw new AppError('All fields are required', 400)
 	}
 
-	const result = await createCryptoInvoice(amount, email, userId, ticketName)
+	const result = await createCryptoInvoice(
+		amount,
+		email,
+		userId,
+		ticketName,
+		eventId,
+		quantity,
+	)
 
 	return res.status(200).json(result)
 })

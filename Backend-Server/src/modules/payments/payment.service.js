@@ -3,6 +3,9 @@ import Payment from '../../models/payment.model.js'
 import { randomUUID } from 'crypto'
 import crypto from 'crypto'
 import Ticket from '../../models/ticket.model.js'
+import Event from '../../models/Event.model.js'
+import EventTicket from '../../models/EventTicket.model.js'
+import Host from '../../models/Host.model.js'
 import { sendVerificationEmail } from '../../services/shared/sendVerificationEmail.js'
 import {
 	generateRegularTicket,
@@ -17,18 +20,27 @@ import {
 	markWebhookFailed,
 } from '../../services/shared/webhookIdempotency.js'
 
-export async function initiateInvoice(amount, email, userId, ticketName) {
-	const tx_ref = 'tx-' + Date.now()
-
-	await Payment.create({
+export async function initiateInvoice(
+	amount,
+	email,
+	userId,
+	ticketName,
+	eventId,
+	quantity,
+) {
+	const payment = await Payment.create({
 		userId,
-		tx_ref,
+		eventId,
 		amount,
 		currency: 'NGN',
 		status: 'pending',
 		customerEmail: email,
+		quantity,
 		ticketName,
+		eventId,
 	})
+
+	const tx_ref = payment._id.toString()
 
 	const response = await flwClient.post('/payments', {
 		tx_ref,
@@ -75,9 +87,11 @@ export async function handleFlutterwaveWebhook(payload) {
 			return { status: 'ignored' }
 		}
 
-		const existingPayment = await Payment.findOne({
-			tx_ref: tx_ref,
+		const existingPayment = await Payment.findById({
+			_id: tx_ref,
 		})
+
+		if (existingPayment.status === 'successful') return
 
 		if (!existingPayment) {
 			console.error('❌ Payment not found:', tx_ref)
@@ -91,12 +105,51 @@ export async function handleFlutterwaveWebhook(payload) {
 
 		// Update payment status
 		const updatedPayment = await Payment.findOneAndUpdate(
-			{ tx_ref: tx_ref },
+			{ _id: tx_ref },
 			{
+				tx_ref: tx_ref,
 				status: 'successful',
 				transactionId: externalId,
 			},
 			{ new: true },
+		)
+
+		const updateEvent = await Event.findByIdAndUpdate(
+			existingPayment.eventId,
+			{
+				$inc: {
+					ticketsSold: existingPayment.quantity,
+				},
+			},
+			{ new: true },
+		)
+
+		const updateEventTicket = await EventTicket.findOneAndUpdate(
+			{
+				eventId: updateEvent._id,
+				ticketName: existingPayment.ticketName,
+			},
+			{
+				$inc: {
+					sold: existingPayment.quantity,
+				},
+			},
+			{ new: true },
+		)
+
+		const amount = payload.amount
+		const platformFee = amount * 0.05
+		const hostEarnings = amount - platformFee
+
+		const hostId = updateEvent.host
+
+		await Host.findOneAndUpdate(
+			{ hostId: hostId },
+			{
+				$inc: {
+					balance: hostEarnings,
+				},
+			},
 		)
 
 		// Generate ticket
@@ -172,8 +225,27 @@ export async function TicketByRef(tx_ref) {
 	return ticket
 }
 
-export async function createCryptoInvoice(amount, email, userId, ticketName) {
-	const tx_ref = `tx-${randomUUID()}`
+export async function createCryptoInvoice(
+	amount,
+	email,
+	userId,
+	ticketName,
+	eventId,
+	quantity,
+) {
+	const payment = await Payment.create({
+		userId,
+		amount,
+		quantity,
+		eventId,
+		currency: 'USD',
+		status: 'pending',
+		customerEmail: email,
+		ticketName,
+		provider: 'nowpayments',
+	})
+
+	const tx_ref = payment._id
 
 	let invoice
 
@@ -182,6 +254,7 @@ export async function createCryptoInvoice(amount, email, userId, ticketName) {
 			price_amount: amount,
 			price_currency: 'USD',
 			order_id: tx_ref,
+			is_fee_paid_by_user: true,
 			order_description: `Payment for ${ticketName} ticket`,
 			ipn_callback_url: `${process.env.BACKEND_URL}/api/payments/crypto-webhook`,
 			success_url: `${process.env.FRONTEND_URL}/payment-status?tx_ref=${tx_ref}`,
@@ -191,17 +264,6 @@ export async function createCryptoInvoice(amount, email, userId, ticketName) {
 		console.error(err)
 		throw new Error('Failed to create crypto invoice')
 	}
-
-	await Payment.create({
-		userId,
-		tx_ref,
-		amount,
-		currency: 'USD',
-		status: 'pending',
-		customerEmail: email,
-		ticketName,
-		provider: 'nowpayments',
-	})
 
 	return { paymentLink: invoice.invoice_url }
 }
@@ -241,7 +303,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 		}
 
 		const existingPayment = await Payment.findOne({
-			tx_ref: paymentData.order_id,
+			_id: paymentData.order_id,
 		})
 
 		if (!existingPayment) {
@@ -277,14 +339,55 @@ export async function handleCryptoWebhook(rawBody, signature) {
 
 		// Update payment
 		const updatedPayment = await Payment.findOneAndUpdate(
-			{ tx_ref: paymentData.order_id },
+			{ _id: paymentData.order_id },
 			{
 				status: 'successful',
 				transactionId: externalId,
+				tx_ref: paymentData.order_id,
 				paidAmountCrypto: paymentData.pay_amount,
-				network: paymentData.pay_currency,
+				currencyPaid: paymentData.pay_currency,
 			},
 			{ new: true },
+		)
+
+		const updateEvent = await Event.findByIdAndUpdate(
+			existingPayment.eventId,
+			{
+				$inc: {
+					ticketsSold: existingPayment.quantity,
+				},
+			},
+			{ new: true },
+		)
+
+		const updateEventTicket = await EventTicket.findOneAndUpdate(
+			{
+				eventId: updateEvent._id,
+				ticketName: existingPayment.ticketName,
+			},
+			{
+				$inc: {
+					sold: existingPayment.quantity,
+				},
+			},
+			{ new: true },
+		)
+
+		const usdAmount = paymentData.price_amount
+		const conversionRate = updateEvent.host.conversionRate // USD → NGN
+		const localAmount = usdAmount * conversionRate
+		const platformFee = localAmount * 0.05
+		const hostEarnings = localAmount - platformFee
+
+		const hostId = updateEvent.host
+
+		await Host.findOneAndUpdate(
+			{ hostId: hostId },
+			{
+				$inc: {
+					balance: hostEarnings,
+				},
+			},
 		)
 
 		// Generate ticket

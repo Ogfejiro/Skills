@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { paymentService } from '@/app/services/paymentService'
 
 interface PaymentTicket {
-	ticketId: string
+	eventId: string
 	title: string
 	priceUSD: number
 	priceNGN: number
@@ -15,7 +15,7 @@ interface PaymentPayload {
 	email: string
 	userId: string
 	ticketName: string
-	ticketId: string
+	eventId: string
 	quantity: number
 }
 
@@ -63,7 +63,7 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 				email,
 				userId: crypto.randomUUID(),
 				ticketName: ticket.title,
-				ticketId: ticket.ticketId,
+				eventId: ticket.eventId,
 				quantity,
 			}
 

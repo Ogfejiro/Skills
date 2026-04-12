@@ -12,6 +12,7 @@ const ticketSchema = new mongoose.Schema(
 		amount: { type: Number, required: true },
 		currency: { type: String },
 		status: { type: String, required: true },
+		quantity: { type: String, required: true },
 		customerEmail: { type: String, required: true },
 		ticketName: { type: String, required: true },
 		eventDate: { type: Date },

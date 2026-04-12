@@ -32,6 +32,7 @@ export async function generateTicket(tx_ref) {
 		tx_ref: payment.tx_ref,
 		ticketName: payment.ticketName,
 		amount: payment.amount,
+		quantity: payment.quantity,
 		currency: payment.currency,
 		status: 'active',
 		customerEmail: payment.customerEmail,
