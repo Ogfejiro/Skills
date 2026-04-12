@@ -54,6 +54,8 @@ export default function ViewEventPage() {
 			try {
 				if (!token) throw new Error('Authentication required')
 
+				console.log('Fetching tickets for event:', eventId)
+
 				const [eventRes, ticketRes] = await Promise.all([
 					eventService.getEventById(eventId, token),
 					ticketService.getEventTickets(eventId, token),
@@ -61,18 +63,20 @@ export default function ViewEventPage() {
 
 				if (eventRes?.success && eventRes.data) {
 					setEvent(eventRes.data)
+					console.log('Event loaded:', eventRes.data)
 				} else {
 					setError('Event not found')
 				}
 
-				// ✅ Always set tickets (even if empty)
+				console.log('Ticket Response:', ticketRes)
+
 				if (ticketRes?.success && Array.isArray(ticketRes.data)) {
 					setTickets(ticketRes.data)
 				} else {
-					setTickets([]) // fallback instead of doing nothing
+					setTickets([])
 				}
 			} catch (err) {
-				console.error(err)
+				console.error('Fetch error:', err)
 				setError('Failed to load')
 				setTickets([]) // prevent UI from breaking
 			} finally {
@@ -119,20 +123,47 @@ export default function ViewEventPage() {
 
 	// ✅ FIXED submit logic
 	const handleSubmitTicket = async () => {
-		if (!token) return
+		if (!token) {
+			alert('Authentication required')
+			return
+		}
+
+		// Validation
+		if (!ticketForm.title.trim()) {
+			alert('Please enter ticket title')
+			return
+		}
+
+		if (!ticketForm.price || Number(ticketForm.price) < 0) {
+			alert('Please enter valid price')
+			return
+		}
+
+		if (!ticketForm.quantity || Number(ticketForm.quantity) <= 0) {
+			alert('Please enter quantity')
+			return
+		}
 
 		setProcessing(true)
 		try {
+			const benefitsFiltered = ticketForm.benefits.filter(
+				(b) => b.trim() !== '',
+			)
+
 			const payload: TicketData = {
-				title: ticketForm.title,
-				description: ticketForm.description,
+				title: ticketForm.title.trim(),
+				description: ticketForm.description.trim(),
 				price: Number(ticketForm.price),
 				quantity: Number(ticketForm.quantity),
-				benefits: ticketForm.benefits.filter((b) => b.trim() !== ''),
+				benefits:
+					benefitsFiltered.length > 0 ? benefitsFiltered : [''],
 				currency: ticketForm.currency as 'NGN' | 'USD',
 			}
 
+			console.log('Submitting ticket payload:', payload)
+
 			if (editingTicket) {
+				console.log('Updating ticket:', editingTicket._id)
 				const res = await ticketService.updateTicket(
 					editingTicket._id,
 					payload,
@@ -140,13 +171,16 @@ export default function ViewEventPage() {
 				)
 
 				if (res?.data) {
+					console.log('Ticket updated successfully:', res.data)
 					setTickets((prev) =>
 						prev.map((t) =>
 							t._id === editingTicket._id ? res.data : t,
 						),
 					)
+					alert('Ticket updated successfully!')
 				}
 			} else {
+				console.log('Creating new ticket for event:', eventId)
 				const res = await ticketService.createTicket(
 					eventId,
 					payload,
@@ -154,13 +188,24 @@ export default function ViewEventPage() {
 				)
 
 				if (res?.data) {
+					console.log('Ticket created successfully:', res.data)
 					setTickets((prev) => [...prev, res.data])
+					alert('Ticket created successfully!')
 				}
 			}
 
 			setShowModal(false)
-		} catch (err) {
+			setTicketForm({
+				title: '',
+				description: '',
+				price: '',
+				quantity: '',
+				currency: 'NGN',
+				benefits: [''],
+			})
+		} catch (err: any) {
 			console.error('Ticket error:', err)
+			alert(err?.message || 'Failed to save ticket')
 		} finally {
 			setProcessing(false)
 		}
@@ -329,7 +374,7 @@ export default function ViewEventPage() {
 				)}
 				<div className='flex gap-4 pt-4'>
 					<Link
-						href={'/dashboard/events/${event._id}/edit'}
+						href={`/dashboard/events/${event._id}/edit`}
 						className='flex-1 px-6 py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition text-center'
 					>
 						{' '}
@@ -393,7 +438,7 @@ export default function ViewEventPage() {
 			{/* ✅ MODAL FIXED */}
 			{showModal && (
 				<div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50'>
-					<div className='bg-gray-900 p-6 rounded-xl w-full max-w-md space-y-4 border border-gold/20'>
+					<div className='bg-gray-900 p-6 rounded-xl w-full max-w-md space-y-4 border border-gold/20 max-h-screen overflow-y-auto'>
 						<div className='flex justify-between items-center'>
 							<h2 className='text-xl font-bold'>
 								{editingTicket
@@ -405,12 +450,168 @@ export default function ViewEventPage() {
 							</button>
 						</div>
 
-						{/* form unchanged */}
+						{/* Ticket Form Fields */}
+						<div className='space-y-3'>
+							{/* Title */}
+							<div>
+								<label className='block text-sm text-gray-300 mb-1'>
+									Ticket Title
+								</label>
+								<input
+									type='text'
+									placeholder='e.g., VIP Pass'
+									value={ticketForm.title}
+									onChange={(e) =>
+										setTicketForm({
+											...ticketForm,
+											title: e.target.value,
+										})
+									}
+									className='w-full px-3 py-2 bg-gray-800 border border-gold/20 rounded text-white'
+								/>
+							</div>
+
+							{/* Description */}
+							<div>
+								<label className='block text-sm text-gray-300 mb-1'>
+									Description
+								</label>
+								<textarea
+									placeholder='Ticket details'
+									value={ticketForm.description}
+									onChange={(e) =>
+										setTicketForm({
+											...ticketForm,
+											description: e.target.value,
+										})
+									}
+									className='w-full px-3 py-2 bg-gray-800 border border-gold/20 rounded text-white'
+									rows={2}
+								/>
+							</div>
+
+							{/* Price & Currency */}
+							<div className='grid grid-cols-2 gap-2'>
+								<div>
+									<label className='block text-sm text-gray-300 mb-1'>
+										Price
+									</label>
+									<input
+										type='number'
+										placeholder='0'
+										value={ticketForm.price}
+										onChange={(e) =>
+											setTicketForm({
+												...ticketForm,
+												price: e.target.value,
+											})
+										}
+										className='w-full px-3 py-2 bg-gray-800 border border-gold/20 rounded text-white'
+									/>
+								</div>
+								<div>
+									<label className='block text-sm text-gray-300 mb-1'>
+										Currency
+									</label>
+									<select
+										value={ticketForm.currency}
+										onChange={(e) =>
+											setTicketForm({
+												...ticketForm,
+												currency: e.target.value,
+											})
+										}
+										className='w-full px-3 py-2 bg-gray-800 border border-gold/20 rounded text-white'
+									>
+										<option value='NGN'>NGN</option>
+										<option value='USD'>USD</option>
+									</select>
+								</div>
+							</div>
+
+							{/* Quantity */}
+							<div>
+								<label className='block text-sm text-gray-300 mb-1'>
+									Quantity Available
+								</label>
+								<input
+									type='number'
+									placeholder='0'
+									value={ticketForm.quantity}
+									onChange={(e) =>
+										setTicketForm({
+											...ticketForm,
+											quantity: e.target.value,
+										})
+									}
+									className='w-full px-3 py-2 bg-gray-800 border border-gold/20 rounded text-white'
+								/>
+							</div>
+
+							{/* Benefits */}
+							<div>
+								<label className='block text-sm text-gray-300 mb-1'>
+									Benefits (one per line)
+								</label>
+								{ticketForm.benefits.map((benefit, idx) => (
+									<div key={idx} className='flex gap-2 mb-2'>
+										<input
+											type='text'
+											placeholder='e.g., Early access'
+											value={benefit}
+											onChange={(e) => {
+												const newBenefits = [
+													...ticketForm.benefits,
+												]
+												newBenefits[idx] =
+													e.target.value
+												setTicketForm({
+													...ticketForm,
+													benefits: newBenefits,
+												})
+											}}
+											className='flex-1 px-3 py-2 bg-gray-800 border border-gold/20 rounded text-white'
+										/>
+										{ticketForm.benefits.length > 1 && (
+											<button
+												onClick={() => {
+													setTicketForm({
+														...ticketForm,
+														benefits:
+															ticketForm.benefits.filter(
+																(_, i) =>
+																	i !== idx,
+															),
+													})
+												}}
+												className='px-3 py-2 bg-red-600 rounded text-white'
+											>
+												Remove
+											</button>
+										)}
+									</div>
+								))}
+								<button
+									onClick={() => {
+										setTicketForm({
+											...ticketForm,
+											benefits: [
+												...ticketForm.benefits,
+												'',
+											],
+										})
+									}}
+									className='text-sm text-gold mt-1'
+								>
+									+ Add Benefit
+								</button>
+							</div>
+						</div>
 
 						<button
 							onClick={handleSubmitTicket}
 							disabled={creating}
-							className='w-full py-2 bg-gold text-black rounded-lg'
+							className='w-full py-2 bg-gold text-black rounded-lg font-bold disabled:opacity-50'
 						>
 							{creating
 								? editingTicket

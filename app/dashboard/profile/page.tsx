@@ -29,6 +29,15 @@ interface SocialLinks {
 
 interface HostProfileData {
 	_id: string
+	role?: string
+	email?: string
+	phone?: string
+	refId?: string
+	firstName?: string
+	lastName?: string
+	profession?: string
+	emailVerified?: boolean
+	phoneVerified?: boolean
 	address?: string
 	organization?: string
 	bankName?: string
@@ -53,6 +62,12 @@ export default function HostProfilePage() {
 	const [success, setSuccess] = useState('')
 
 	const [formData, setFormData] = useState({
+		firstName: '',
+		lastName: '',
+		profession: '',
+		phone: '',
+		role: '',
+		refId: '',
 		address: '',
 		organization: '',
 		bankName: '',
@@ -93,6 +108,12 @@ export default function HostProfilePage() {
 			if (response.success && response.data) {
 				setProfile(response.data)
 				setFormData({
+					firstName: response.data.firstName || '',
+					lastName: response.data.lastName || '',
+					profession: response.data.profession || '',
+					phone: response.data.phone || '',
+					role: response.data.role || '',
+					refId: response.data.refId || '',
 					address: response.data.address || '',
 					organization: response.data.organization || '',
 					bankName: response.data.bankName || '',
@@ -319,6 +340,131 @@ export default function HostProfilePage() {
 						</h2>
 
 						<div className='space-y-3 sm:space-y-4'>
+							<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+								<div>
+									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
+										First Name
+									</label>
+									<input
+										type='text'
+										name='firstName'
+										value={formData.firstName}
+										onChange={handleFormChange}
+										placeholder='Your first name'
+										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+									/>
+								</div>
+								<div>
+									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
+										Last Name
+									</label>
+									<input
+										type='text'
+										name='lastName'
+										value={formData.lastName}
+										onChange={handleFormChange}
+										placeholder='Your last name'
+										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+									/>
+								</div>
+							</div>
+
+							<div>
+								<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
+									Email (Read-only)
+								</label>
+								<input
+									type='email'
+									disabled
+									value=''
+									placeholder='Email cannot be changed'
+									className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-gray-500 placeholder-gray-600 text-sm opacity-50 cursor-not-allowed'
+								/>
+							</div>
+
+							<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+								<div>
+									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
+										Phone
+									</label>
+									<input
+										type='tel'
+										name='phone'
+										value={formData.phone}
+										onChange={handleFormChange}
+										placeholder='Your phone number'
+										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+									/>
+								</div>
+								<div>
+									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
+										Profession
+									</label>
+									<input
+										type='text'
+										name='profession'
+										value={formData.profession}
+										onChange={handleFormChange}
+										placeholder='Your profession'
+										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+									/>
+								</div>
+							</div>
+
+							<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+								<div>
+									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
+										Role
+									</label>
+									<input
+										type='text'
+										name='role'
+										value={formData.role}
+										onChange={handleFormChange}
+										placeholder='Your role'
+										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+									/>
+								</div>
+								<div>
+									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
+										Referral ID
+									</label>
+									<input
+										type='text'
+										name='refId'
+										value={formData.refId}
+										onChange={handleFormChange}
+										placeholder='Your referral ID'
+										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
+									/>
+								</div>
+							</div>
+
+							<div className='p-3 sm:p-4 bg-neutral-800 rounded-lg'>
+								<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+									<div>
+										<p className='text-xs sm:text-sm font-medium text-gray-400 mb-2'>
+											Email Verified
+										</p>
+										<p className='text-sm text-gray-300 font-semibold'>
+											{profile?.emailVerified
+												? '✓ Yes'
+												: '✗ No'}
+										</p>
+									</div>
+									<div>
+										<p className='text-xs sm:text-sm font-medium text-gray-400 mb-2'>
+											Phone Verified
+										</p>
+										<p className='text-sm text-gray-300 font-semibold'>
+											{profile?.phoneVerified
+												? '✓ Yes'
+												: '✗ No'}
+										</p>
+									</div>
+								</div>
+							</div>
+
 							<div>
 								<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
 									Organization / Business Name

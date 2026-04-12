@@ -1,6 +1,15 @@
 export interface HostProfile {
 	_id: string
 	hostId: string
+	role?: string
+	email?: string
+	phone?: string
+	refId?: string
+	firstName?: string
+	lastName?: string
+	profession?: string
+	emailVerified?: boolean
+	phoneVerified?: boolean
 	address?: string
 	organization?: string
 	bankName?: string
@@ -23,6 +32,11 @@ export interface HostProfile {
 }
 
 export interface UpdateProfileData {
+	phone?: string
+	refId?: string
+	firstName?: string
+	lastName?: string
+	profession?: string
 	address?: string
 	organization?: string
 	bankName?: string
@@ -87,7 +101,7 @@ class HostProfileService {
 			console.log('✏️ Updating host profile:', data)
 
 			const response = await fetch(`${this.baseUrl}/api/host/profile`, {
-				method: 'PUT',
+				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${token}`,

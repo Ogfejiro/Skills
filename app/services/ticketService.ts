@@ -99,11 +99,69 @@ class TicketService {
 			}
 
 			const result = await response.json()
-			console.log('✅ Tickets fetched successfully:', result.data)
+			console.log('Full ticket response:', result)
+
+			// Handle different backend response structures
+			let ticketsData: Ticket[] = []
+
+			if (Array.isArray(result)) {
+				ticketsData = result
+			} else if (result.data && Array.isArray(result.data)) {
+				ticketsData = result.data
+			} else if (result.tickets && Array.isArray(result.tickets)) {
+				ticketsData = result.tickets
+			}
+
+			console.log('✅ Tickets fetched successfully:', ticketsData)
 
 			return {
 				success: true,
-				data: result.data || [],
+				data: ticketsData,
+			}
+		} catch (error) {
+			console.error('❌ Get tickets service error:', error)
+			throw error
+		}
+	}
+	async getEventTicketsPublic(eventId: string): Promise<GetTicketsResponse> {
+		try {
+			console.log('🎫 Fetching tickets for event:', eventId)
+
+			const response = await fetch(
+				`${this.baseUrl}/api/tickets/${eventId}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			)
+
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Get tickets error:', error)
+				throw new Error(error.message || 'Failed to fetch tickets')
+			}
+
+			const result = await response.json()
+			console.log('Full ticket response:', result)
+
+			// Handle different backend response structures
+			let ticketsData: Ticket[] = []
+
+			if (Array.isArray(result)) {
+				ticketsData = result
+			} else if (result.data && Array.isArray(result.data)) {
+				ticketsData = result.data
+			} else if (result.tickets && Array.isArray(result.tickets)) {
+				ticketsData = result.tickets
+			}
+
+			console.log('✅ Tickets fetched successfully:', ticketsData)
+
+			return {
+				success: true,
+				data: ticketsData,
 			}
 		} catch (error) {
 			console.error('❌ Get tickets service error:', error)
