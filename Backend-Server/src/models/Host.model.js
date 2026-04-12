@@ -43,6 +43,16 @@ const hostSchema = new mongoose.Schema(
 			default: 1400, // NGN per USD unit, host editable
 			min: 100,
 		},
+		bankName: {
+			type: String,
+		},
+		socials: {
+			twitter: String,
+			instagram: String,
+			facebook: String,
+			linkedin: String,
+			website: String,
+		},
 	},
 	{ timestamps: true },
 )

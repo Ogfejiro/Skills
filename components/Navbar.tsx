@@ -221,14 +221,14 @@ export default function Navbar() {
 											</Link>
 
 											<Link
-												href='/dashboard'
+												href='/dashboard/profile'
 												className='flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all'
 												onClick={() =>
 													setShowUserMenu(false)
 												}
 											>
 												<User className='w-4 h-4' />
-												Settings
+												Settings / Profile
 											</Link>
 
 											<button
