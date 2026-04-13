@@ -67,7 +67,7 @@ export const editTicket = asyncHandler(async (req, res) => {
 })
 
 export const deleteTicket = asyncHandler(async (req, res) => {
-	const { id } = req.params.id
+	const { id } = req.params
 
 	if (!id) {
 		throw new AppError('ID is required', 401)
@@ -75,5 +75,5 @@ export const deleteTicket = asyncHandler(async (req, res) => {
 
 	const result = await deleteTicketById(id)
 
-	res.status.json(result)
+	res.status(200).json(result)
 })

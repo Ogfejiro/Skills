@@ -134,7 +134,7 @@ export async function handleFlutterwaveWebhook(payload) {
 			const emailResult = await sendVerificationEmail(
 				updatedPayment.customerEmail,
 				updatedPayment.ticketName,
-				`https://www.lofte.live/payment-status?tx_ref=${tx_ref}`,
+				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
 			)
 
 			if (!emailResult.success) {
@@ -376,7 +376,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 
 		// Generate ticket
 		try {
-			await generateTicket(existingPayment.tx_ref)
+			await generateTicket(updatedPayment.tx_ref)
 		} catch (ticketError) {
 			console.error('❌ Ticket generation failed:', ticketError)
 			await markWebhookFailed(
@@ -392,7 +392,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			const emailResult = await sendVerificationEmail(
 				updatedPayment.customerEmail,
 				updatedPayment.ticketName,
-				`https://www.lofte.live/payment-status?tx_ref=${updatedPayment.tx_ref}`,
+				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
 			)
 
 			if (!emailResult.success) {
@@ -485,7 +485,7 @@ export async function regularTicketService(email, ticketName, eventId) {
 	const eventName = event.title
 	const ticket = await generateRegularTicket(email, ticketName, eventName)
 
-	const link = `https://www.lofte.live/payment-status?tx_ref=${ticket.tx_ref}`
+	const link = `https://www.lofte.live/tickets?tx_ref=${ticket.tx_ref}`
 	await sendVerificationEmail(email, ticketName, link)
 
 	return 'Ticket has been sent to your email'

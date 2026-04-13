@@ -81,15 +81,16 @@ export async function editTicketById(ticketId, userId, updateData) {
 
 export async function deleteTicketById(id) {
 	const ticket = await EventTicket.findById(id)
+
 	if (!ticket) {
 		throw new AppError('Event Ticket not found', 404)
 	}
 
 	if (ticket.sold > 0) {
-		throw new AppError(`Can't delete Live event Ticket`, 409)
+		throw new AppError(`Can't delete ticket with active sales`, 409)
 	}
 
-	await EventTicket.findByIdAndDelete(id)
+	await ticket.deleteOne()
 
-	return 'Ticket delete successfully'
+	return 'Ticket deleted successfully'
 }
