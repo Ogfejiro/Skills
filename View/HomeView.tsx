@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { Calendar, MapPin, Users, Ticket, AlertCircle } from 'lucide-react'
+import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import eventService from '@/app/services/eventService'
 import ticketService from '@/app/services/ticketService'
@@ -179,9 +180,9 @@ export default function HomePage() {
 				</p>
 
 				<div className='flex flex-col sm:flex-row items-center gap-4'>
-					<button className='px-6 py-3 rounded-full bg-[#c9a227] text-black font-bold text-sm hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-900/40'>
+					<Link href='/auth/register' className='px-6 py-3 rounded-full bg-[#c9a227] text-black font-bold text-sm hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-900/40'>
 						Register Now Today →
-					</button>
+					</Link>
 					<div className='flex items-center gap-3'>
 						<div className='flex -space-x-2'>
 							{['🧑', '👩', '🧔', '👱'].map((emoji, i) => (
