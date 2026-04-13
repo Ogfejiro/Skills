@@ -66,7 +66,7 @@ export const editTicket = asyncHandler(async (req, res) => {
 	res.status(201).json(result)
 })
 
-export const deleteTicket = asynchHandler(async (req, res) => {
+export const deleteTicket = asyncHandler(async (req, res) => {
 	const { ticketId } = req.body
 
 	if (!ticketId) {
