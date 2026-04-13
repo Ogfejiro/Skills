@@ -11,6 +11,9 @@ import { AuthProvider } from "@/app/context/AuthContext";
 export const metadata: Metadata = {
   title: "LoFT3 | Web3 Events",
   description: "Exclusive Web3 events and experiences",
+  icons: {
+    icon: "/images/image0.jpeg",
+  },
 };
 
 export const viewport: Viewport = {
@@ -32,6 +35,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="icon" href="/images/image0.jpeg" type="image/jpeg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet" />

@@ -49,6 +49,7 @@ export default function HostDashboard() {
   const fetchHostEvents = async () => {
     try {
       setLoading(true);
+      if (!token) throw new Error('No authentication token');
       // Fetch events
       const response = await eventService.getHostEvents(token, 1, 100);
       if (response.success && response.data.events) {
@@ -59,6 +60,7 @@ export default function HostDashboard() {
         const pendingCount = response.data.events.filter(e => e.status === 'draft' || e.status === 'Auditing').length;
         
         // Fetch host profile for balance and revenue
+        if (!token) throw new Error('No authentication token');
         const profileResponse = await hostProfileService.getProfile(token);
         if (profileResponse.success && profileResponse.data) {
           setHostProfile(profileResponse.data);
@@ -80,10 +82,7 @@ export default function HostDashboard() {
             totalBalance: 0,
             revenue: 0,
           });
-        }iveEvents: liveCount,
-          pendingEvents: pendingCount,
-          totalEarnings: 0, // Will be calculated if ticket data is available
-        });
+        }
       }
     } catch (err) {
       console.error('Error fetching events:', err);
@@ -187,64 +186,20 @@ export default function HostDashboard() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-              Host Dashboard, <span className="text-go2 lg:grid-cols-5 gap-6 mb-8">
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400">Total Events</span>
-              <Calendar className="w-5 h-5 text-gold" />
-            </div>
-            <p className="text-3xl font-bold text-white">{stats.totalEvents}</p>
+              Host Dashboard, <span className="text-gold">{user.firstName}</span>
+            </h1>
           </div>
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400">Live Events</span>
-              <Settings className="w-5 h-5 text-green-500" />
-            </div>
-            <p className="text-3xl font-bold text-green-400">{stats.liveEvents}</p>
-          </div>
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400">Pending Review</span>
-              <Calendar className="w-5 h-5 text-yellow-500" />
-            </div>
-            <p className="text-3xl font-bold text-yellow-400">{stats.pendingEvents}</p>
-          </div>
-          <div className="bg-gray-900/50 border border-emerald-500/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400">Revenue</span>
-              <DollarSign className="w-5 h-5 text-emerald-500" />
-            </div>
-            <p className="text-3xl font-bold text-emerald-400">₦{stats.revenue.toLocaleString()}</p>
-          </div>
-          <div className="bg-gray-900/50 border border-cyan-500/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400">Total Balance</span>
-              <DollarSign className="w-5 h-5 text-cyan-500" />
-            </div>
-            <p className="text-3xl font-bold text-cyan-400">₦{stats.totalBalance.toLocaleString()
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400">Total Events</span>
-              <Calendar className="w-5 h-5 text-gold" />
-            </div>
-            <p className="text-3xl font-bold text-white">{stats.totalEvents}</p>
-          </div>
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400">Live Events</span>
-              <Settings className="w-5 h-5 text-green-500" />
-            </div>
-            <p className="text-3xl font-bold text-green-400">{stats.liveEvents}</p>
-          </div>
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400">Pending Review</span>
-              <Calendar className="w-5 h-5 text-yellow-500" />
-            </div>
-            <p className="text-3xl font-bold text-yellow-400">{stats.pendingEvents}</p>
-          </div>
+          <Link
+            href="/dashboard/events/create"
+            className="px-4 py-2 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition flex items-center gap-2"
+          >
+            <PlusCircle className="w-4 h-4" />
+            Create Event
+          </Link>
         </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
 
         {/* Events List */}
         <div className="bg-gray-900/50 border border-gold/20 rounded-xl overflow-hidden">

@@ -113,7 +113,7 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 				{/* CLOSE */}
 				<button
 					onClick={onClose}
-					className='sticky top-0 right-0 float-right text-gray-400 hover:text-white text-lg z-10'
+					className='absolute top-4 right-4 text-gray-400 hover:text-white text-lg z-10'
 				>
 					✕
 				</button>
