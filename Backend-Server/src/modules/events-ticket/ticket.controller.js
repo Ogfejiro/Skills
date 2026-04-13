@@ -67,7 +67,7 @@ export const editTicket = asyncHandler(async (req, res) => {
 })
 
 export const deleteTicket = asyncHandler(async (req, res) => {
-	const { ticketId } = req.body
+	const { ticketId } = req.params
 
 	if (!ticketId) {
 		throw new AppError('Ticket ID missing', 409)
