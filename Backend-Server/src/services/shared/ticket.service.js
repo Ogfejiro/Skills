@@ -43,7 +43,7 @@ export async function generateTicket(tx_ref) {
 
 export async function generateRegularTicket(email, ticketName, eventName) {
 	const existingTicket = await Ticket.findOne({ customerEmail: email })
-	if (existingTicket.amount === 0) {
+	if (existingTicket?.amount === 0) {
 		return existingTicket
 	}
 
