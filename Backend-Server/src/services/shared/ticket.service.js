@@ -65,6 +65,7 @@ export async function generateRegularTicket(email, ticketName, eventName) {
 		status: 'active',
 		customerEmail: email,
 		eventName: eventName,
+		quantity: 1,
 	})
 
 	return newTicket
