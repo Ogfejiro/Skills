@@ -7,6 +7,7 @@ const paymentSchema = new mongoose.Schema(
 		transactionId: String,
 		amount: Number,
 		quantity: Number,
+		eventId: String,
 		currency: String,
 		currencyPaid: String,
 		status: String,
