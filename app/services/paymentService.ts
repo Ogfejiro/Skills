@@ -191,7 +191,7 @@ class PaymentService {
 					body: JSON.stringify({
 						email: data.email,
 						ticketName: data.ticketName,
-						eventName: data.eventId,
+						eventId: data.eventId,
 						quantity: data.quantity,
 					}),
 				},
@@ -200,9 +200,7 @@ class PaymentService {
 			if (!response.ok) {
 				const error = await response.json()
 				console.error('❌ Free ticket error:', error)
-				throw new Error(
-					error.error || 'Failed to register free ticket',
-				)
+				throw new Error(error.error || 'Failed to register free ticket')
 			}
 
 			const result = await response.json()
