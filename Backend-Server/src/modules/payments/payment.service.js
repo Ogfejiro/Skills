@@ -78,6 +78,7 @@ export async function handleFlutterwaveWebhook(payload) {
 
 		// Log webhook as pending
 		await logWebhookPending('flutterwave', externalId, payload)
+		console.log('✅ Webhook already processed')
 
 		const status = payload.status?.toLowerCase()
 
@@ -90,6 +91,7 @@ export async function handleFlutterwaveWebhook(payload) {
 		const existingPayment = await Payment.findById({
 			_id: tx_ref,
 		})
+		console.log('✅ Passed Existing Payment')
 
 		if (existingPayment.status === 'successful') return
 
@@ -112,44 +114,6 @@ export async function handleFlutterwaveWebhook(payload) {
 				transactionId: externalId,
 			},
 			{ new: true },
-		)
-
-		const updateEvent = await Event.findByIdAndUpdate(
-			existingPayment.eventId,
-			{
-				$inc: {
-					ticketsSold: existingPayment.quantity,
-				},
-			},
-			{ new: true },
-		)
-
-		const updateEventTicket = await EventTicket.findOneAndUpdate(
-			{
-				eventId: updateEvent._id,
-				ticketName: existingPayment.ticketName,
-			},
-			{
-				$inc: {
-					sold: existingPayment.quantity,
-				},
-			},
-			{ new: true },
-		)
-
-		const amount = payload.amount
-		const platformFee = amount * 0.05
-		const hostEarnings = amount - platformFee
-
-		const hostId = updateEvent.host
-
-		await Host.findOneAndUpdate(
-			{ hostId: hostId },
-			{
-				$inc: {
-					balance: hostEarnings,
-				},
-			},
 		)
 
 		// Generate ticket
@@ -185,6 +149,62 @@ export async function handleFlutterwaveWebhook(payload) {
 				emailError,
 			)
 			// Continue even if email fails - ticket was already generated
+		}
+
+		const updateEvent = await Event.findByIdAndUpdate(
+			existingPayment.eventId,
+			{
+				$inc: {
+					ticketsSold: existingPayment.quantity,
+				},
+			},
+			{ new: true },
+		)
+
+		if (!updateEvent) {
+			throw new AppError(
+				`Event not found for ID: ${existingPayment.eventId}`,
+				404,
+			)
+		}
+
+		const updateEventTicket = await EventTicket.findOneAndUpdate(
+			{
+				eventId: updateEvent._id,
+				ticketName: existingPayment.ticketName,
+			},
+			{
+				$inc: {
+					sold: existingPayment.quantity,
+				},
+			},
+			{ new: true },
+		)
+
+		if (!updateEventTicket) {
+			throw new AppError(
+				`Event ticket not found for ID: ${existingPayment.ticketName}`,
+				404,
+			)
+		}
+
+		const amount = payload.amount
+		const platformFee = amount * 0.05
+		const hostEarnings = amount - platformFee
+
+		const hostId = updateEvent.host
+
+		const updateBalance = await Host.findOneAndUpdate(
+			{ hostId: hostId },
+			{
+				$inc: {
+					balance: hostEarnings,
+				},
+			},
+		)
+
+		if (!updateBalance) {
+			throw new AppError('Update Balance Failed', 409)
 		}
 
 		// Mark webhook as processed
@@ -350,46 +370,6 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			{ new: true },
 		)
 
-		const updateEvent = await Event.findByIdAndUpdate(
-			existingPayment.eventId,
-			{
-				$inc: {
-					ticketsSold: existingPayment.quantity,
-				},
-			},
-			{ new: true },
-		)
-
-		const updateEventTicket = await EventTicket.findOneAndUpdate(
-			{
-				eventId: updateEvent._id,
-				ticketName: existingPayment.ticketName,
-			},
-			{
-				$inc: {
-					sold: existingPayment.quantity,
-				},
-			},
-			{ new: true },
-		)
-
-		const usdAmount = paymentData.price_amount
-		const conversionRate = updateEvent.host.conversionRate // USD → NGN
-		const localAmount = usdAmount * conversionRate
-		const platformFee = localAmount * 0.05
-		const hostEarnings = localAmount - platformFee
-
-		const hostId = updateEvent.host
-
-		await Host.findOneAndUpdate(
-			{ hostId: hostId },
-			{
-				$inc: {
-					balance: hostEarnings,
-				},
-			},
-		)
-
 		// Generate ticket
 		try {
 			await generateTicket(existingPayment.tx_ref)
@@ -421,6 +401,64 @@ export async function handleCryptoWebhook(rawBody, signature) {
 				`⚠️ Email error for crypto payment ${updatedPayment._id}:`,
 				emailError,
 			)
+		} 
+
+		const updateEvent = await Event.findByIdAndUpdate(
+			existingPayment.eventId,
+			{
+				$inc: {
+					ticketsSold: existingPayment.quantity,
+				},
+			},
+			{ new: true },
+		)
+
+		if (!updateEvent) {
+			throw new AppError(
+				`Updating Event failed, Event with ID: ${existingPayment.eventId} not found. `,
+				404,
+			)
+		}
+
+		const updateEventTicket = await EventTicket.findOneAndUpdate(
+			{
+				eventId: updateEvent._id,
+				ticketName: existingPayment.ticketName,
+			},
+			{
+				$inc: {
+					sold: existingPayment.quantity,
+				},
+			},
+			{ new: true },
+		)
+
+		if (!updateEventTicket) {
+			throw new AppError(
+				`Updating Event Ticket failed, Event with ID: ${existingPayment.ticketName} not found. `,
+				404,
+			)
+		}
+
+		const usdAmount = paymentData.price_amount
+		const conversionRate = updateEvent.host.conversionRate // USD → NGN
+		const localAmount = usdAmount * conversionRate
+		const platformFee = localAmount * 0.05
+		const hostEarnings = localAmount - platformFee
+
+		const hostId = updateEvent.host
+
+		const hostBalance = await Host.findOneAndUpdate(
+			{ hostId: hostId },
+			{
+				$inc: {
+					balance: hostEarnings,
+				},
+			},
+		)
+
+		if (!hostBalance) {
+			throw new AppError(`Updating Balance failed, Host not found.`, 404)
 		}
 
 		// Mark webhook as processed
