@@ -27,7 +27,7 @@ const ViewEventModal = ({ event, isOpen, onClose, onGetTickets }: Props) => {
 				{event.banner && (
 					<img
 						src={event.banner}
-						className='w-full h-52 object-cover'
+						className='w-full h-auto object-contain'
 					/>
 				)}
 
@@ -35,7 +35,9 @@ const ViewEventModal = ({ event, isOpen, onClose, onGetTickets }: Props) => {
 				<div className='p-5 lg:p-6 overflow-y-auto'>
 					<h2 className='text-xl font-bold'>{event.title}</h2>
 
-					<p className='text-gray-400 mt-3'>{event.description}</p>
+					<p className='text-gray-400 mt-3' whitespace-pre-wrap>
+						{event.description}
+					</p>
 
 					<div className='mt-5 text-sm text-gray-400 space-y-3'>
 						<div className='flex gap-2 items-center'>
