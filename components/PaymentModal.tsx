@@ -45,20 +45,7 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 	// ✅ SAFE EARLY RETURN (after hooks)
 	if (!isOpen || !ticket) return null
 
-	let unitPrice
-
-	switch (currency) {
-		case 'USD':
-			unitPrice = ticket.priceUSD
-			break
-
-		case 'NGN':
-			unitPrice = ticket.priceNGN
-			break
-
-		default:
-			unitPrice = ticket.priceUSD
-	}
+	const unitPrice = currency === 'USD' ? ticket.priceUSD : ticket.priceNGN
 
 	const totalPrice = unitPrice * quantity
 
