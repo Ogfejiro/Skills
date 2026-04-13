@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { motion } from 'framer-motion'
 import {
@@ -59,7 +59,7 @@ const Footer = () => {
 							</h2>
 
 							<p className='text-gray-400'>
-								Africa's Premier Web3 Events platform.
+								Africa's Premier Events platform.
 							</p>
 
 							<div className='flex gap-4'>

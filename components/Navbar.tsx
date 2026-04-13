@@ -136,7 +136,7 @@ export default function Navbar() {
 								<span className='text-gold'>-3</span>
 							</div>
 							<p className='text-xs text-gray-400 tracking-wider'>
-								WEB3 EVENTS
+								EVENTS
 							</p>
 						</div>
 					</div>
@@ -352,7 +352,7 @@ export default function Navbar() {
 								<span className='text-gold'>-3</span>
 							</div>
 							<p className='text-xs text-gray-400 tracking-wider'>
-								WEB3 EVENTS
+								EVENTS
 							</p>
 						</div>
 					</div>

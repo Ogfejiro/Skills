@@ -33,7 +33,7 @@ export default function FAQPage() {
 		{
 			id: 1,
 			question: 'What is LOFTE-3?',
-			answer: 'LOFTE-3 is a strategic Web3 events platform that helps brands design, host, and amplify high-impact IRL and virtual experiences. We combine culture, lifestyle, and technology to create events that go beyond gatherings—activating communities, generating content, and delivering measurable brand visibility.',
+			answer: 'LOFTE-3 is a strategic events platform that helps brands design, host, and amplify high-impact IRL and virtual experiences. We combine culture, lifestyle, and technology to create events that go beyond gatherings—activating communities, generating content, and delivering measurable brand visibility.',
 			details: [
 				'Curate the right audience',
 				'Design immersive brand moments',
@@ -103,7 +103,7 @@ export default function FAQPage() {
 		},
 		{
 			id: 7,
-			question: 'What makes LOFTE-3 different from other Web3 events?',
+			question: 'What makes LOFTE-3 different from other events?',
 			answer: 'LOFTE-3 combines culture, lifestyle, and technology to create holistic experiences that deliver real value beyond just networking.',
 			details: [
 				'Strategic brand partnerships',
@@ -116,10 +116,10 @@ export default function FAQPage() {
 		{
 			id: 8,
 			question: 'Who typically attends LOFTE-3 events?',
-			answer: 'LOFTE-3 attracts a diverse mix of Web3 professionals, innovators, and enthusiasts including:',
+			answer: 'LOFTE-3 attracts a diverse mix of professionals, innovators, and enthusiasts including:',
 			details: [
 				'Blockchain founders & builders',
-				'Web3 investors & VCs',
+				'Investors & VCs',
 				'Digital creators & artists',
 				'Enterprise decision-makers',
 				'Crypto enthusiasts & traders',

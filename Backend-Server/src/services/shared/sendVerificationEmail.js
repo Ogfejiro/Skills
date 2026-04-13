@@ -9,7 +9,7 @@ export async function sendVerificationEmail(customerEmail, ticketName, link) {
 			body: JSON.stringify({
 				sender: {
 					email: process.env.EMAIL_FROM,
-					name: 'Lofte Web3 Events',
+					name: 'Lofte Events',
 				},
 				to: [{ email: customerEmail }],
 				templateId: Number(process.env.BREVO_TEMPLATE_ID),
@@ -45,7 +45,7 @@ export async function sendEventEmail(customerEmail, title, date) {
 			body: JSON.stringify({
 				sender: {
 					email: process.env.EMAIL_FROM,
-					name: 'Lofte Web3 Events',
+					name: 'Lofte Events',
 				},
 				to: [{ email: process.env.EMAIL_FROM }],
 				templateId: Number(process.env.BREVO_TEMPLATE_ID_EVENT),

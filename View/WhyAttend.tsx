@@ -13,7 +13,7 @@ export default function WhyAttendPage() {
 			id: 1,
 			title: 'Red Carpet Experience',
 			description:
-				'Walk the red carpet like a Web3 celebrity. Professional photography, media coverage, and star treatment from arrival to departure.',
+				'Walk the red carpet like a celebrity. Professional photography, media coverage, and star treatment from arrival to departure.',
 			image: '/images/hbd.jpg',
 			stats: 'VIP Treatment',
 			features: [
@@ -25,7 +25,7 @@ export default function WhyAttendPage() {
 		},
 		{
 			id: 2,
-			title: 'Find Your Web3 Soulmate',
+			title: 'Find Your Tech Soulmate',
 			description:
 				'Connect with like-minded individuals in the blockchain space. Our matchmaking sessions help you find partners, co-founders, and lifelong friends.',
 			image: 'https://plus.unsplash.com/premium_photo-1658506739004-703dabce5ebe?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTN8fGNvdXBsZSUyMHNoYWRvd3xlbnwwfHwwfHx8MA%3D%3D',
@@ -41,7 +41,7 @@ export default function WhyAttendPage() {
 			id: 3,
 			title: 'Brand & Community Exposure',
 			description:
-				'Showcase your project to thousands of Web3 enthusiasts. Get featured in our media coverage and connect with potential users and supporters.',
+				'Showcase your project to thousands of enthusiasts. Get featured in our media coverage and connect with potential users and supporters.',
 			image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop',
 			stats: 'Amplify Your Reach',
 			features: [
@@ -111,7 +111,7 @@ export default function WhyAttendPage() {
 			id: 8,
 			title: 'Premium Experiences',
 			description:
-				'Enjoy luxury amenities, gourmet dining, and exclusive access that redefine what a Web3 event can be.',
+				'Enjoy luxury amenities, gourmet dining, and exclusive access that redefine what an event can be.',
 			image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2070&auto=format&fit=crop',
 			stats: 'Luxury & Exclusivity',
 			features: [
@@ -185,9 +185,9 @@ export default function WhyAttendPage() {
 						</h1>
 
 						<p className='text-lg md:text-xl text-gray-300 max-w-3xl mx-auto'>
-							Discover what makes LOFTE-3 the most exclusive Web3
-							event platform in Africa. More than just parties
-							it's where opportunities are born.
+							Discover what makes LOFTE-3 the most exclusive event
+							platform in Africa. More than just parties it's
+							where opportunities are born.
 						</p>
 					</motion.div>
 
@@ -486,7 +486,7 @@ export default function WhyAttendPage() {
 									Ready to Experience
 								</span>
 								<span className='gold-gradient block'>
-									Web3 Like Never Before?
+									Event Like Never Before?
 								</span>
 							</motion.h2>
 
