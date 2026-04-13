@@ -7,6 +7,7 @@ export interface EventData {
 	banner: string
 	category: string
 	tags?: string[]
+	feeByUser: string
 }
 
 export interface Event extends EventData {

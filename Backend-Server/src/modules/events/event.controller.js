@@ -24,6 +24,7 @@ export const createEventController = asyncHandler(async (req, res) => {
 		banner,
 		category,
 		tags,
+		feeByUser,
 	} = req.body
 
 	if (
@@ -58,6 +59,7 @@ export const createEventController = asyncHandler(async (req, res) => {
 		banner,
 		category,
 		tags,
+		feeByUser,
 	})
 
 	res.status(201).json({
@@ -128,7 +130,7 @@ export const cloudinarySignature = asyncHandler(async (req, res) => {
 
 export const getPendingEventsController = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10 } = req.query
-	
+
 	const eventsData = await getPendingEvents(page, limit)
 
 	res.status(200).json({
@@ -139,7 +141,7 @@ export const getPendingEventsController = asyncHandler(async (req, res) => {
 
 export const approveEventController = asyncHandler(async (req, res) => {
 	const { eventId } = req.params
-	
+
 	const event = await approveEvent(eventId)
 
 	res.status(200).json({

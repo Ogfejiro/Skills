@@ -103,13 +103,13 @@ export const cryptoWebhook = asyncHandler(async (req, res) => {
 })
 
 export const regularTicket = asyncHandler(async (req, res) => {
-	const { email, ticketName, eventName } = req.body
+	const { email, ticketName, eventId } = req.body
 
-	if (!email || !ticketName || !eventName) {
+	if (!email || !ticketName || !eventId) {
 		throw new AppError('All fields are required', 400)
 	}
 
-	const result = await regularTicketService(email, ticketName, eventName)
+	const result = await regularTicketService(email, ticketName, eventId)
 
-	res.status.json(result)
+	res.status(201).json(result)
 })

@@ -4,6 +4,7 @@ import {
 	createEventTicket,
 	getTicketsByEvent,
 	editTicketById,
+	deleteTicketById,
 } from './ticket.service.js'
 
 export const createTicket = asyncHandler(async (req, res) => {
@@ -63,4 +64,16 @@ export const editTicket = asyncHandler(async (req, res) => {
 	})
 
 	res.status(201).json(result)
+})
+
+export const deleteTicket = asynchHandler(async (req, res) => {
+	const { ticketId } = req.body
+
+	if (!ticketId) {
+		throw new AppError('Ticket ID missing', 409)
+	}
+
+	const result = await deleteTicketById(ticketId)
+
+	res.status(200).json(result)
 })

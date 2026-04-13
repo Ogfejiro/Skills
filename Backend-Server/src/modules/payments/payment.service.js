@@ -265,6 +265,8 @@ export async function createCryptoInvoice(
 		provider: 'nowpayments',
 	})
 
+	const eventExist = await Event.findById(eventId)
+
 	const tx_ref = payment._id
 
 	let invoice
@@ -274,7 +276,9 @@ export async function createCryptoInvoice(
 			price_amount: amount,
 			price_currency: 'USD',
 			order_id: tx_ref,
-			is_fee_paid_by_user: true,
+			is_fee_paid_by_user: eventExist.feeByUser,
+			is_fixed_rate: true,
+			payout_currency: 'usdtsol',
 			order_description: `Payment for ${ticketName} ticket`,
 			ipn_callback_url: `${process.env.BACKEND_URL}/api/payments/crypto-webhook`,
 			success_url: `${process.env.FRONTEND_URL}/payment-status?tx_ref=${tx_ref}`,
@@ -401,7 +405,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 				`⚠️ Email error for crypto payment ${updatedPayment._id}:`,
 				emailError,
 			)
-		} 
+		}
 
 		const updateEvent = await Event.findByIdAndUpdate(
 			existingPayment.eventId,
@@ -443,7 +447,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 		const usdAmount = paymentData.price_amount
 		const conversionRate = updateEvent.host.conversionRate // USD → NGN
 		const localAmount = usdAmount * conversionRate
-		const platformFee = localAmount * 0.05
+		const platformFee = localAmount * 0.03
 		const hostEarnings = localAmount - platformFee
 
 		const hostId = updateEvent.host
@@ -476,7 +480,9 @@ export async function handleCryptoWebhook(rawBody, signature) {
 	}
 }
 
-export async function regularTicketService(email, ticketName, eventName) {
+export async function regularTicketService(email, ticketName, eventId) {
+	const event = await Event.findById(eventId)
+	const eventName = event.title
 	const ticket = await generateRegularTicket(email, ticketName, eventName)
 
 	const link = `https://www.lofte.live/payment-status?tx_ref=${ticket.tx_ref}`

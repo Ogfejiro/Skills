@@ -45,7 +45,20 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 	// ✅ SAFE EARLY RETURN (after hooks)
 	if (!isOpen || !ticket) return null
 
-	const unitPrice = currency === 'USD' ? ticket.priceUSD : ticket.priceNGN
+	let unitPrice
+
+	switch (currency) {
+		case 'USD':
+			unitPrice = ticket.priceUSD
+			break
+
+		case 'NGN':
+			unitPrice = ticket.priceNGN
+			break
+
+		default:
+			unitPrice = ticket.priceUSD
+	}
 
 	const totalPrice = unitPrice * quantity
 
@@ -78,7 +91,9 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 				})
 
 				if (res?.success) {
-					alert('🎉 Free ticket registered successfully! Check your email.')
+					alert(
+						'🎉 Free ticket registered successfully! Check your email.',
+					)
 					onClose()
 				} else {
 					throw new Error('Failed to register free ticket')
@@ -108,7 +123,7 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 	}
 
 	return (
-		<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-4'>
+		<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-70 px-4 py-4'>
 			<div className='bg-[#10101e] w-full max-w-md sm:max-w-lg lg:max-w-xl rounded-2xl border border-white/10 p-6 lg:p-8 relative max-h-[90vh] overflow-y-auto'>
 				{/* CLOSE */}
 				<button
@@ -193,7 +208,11 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 					disabled={loading}
 					className='w-full bg-[#c9a227] hover:bg-[#b8921f] text-black py-3 rounded-lg font-bold transition disabled:opacity-50'
 				>
-					{loading ? 'Processing...' : totalPrice === 0 ? 'Register Free Ticket' : 'Proceed to Payment'}
+					{loading
+						? 'Processing...'
+						: totalPrice === 0
+							? 'Register Free Ticket'
+							: 'Proceed to Payment'}
 				</button>
 			</div>
 		</div>

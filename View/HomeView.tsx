@@ -7,6 +7,7 @@ import eventService from '@/app/services/eventService'
 import ticketService from '@/app/services/ticketService'
 import PaymentModal from '@/components/PaymentModal'
 import TicketModal from '@/components/TicketModal'
+import ViewEventModal from '@/components/ViewEventModal'
 
 const LOGOS = [
 	'Sorare',
@@ -47,7 +48,11 @@ const FEATURES = [
 const LOFTE3_BENEFITS = [
 	{ icon: '🌐', title: 'Networking', desc: 'Connect with innovators.' },
 	{ icon: '⭐', title: 'Premium Events', desc: 'Exclusive curated events.' },
-	{ icon: '🎟️', title: 'Automated Payment', desc: 'Seamless payment experience.' },
+	{
+		icon: '🎟️',
+		title: 'Automated Payment',
+		desc: 'Seamless payment experience.',
+	},
 	{ icon: '🌍', title: 'Global Reach', desc: 'Connect worldwide.' },
 ]
 
@@ -55,6 +60,8 @@ export default function HomePage() {
 	const [publicEvents, setPublicEvents] = useState<any[]>([])
 	const [eventsLoading, setEventsLoading] = useState(true)
 	const [eventsError, setEventsError] = useState('')
+	const [selectedEvent, setSelectedEvent] = useState<any>(null)
+	const [isViewModalOpen, setIsViewModalOpen] = useState(false)
 
 	// MODAL STATES
 	const [isTicketModalOpen, setIsTicketModalOpen] = useState(false)
@@ -93,6 +100,18 @@ export default function HomePage() {
 
 		fetchEvents()
 	}, [])
+
+	// View Event Modal
+
+	const handleViewEvent = (event: any) => {
+		setSelectedEvent(event)
+		setIsViewModalOpen(true)
+	}
+
+	const handleCloseModal = () => {
+		setIsViewModalOpen(false)
+		setSelectedEvent(null)
+	}
 
 	// FETCH TICKETS ON CLICK
 	const handleGetTickets = async (eventId: string) => {
@@ -178,7 +197,10 @@ export default function HomePage() {
 				</p>
 
 				<div className='flex flex-col sm:flex-row items-center gap-4'>
-					<Link href='/auth/register' className='px-6 py-3 rounded-full bg-[#c9a227] text-black font-bold text-sm hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-900/40'>
+					<Link
+						href='/auth/register'
+						className='px-6 py-3 rounded-full bg-[#c9a227] text-black font-bold text-sm hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-900/40'
+					>
 						Register Now Today →
 					</Link>
 					<div className='flex items-center gap-3'>
@@ -341,22 +363,28 @@ export default function HomePage() {
 
 									<button
 										onClick={() =>
-											handleGetTickets(event._id)
+											handleViewEvent(event._id)
 										}
 										className='mt-5 w-full bg-[#c9a227] text-black py-3 rounded-md text-sm font-bold hover:opacity-90 transition'
 									>
-										Get Tickets
+										View Event
 									</button>
 								</div>
 							</div>
 						))}
 					</div>
 				)}
+				<ViewEventModal
+					event={selectedEvent}
+					isOpen={isViewModalOpen}
+					onClose={handleCloseModal}
+					onGetTickets={(id) => handleGetTickets(id)}
+				/>
 			</section>
 
 			{/* TICKET MODAL */}
 			{isTicketModalOpen && (
-				<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4'>
+				<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-60 px-4'>
 					<div className='bg-[#10101e] w-full max-w-2xl lg:max-w-4xl max-h-[80vh] rounded-2xl border border-white/10 flex flex-col overflow-hidden'>
 						{/* HEADER */}
 						<div className='p-6 lg:p-10 border-b border-white/10 flex-shrink-0 flex justify-between items-center'>
@@ -408,7 +436,8 @@ export default function HomePage() {
 
 												{/* BENEFITS */}
 												{ticket.benefits &&
-													ticket.benefits.length > 0 && (
+													ticket.benefits.length >
+														0 && (
 														<ul className='space-y-2 mb-4'>
 															{ticket.benefits.map(
 																(
@@ -416,13 +445,17 @@ export default function HomePage() {
 																	index: number,
 																) => (
 																	<li
-																		key={index}
+																		key={
+																			index
+																		}
 																		className='text-sm text-gray-300 flex gap-2 items-start'
 																	>
 																		<span className='text-[#c9a227]'>
 																			✔
 																		</span>
-																		{benefit}
+																		{
+																			benefit
+																		}
 																	</li>
 																),
 															)}
@@ -433,7 +466,8 @@ export default function HomePage() {
 											{/* BOTTOM */}
 											<div className='mt-4'>
 												<p className='text-[#c9a227] font-bold text-lg mb-3'>
-													{ticket.currency} {ticket.price}
+													{ticket.currency}{' '}
+													{ticket.price}
 												</p>
 
 												<button

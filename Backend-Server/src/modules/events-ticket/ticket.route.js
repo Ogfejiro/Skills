@@ -4,7 +4,12 @@ import {
 	authorizeRoles,
 } from '../../services/middleware/auth.middleware.js'
 import { profileLimiter } from '../../services/middleware/rateLimit.js'
-import { createTicket, getTickets, editTicket } from './ticket.controller.js'
+import {
+	createTicket,
+	getTickets,
+	editTicket,
+	deleteTicket,
+} from './ticket.controller.js'
 
 const router = express.Router()
 
@@ -15,5 +20,6 @@ router.use(authenticateToken, authorizeRoles('Host'))
 router.get('/:id', getTickets)
 router.post('/:eventId', createTicket)
 router.put('/:id', editTicket)
+router.delete('/:id', deleteTicket)
 
 export default router
