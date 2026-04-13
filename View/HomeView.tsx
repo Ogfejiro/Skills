@@ -362,9 +362,7 @@ export default function HomePage() {
 									</div>
 
 									<button
-										onClick={() =>
-											handleViewEvent(event._id)
-										}
+										onClick={() => handleViewEvent(event)}
 										className='mt-5 w-full bg-[#c9a227] text-black py-3 rounded-md text-sm font-bold hover:opacity-90 transition'
 									>
 										View Event
