@@ -111,7 +111,7 @@ export default function Navbar() {
 							<div className='relative w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden'>
 								<div className='relative w-8 h-8 md:w-10 md:h-10'>
 									<Image
-										src='/images/hds.jpg'
+										src='/images/image0.jpeg'
 										alt='LOFTE-3 Logo'
 										width={32}
 										height={32}
@@ -337,7 +337,7 @@ export default function Navbar() {
 						<div className='relative w-10 h-10 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden'>
 							<div className='relative w-8 h-8'>
 								<Image
-									src='/images/hds.jpg'
+									src='/images/image0.jpeg'
 									alt='LoFT3 Logo'
 									width={32}
 									height={32}

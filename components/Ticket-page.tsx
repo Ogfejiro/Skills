@@ -125,9 +125,10 @@ export default function TicketsPage() {
   }
 
   return (
-    <main className='min-h-screen bg-black text-white'>
+    <main className='min-h-screen bg-black text-white flex flex-col'>
       <Navbar />
-      <div className='container mx-auto px-4 pt-24 md:pt-32 pb-12 md:pb-20'>
+      <div className='flex-1 overflow-y-auto'>
+        <div className='container mx-auto px-4 pt-24 md:pt-32 pb-12 md:pb-20'>
         {/* Back Button */}
         <Link
           href='/'
@@ -314,6 +315,7 @@ export default function TicketsPage() {
             </Link>
           </div>
         )}
+        </div>
       </div>
     </main>
   )

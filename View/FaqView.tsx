@@ -78,7 +78,7 @@ export default function FAQPage() {
 			contact: [
 				{
 					method: 'Email',
-					details: 'hidreamsofweb3@gmail.com',
+					details: 'partnerships@lofte.live.',
 					icon: <Mail className='w-4 h-4' />,
 				},
 				{

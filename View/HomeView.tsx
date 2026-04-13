@@ -44,9 +44,9 @@ const FEATURES = [
 ]
 
 const LOFTE3_BENEFITS = [
-	{ icon: '🌐', title: 'Web3 Networking', desc: 'Connect with innovators.' },
+	{ icon: '🌐', title: 'Networking', desc: 'Connect with innovators.' },
 	{ icon: '⭐', title: 'Premium Events', desc: 'Exclusive curated events.' },
-	{ icon: '🎟️', title: 'Easy Ticketing', desc: 'Simple buying experience.' },
+	{ icon: '🎟️', title: 'Automated Payment', desc: 'Seamless payment experience.' },
 	{ icon: '🌍', title: 'Global Reach', desc: 'Connect worldwide.' },
 ]
 

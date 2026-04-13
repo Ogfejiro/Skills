@@ -67,34 +67,53 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 				quantity,
 			}
 
-			let res
+			// Check if amount is zero for free tickets
+			if (totalPrice === 0) {
+				// Call regular ticket endpoint
+				const res = await paymentService.regularTicket({
+					email,
+					ticketName: ticket.title,
+					eventId: ticket.eventId,
+					quantity,
+				})
 
-			if (currency === 'NGN') {
-				res = await paymentService.initiatePayment(payload)
+				if (res?.success) {
+					alert('🎉 Free ticket registered successfully! Check your email.')
+					onClose()
+				} else {
+					throw new Error('Failed to register free ticket')
+				}
 			} else {
-				res = await paymentService.initiateCryptoPayment(payload)
-			}
+				// Proceed with normal payment flow
+				let res
 
-			if (res?.paymentLink) {
-				window.location.href = res.paymentLink
-			} else {
-				throw new Error('No payment link returned')
+				if (currency === 'NGN') {
+					res = await paymentService.initiatePayment(payload)
+				} else {
+					res = await paymentService.initiateCryptoPayment(payload)
+				}
+
+				if (res?.paymentLink) {
+					window.location.href = res.paymentLink
+				} else {
+					throw new Error('No payment link returned')
+				}
 			}
 		} catch (err) {
 			console.error(err)
-			alert('Payment failed. Please try again.')
+			alert('Operation failed. Please try again.')
 		} finally {
 			setLoading(false)
 		}
 	}
 
 	return (
-		<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4'>
-			<div className='bg-[#10101e] w-full max-w-md sm:max-w-lg lg:max-w-xl rounded-2xl border border-white/10 p-6 lg:p-8 relative'>
+		<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-4'>
+			<div className='bg-[#10101e] w-full max-w-md sm:max-w-lg lg:max-w-xl rounded-2xl border border-white/10 p-6 lg:p-8 relative max-h-[90vh] overflow-y-auto'>
 				{/* CLOSE */}
 				<button
 					onClick={onClose}
-					className='absolute top-4 right-4 text-gray-400 hover:text-white text-lg'
+					className='sticky top-0 right-0 float-right text-gray-400 hover:text-white text-lg z-10'
 				>
 					✕
 				</button>
@@ -174,7 +193,7 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 					disabled={loading}
 					className='w-full bg-[#c9a227] hover:bg-[#b8921f] text-black py-3 rounded-lg font-bold transition disabled:opacity-50'
 				>
-					{loading ? 'Processing...' : 'Proceed to Payment'}
+					{loading ? 'Processing...' : totalPrice === 0 ? 'Register Free Ticket' : 'Proceed to Payment'}
 				</button>
 			</div>
 		</div>

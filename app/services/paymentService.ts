@@ -161,6 +161,62 @@ class PaymentService {
 			throw error
 		}
 	}
+
+	// For free tickets (zero amount)
+	async regularTicket(data: {
+		email: string
+		ticketName: string
+		eventId: string
+		quantity: number
+	}): Promise<{ success: boolean; message: string }> {
+		try {
+			console.log(
+				'🎫 Registering free ticket to:',
+				`${this.baseUrl}/api/payments/regular`,
+			)
+			console.log('🎫 Free ticket data:', {
+				email: data.email,
+				ticketName: data.ticketName,
+				eventId: data.eventId,
+				quantity: data.quantity,
+			})
+
+			const response = await fetch(
+				`${this.baseUrl}/api/payments/regular`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						email: data.email,
+						ticketName: data.ticketName,
+						eventName: data.eventId,
+						quantity: data.quantity,
+					}),
+				},
+			)
+
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Free ticket error:', error)
+				throw new Error(
+					error.error || 'Failed to register free ticket',
+				)
+			}
+
+			const result = await response.json()
+			console.log('✅ Free ticket registered:', result)
+
+			return {
+				success: true,
+				message: 'Ticket registered successfully',
+			}
+		} catch (error) {
+			console.error('❌ Free ticket service error:', error)
+			throw error
+		}
+	}
 }
 
 export const paymentService = new PaymentService()

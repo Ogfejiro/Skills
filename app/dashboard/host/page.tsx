@@ -8,12 +8,15 @@ import { Loader2, Calendar, DollarSign, PlusCircle, Settings, Edit, Trash2, Eye 
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import eventService, { Event } from '@/app/services/eventService';
+import hostProfileService, { HostProfile } from '@/app/services/hostProfileService';
 
 interface HostStats {
   totalEvents: number;
   liveEvents: number;
   pendingEvents: number;
   totalEarnings: number;
+  totalBalance: number;
+  revenue: number;
 }
 
 export default function HostDashboard() {
@@ -27,7 +30,10 @@ export default function HostDashboard() {
     liveEvents: 0,
     pendingEvents: 0,
     totalEarnings: 0,
+    totalBalance: 0,
+    revenue: 0,
   });
+  const [hostProfile, setHostProfile] = useState<HostProfile | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,9 +49,7 @@ export default function HostDashboard() {
   const fetchHostEvents = async () => {
     try {
       setLoading(true);
-      setError('');
-      if (!token) throw new Error('No authentication token');
-      
+      // Fetch events
       const response = await eventService.getHostEvents(token, 1, 100);
       if (response.success && response.data.events) {
         setEvents(response.data.events);
@@ -54,9 +58,29 @@ export default function HostDashboard() {
         const liveCount = response.data.events.filter(e => e.status === 'live').length;
         const pendingCount = response.data.events.filter(e => e.status === 'draft' || e.status === 'Auditing').length;
         
-        setStats({
-          totalEvents: response.data.events.length,
-          liveEvents: liveCount,
+        // Fetch host profile for balance and revenue
+        const profileResponse = await hostProfileService.getProfile(token);
+        if (profileResponse.success && profileResponse.data) {
+          setHostProfile(profileResponse.data);
+          
+          setStats({
+            totalEvents: response.data.events.length,
+            liveEvents: liveCount,
+            pendingEvents: pendingCount,
+            totalEarnings: 0, // Will be calculated if ticket data is available
+            totalBalance: profileResponse.data.balance || 0,
+            revenue: profileResponse.data.balance || 0, // Using balance as revenue for now
+          });
+        } else {
+          setStats({
+            totalEvents: response.data.events.length,
+            liveEvents: liveCount,
+            pendingEvents: pendingCount,
+            totalEarnings: 0,
+            totalBalance: 0,
+            revenue: 0,
+          });
+        }iveEvents: liveCount,
           pendingEvents: pendingCount,
           totalEarnings: 0, // Will be calculated if ticket data is available
         });
@@ -163,27 +187,41 @@ export default function HostDashboard() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
           <div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
-              Host Dashboard, <span className="text-gold">{user.firstName}</span>
-            </h1>
-            <p className="text-gray-400 mt-1">Manage your events and earnings</p>
+              Host Dashboard, <span className="text-go2 lg:grid-cols-5 gap-6 mb-8">
+          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-400">Total Events</span>
+              <Calendar className="w-5 h-5 text-gold" />
+            </div>
+            <p className="text-3xl font-bold text-white">{stats.totalEvents}</p>
           </div>
-          <Link
-            href="/dashboard/events/create"
-            className="flex items-center gap-2 px-4 py-2 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition"
-          >
-            <PlusCircle className="w-4 h-4" />
-            Create Event
-          </Link>
-        </div>
-
-        {/* Error Alert */}
-        {error && (
-          <div className="mb-6 p-4 border border-red-500/30 bg-red-500/10 rounded-lg text-red-400">
-            {error}
+          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-400">Live Events</span>
+              <Settings className="w-5 h-5 text-green-500" />
+            </div>
+            <p className="text-3xl font-bold text-green-400">{stats.liveEvents}</p>
           </div>
-        )}
-
-        {/* Quick Stats */}
+          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-400">Pending Review</span>
+              <Calendar className="w-5 h-5 text-yellow-500" />
+            </div>
+            <p className="text-3xl font-bold text-yellow-400">{stats.pendingEvents}</p>
+          </div>
+          <div className="bg-gray-900/50 border border-emerald-500/20 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-400">Revenue</span>
+              <DollarSign className="w-5 h-5 text-emerald-500" />
+            </div>
+            <p className="text-3xl font-bold text-emerald-400">₦{stats.revenue.toLocaleString()}</p>
+          </div>
+          <div className="bg-gray-900/50 border border-cyan-500/20 rounded-xl p-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-400">Total Balance</span>
+              <DollarSign className="w-5 h-5 text-cyan-500" />
+            </div>
+            <p className="text-3xl font-bold text-cyan-400">₦{stats.totalBalance.toLocaleString()
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6">
             <div className="flex items-center justify-between mb-2">
