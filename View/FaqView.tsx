@@ -24,7 +24,6 @@ import {
 	Coffee,
 	Star,
 } from 'lucide-react'
-import Navbar from '@/components/Navbar'
 import { useState } from 'react'
 
 export default function FAQPage() {
@@ -135,8 +134,6 @@ export default function FAQPage() {
 
 	return (
 		<main className='min-h-screen bg-black text-white overflow-hidden'>
-			<Navbar />
-
 			{/* HERO SECTION */}
 			<section className='relative pt-32 pb-20'>
 				{/* Animated Background Elements */}

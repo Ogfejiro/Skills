@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useState, useEffect, useCallback } from 'react'
-import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 
 export default function WhyAttendPage() {
@@ -162,8 +161,6 @@ export default function WhyAttendPage() {
 
 	return (
 		<main id='why-attend' className='min-h-screen bg-black text-white'>
-			<Navbar />
-
 			{/* HERO SECTION */}
 			<section className='relative pt-32 pb-20 px-4'>
 				<div className='container mx-auto relative z-10'>

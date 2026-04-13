@@ -3,10 +3,10 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Calendar, MapPin, Users, Ticket, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import Navbar from '@/components/Navbar'
 import eventService from '@/app/services/eventService'
 import ticketService from '@/app/services/ticketService'
 import PaymentModal from '@/components/PaymentModal'
+import TicketModal from '@/components/TicketModal'
 
 const LOGOS = [
 	'Sorare',
@@ -137,8 +137,6 @@ export default function HomePage() {
 
 	return (
 		<div className='min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden'>
-			<Navbar />
-
 			{/* ── Hero ── */}
 			<section className='relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 overflow-hidden'>
 				{/* Stars background */}
@@ -359,9 +357,9 @@ export default function HomePage() {
 			{/* TICKET MODAL */}
 			{isTicketModalOpen && (
 				<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4'>
-					<div className='bg-[#10101e] w-full max-w-2xl lg:max-w-4xl rounded-2xl border border-white/10 p-6 lg:p-10'>
+					<div className='bg-[#10101e] w-full max-w-2xl lg:max-w-4xl max-h-[80vh] rounded-2xl border border-white/10 flex flex-col overflow-hidden'>
 						{/* HEADER */}
-						<div className='flex justify-between items-center mb-6'>
+						<div className='p-6 lg:p-10 border-b border-white/10 flex-shrink-0 flex justify-between items-center'>
 							<h2 className='font-bold text-xl lg:text-2xl'>
 								Event Tickets
 							</h2>
@@ -374,97 +372,100 @@ export default function HomePage() {
 							</button>
 						</div>
 
-						{/* LOADING */}
-						{ticketLoading && (
-							<p className='text-gray-400 text-center'>
-								Loading tickets...
-							</p>
-						)}
+						{/* SCROLLABLE CONTENT */}
+						<div className='flex-1 overflow-y-auto p-6 lg:p-10'>
+							{/* LOADING */}
+							{ticketLoading && (
+								<p className='text-gray-400 text-center'>
+									Loading tickets...
+								</p>
+							)}
 
-						{/* ERROR */}
-						{!ticketLoading && ticketError && (
-							<p className='text-red-400 text-center'>
-								{ticketError}
-							</p>
-						)}
+							{/* ERROR */}
+							{!ticketLoading && ticketError && (
+								<p className='text-red-400 text-center'>
+									{ticketError}
+								</p>
+							)}
 
-						{/* TICKETS */}
-						{!ticketLoading && modalTickets.length > 0 && (
-							<div className='grid sm:grid-cols-2 gap-6'>
-								{modalTickets.map((ticket: any) => (
-									<div
-										key={ticket._id}
-										className='border border-white/10 rounded-xl p-5 lg:p-6 bg-[#0c0c18] flex flex-col justify-between hover:border-[#c9a227] transition'
-									>
-										{/* TOP */}
-										<div>
-											<h3 className='font-bold text-lg mb-1'>
-												{ticket.title}
-											</h3>
+							{/* TICKETS */}
+							{!ticketLoading && modalTickets.length > 0 && (
+								<div className='grid sm:grid-cols-2 gap-6'>
+									{modalTickets.map((ticket: any) => (
+										<div
+											key={ticket._id}
+											className='border border-white/10 rounded-xl p-5 lg:p-6 bg-[#0c0c18] flex flex-col justify-between hover:border-[#c9a227] transition'
+										>
+											{/* TOP */}
+											<div>
+												<h3 className='font-bold text-lg mb-1'>
+													{ticket.title}
+												</h3>
 
-											<p className='text-sm text-gray-400 mb-4'>
-												{ticket.description}
-											</p>
+												<p className='text-sm text-gray-400 mb-4'>
+													{ticket.description}
+												</p>
 
-											{/* BENEFITS */}
-											{ticket.benefits &&
-												ticket.benefits.length > 0 && (
-													<ul className='space-y-2 mb-4'>
-														{ticket.benefits.map(
-															(
-																benefit: string,
-																index: number,
-															) => (
-																<li
-																	key={index}
-																	className='text-sm text-gray-300 flex gap-2 items-start'
-																>
-																	<span className='text-[#c9a227]'>
-																		✔
-																	</span>
-																	{benefit}
-																</li>
-															),
-														)}
-													</ul>
-												)}
+												{/* BENEFITS */}
+												{ticket.benefits &&
+													ticket.benefits.length > 0 && (
+														<ul className='space-y-2 mb-4'>
+															{ticket.benefits.map(
+																(
+																	benefit: string,
+																	index: number,
+																) => (
+																	<li
+																		key={index}
+																		className='text-sm text-gray-300 flex gap-2 items-start'
+																	>
+																		<span className='text-[#c9a227]'>
+																			✔
+																		</span>
+																		{benefit}
+																	</li>
+																),
+															)}
+														</ul>
+													)}
+											</div>
+
+											{/* BOTTOM */}
+											<div className='mt-4'>
+												<p className='text-[#c9a227] font-bold text-lg mb-3'>
+													{ticket.currency} {ticket.price}
+												</p>
+
+												<button
+													onClick={() =>
+														handleBuyTicket(ticket)
+													}
+													className='w-full bg-[#c9a227] hover:bg-[#b8921f] text-black py-3 rounded-lg font-bold transition'
+												>
+													Buy Ticket
+												</button>
+											</div>
 										</div>
+									))}
+								</div>
+							)}
 
-										{/* BOTTOM */}
-										<div className='mt-4'>
-											<p className='text-[#c9a227] font-bold text-lg mb-3'>
-												{ticket.currency} {ticket.price}
-											</p>
+							{/* EMPTY */}
+							{!ticketLoading &&
+								modalTickets.length === 0 &&
+								!ticketError && (
+									<p className='text-gray-400 text-center'>
+										No tickets available.
+									</p>
+								)}
+						</div>
 
-											<button
-												onClick={() =>
-													handleBuyTicket(ticket)
-												}
-												className='w-full bg-[#c9a227] hover:bg-[#b8921f] text-black py-3 rounded-lg font-bold transition'
-											>
-												Buy Ticket
-											</button>
-										</div>
-									</div>
-								))}
-							</div>
-						)}
-
-						{/* ✅ ADD PAYMENT MODAL HERE */}
+						{/* ✅ PAYMENT MODAL */}
 						<PaymentModal
 							isOpen={isPaymentOpen}
 							onClose={() => setIsPaymentOpen(false)}
 							ticket={selectedTicket}
 						/>
-
-						{/* EMPTY */}
-						{!ticketLoading &&
-							modalTickets.length === 0 &&
-							!ticketError && (
-								<p className='text-gray-400 text-center'>
-									No tickets available.
-								</p>
-							)}
 					</div>
 				</div>
 			)}
