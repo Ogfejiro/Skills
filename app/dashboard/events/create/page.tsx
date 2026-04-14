@@ -285,6 +285,7 @@ export default function CreateEventPage() {
 								name='feeByUser'
 								value={formData.feeByUser || ''}
 								onChange={handleInputChange}
+								className='px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg'
 								required
 							>
 								<option value='' disabled>
