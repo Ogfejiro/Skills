@@ -157,7 +157,7 @@ export default function HomePage() {
 	return (
 		<div className='min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden'>
 			{/* ── Hero ── */}
-			<section className='relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-24 pb-16 overflow-hidden'>
+			<section className='relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-20 md:pt-24 pb-12 md:pb-16 overflow-hidden'>
 				{/* Stars background */}
 				<div className='absolute inset-0 pointer-events-none'>
 					{Array.from({ length: 80 }).map((_, i) => (
@@ -179,18 +179,18 @@ export default function HomePage() {
 				<div className='absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#c9a227]/10 rounded-full blur-[120px] pointer-events-none' />
 				<div className='absolute bottom-0 left-1/4 w-[300px] h-[200px] bg-purple-900/20 rounded-full blur-[100px] pointer-events-none' />
 
-				<p className='text-xs text-gray-500 tracking-widest mb-6 uppercase'>
+				<p className='text-[10px] md:text-xs text-gray-500 tracking-widest mb-4 md:mb-6 uppercase'>
 					✦ This is an unforgettable experience
 				</p>
 
-				<h1 className='text-4xl md:text-6xl lg:text-7xl font-black leading-tight max-w-4xl mb-4'>
+				<h1 className='text-3xl md:text-5xl lg:text-6xl font-black leading-tight max-w-4xl mb-3 md:mb-4'>
 					<span className='text-white'>Join the Celebration</span>
 					<br />
 					<span className='text-white'>Unforgettable </span>
 					<span className='text-[#c9a227]'>Event Experience</span>
 				</h1>
 
-				<p className='text-gray-400 max-w-xl text-sm md:text-base mt-4 mb-8 leading-relaxed'>
+				<p className='text-gray-400 max-w-xl text-xs md:text-sm mt-2 md:mt-4 mb-6 md:mb-8 leading-relaxed'>
 					Embark on a journey of sophistication and joy, where each
 					moment is designed to inspire and delight. Join us and
 					discover the perfect fusion.
@@ -226,17 +226,17 @@ export default function HomePage() {
 				</div>
 
 				{/* LOFTE-3 Benefits Cards */}
-				<div className='relative mt-16 w-full max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
+				<div className='relative mt-12 md:mt-16 w-full max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4'>
 					{LOFTE3_BENEFITS.map((benefit, idx) => (
 						<div
 							key={idx}
-							className='bg-[#10101e] rounded-xl border border-white/10 p-6 hover:border-white/20 hover:shadow-lg hover:shadow-[#c9a227]/10 transition-all hover:scale-105'
+							className='bg-[#10101e] rounded-xl border border-white/10 p-4 md:p-6 hover:border-white/20 hover:shadow-lg hover:shadow-[#c9a227]/10 transition-all md:hover:scale-105'
 						>
-							<div className='text-4xl mb-3'>{benefit.icon}</div>
-							<h3 className='text-sm font-bold text-white mb-2'>
+							<div className='text-3xl md:text-4xl mb-2 md:mb-3'>{benefit.icon}</div>
+							<h3 className='text-xs md:text-sm font-bold text-white mb-1 md:mb-2'>
 								{benefit.title}
 							</h3>
-							<p className='text-xs text-gray-400 leading-relaxed'>
+							<p className='text-[10px] md:text-xs text-gray-400 leading-relaxed'>
 								{benefit.desc}
 							</p>
 						</div>
@@ -245,7 +245,7 @@ export default function HomePage() {
 			</section>
 
 			{/* ── Logo Marquee ── */}
-			<section className='py-12 border-y border-white/5 overflow-hidden'>
+			<section className='py-8 md:py-12 border-y border-white/5 overflow-hidden'>
 				<div className='flex gap-12 animate-marquee whitespace-nowrap'>
 					{[...LOGOS, ...LOGOS].map((logo, i) => (
 						<span
@@ -259,8 +259,8 @@ export default function HomePage() {
 			</section>
 
 			{/* ── Explore Our Event Website Offers ── */}
-			<section className='py-24 px-4'>
-				<div className='max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-start'>
+			<section className='py-16 md:py-24 px-4'>
+				<div className='max-w-7xl mx-auto grid md:grid-cols-2 gap-8 md:gap-16 items-start'>
 					{/* LEFT SIDE */}
 					<div>
 						<span className='text-[10px] text-[#c9a227] tracking-widest uppercase font-semibold'>
@@ -304,8 +304,8 @@ export default function HomePage() {
 			</section>
 
 			{/* EVENTS */}
-			<section className='py-24 px-6 lg:px-12 max-w-7xl xl:max-w-[1400px] mx-auto'>
-				<h2 className='text-3xl sm:text-4xl lg:text-5xl font-black text-center mb-14'>
+			<section className='py-16 md:py-24 px-4 lg:px-6 max-w-7xl xl:max-w-[1400px] mx-auto'>
+				<h2 className='text-2xl sm:text-3xl lg:text-4xl font-black text-center mb-8 md:mb-14'>
 					Current Events
 				</h2>
 

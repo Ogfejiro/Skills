@@ -154,6 +154,40 @@ class HostProfileService {
 			throw error
 		}
 	}
+
+	async requestWithdrawal(
+		amount: number,
+		token: string,
+	): Promise<{ success: boolean; message: string }> {
+		try {
+			console.log('💸 Requesting withdrawal:', amount)
+
+			const response = await fetch(
+				`${this.baseUrl}/api/host/withdrawal`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+					body: JSON.stringify({ amount }),
+				},
+			)
+
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Withdrawal error:', error)
+				throw new Error(error.message || 'Failed to request withdrawal')
+			}
+
+			const result = await response.json()
+			console.log('✅ Withdrawal requested successfully')
+			return result
+		} catch (error) {
+			console.error('❌ Withdrawal service error:', error)
+			throw error
+		}
+	}
 }
 
 export default new HostProfileService()

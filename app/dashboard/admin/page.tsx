@@ -167,39 +167,243 @@ export default function AdminDashboard() {
 	if (!user || user.role !== 'Admin') return null
 
 	return (
-		<div className='min-h-screen bg-black'>
+		<div className='min-h-screen bg-black text-white'>
 			<Navbar />
 
-			<div className='max-w-7xl mx-auto px-4 py-8'>
-				<h1 className='text-3xl font-bold text-white mb-6'>
-					Admin Dashboard
-				</h1>
+			<div className='max-w-7xl mx-auto px-4 pt-24 pb-12'>
+				{/* HEADER */}
+				<div className='mb-8'>
+					<h1 className='text-3xl md:text-4xl font-bold mb-2'>
+						Admin Dashboard
+					</h1>
+					<p className='text-gray-400'>Manage and monitor all events on the platform</p>
+				</div>
 
-				{/* EVENTS */}
-				{filteredEvents.length === 0 ? (
-					<div className='text-gray-400 text-center py-12'>
-						No events found
-					</div>
-				) : (
-					filteredEvents.map((event) => (
-						<div
-							key={event._id}
-							className='bg-neutral-900 p-4 rounded-lg mb-4'
-						>
-							<h2 className='text-white font-bold'>
-								{event.title}
-							</h2>
-							<p className='text-gray-400'>{event.venue}</p>
-
-							<span
-								className={`text-xs px-2 py-1 rounded ${
-									STATUS_COLORS[event.status]
-								}`}
-							>
-								{event.status}
-							</span>
+				{/* STATS */}
+				{analytics && (
+					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8'>
+						<div className='border border-gold/20 rounded-xl p-6 bg-gray-900/50'>
+							<div className='flex items-center justify-between mb-2'>
+								<p className='text-gray-400 text-sm'>Total Events</p>
+								<Calendar className='w-5 h-5 text-gold' />
+							</div>
+							<p className='text-2xl font-bold'>{analytics.totalEvents || 0}</p>
 						</div>
-					))
+
+						<div className='border border-gold/20 rounded-xl p-6 bg-gray-900/50'>
+							<div className='flex items-center justify-between mb-2'>
+								<p className='text-gray-400 text-sm'>Live Events</p>
+								<CheckCircle className='w-5 h-5 text-green-400' />
+							</div>
+							<p className='text-2xl font-bold'>{analytics.liveEvents || 0}</p>
+						</div>
+
+						<div className='border border-gold/20 rounded-xl p-6 bg-gray-900/50'>
+							<div className='flex items-center justify-between mb-2'>
+								<p className='text-gray-400 text-sm'>Auditing</p>
+								<Clock className='w-5 h-5 text-yellow-400' />
+							</div>
+							<p className='text-2xl font-bold'>{analytics.auditingEvents || 0}</p>
+						</div>
+
+						<div className='border border-gold/20 rounded-xl p-6 bg-gray-900/50'>
+							<div className='flex items-center justify-between mb-2'>
+								<p className='text-gray-400 text-sm'>Total Users</p>
+								<Users className='w-5 h-5 text-blue-400' />
+							</div>
+							<p className='text-2xl font-bold'>{analytics.totalUsers || 0}</p>
+						</div>
+					</div>
+				)}
+
+				{/* SEARCH & FILTER */}
+				<div className='mb-6 flex flex-col sm:flex-row gap-4'>
+					<div className='flex-1 relative'>
+						<Search className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5' />
+						<input
+							type='text'
+							placeholder='Search events, venue, or host...'
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							className='w-full pl-10 pr-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:border-gold focus:outline-none'
+						/>
+					</div>
+
+					<select
+						value={selectedStatus}
+						onChange={(e) => setSelectedStatus(e.target.value)}
+						className='px-4 py-2 rounded-lg bg-gray-900 border border-gray-700 text-white focus:border-gold focus:outline-none'
+					>
+						<option value='all'>All Status</option>
+						<option value='draft'>Draft</option>
+						<option value='Auditing'>Auditing</option>
+						<option value='live'>Live</option>
+						<option value='ended'>Ended</option>
+						<option value='cancelled'>Cancelled</option>
+					</select>
+				</div>
+
+				{/* EVENTS TABLE */}
+				<div className='border border-gray-800 rounded-xl overflow-hidden bg-gray-900/30'>
+					{filteredEvents.length === 0 ? (
+						<div className='p-12 text-center'>
+							<AlertCircle className='w-12 h-12 text-gray-600 mx-auto mb-3' />
+							<p className='text-gray-400'>No events found</p>
+						</div>
+					) : (
+						<>
+							<div className='overflow-x-auto'>
+								<table className='w-full'>
+									<thead className='border-b border-gray-800 bg-gray-900/50'>
+										<tr>
+											<th className='px-6 py-4 text-left text-sm font-semibold text-gray-300'>Event</th>
+											<th className='px-6 py-4 text-left text-sm font-semibold text-gray-300'>Host</th>
+											<th className='px-6 py-4 text-left text-sm font-semibold text-gray-300'>Date</th>
+											<th className='px-6 py-4 text-left text-sm font-semibold text-gray-300'>Status</th>
+											<th className='px-6 py-4 text-left text-sm font-semibold text-gray-300'>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										{filteredEvents.map((event) => (
+											<tr key={event._id} className='border-b border-gray-800 hover:bg-gray-800/30 transition'>
+												<td className='px-6 py-4'>
+													<div className='flex items-center gap-3'>
+														{event.banner && (
+															<img
+																src={event.banner}
+																alt={event.title}
+																className='w-10 h-10 rounded object-cover'
+															/>
+														)}
+														<div>
+															<p className='font-medium text-white truncate'>{event.title}</p>
+															<p className='text-xs text-gray-500'>{event.venue}</p>
+														</div>
+													</div>
+												</td>
+												<td className='px-6 py-4 text-sm text-gray-300'>
+													{event.host?.name || 'N/A'}
+												</td>
+												<td className='px-6 py-4 text-sm text-gray-400'>
+													{event.date
+														? new Date(event.date).toLocaleDateString()
+														: 'TBA'}
+												</td>
+												<td className='px-6 py-4'>
+													{getStatusBadge(event.status)}
+												</td>
+												<td className='px-6 py-4'>
+													<button
+														onClick={() => {
+															setSelectedEvent(event)
+															setNewStatus(event.status as any)
+															setShowStatusModal(true)
+														}}
+														className='px-3 py-1 text-xs font-medium bg-gold/20 text-gold rounded hover:bg-gold/30 transition'
+													>
+														Change Status
+													</button>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+
+							{/* PAGINATION */}
+							<div className='px-6 py-4 border-t border-gray-800 flex items-center justify-between'>
+								<p className='text-sm text-gray-400'>
+									Page {pagination.page} of {pagination.totalPages} ({pagination.totalEvents} total events)
+								</p>
+								<div className='flex gap-2'>
+									<button
+										onClick={() => handlePageChange(pagination.page - 1)}
+										disabled={pagination.page === 1}
+										className='px-3 py-1 text-sm rounded bg-gray-800 text-gray-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition'
+									>
+										Previous
+									</button>
+									<button
+										onClick={() => handlePageChange(pagination.page + 1)}
+										disabled={pagination.page === pagination.totalPages}
+										className='px-3 py-1 text-sm rounded bg-gray-800 text-gray-300 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition'
+									>
+										Next
+									</button>
+								</div>
+							</div>
+						</>
+					)}
+				</div>
+
+				{/* STATUS MODAL */}
+				{showStatusModal && selectedEvent && (
+					<div className='fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4'>
+						<div className='bg-gray-900 border border-gray-800 rounded-xl p-6 max-w-md w-full'>
+							<h2 className='text-xl font-bold mb-4'>Change Event Status</h2>
+							<p className='text-gray-400 text-sm mb-4'>
+								Event: <span className='text-white font-medium'>{selectedEvent.title}</span>
+							</p>
+
+							<div className='space-y-3 mb-6'>
+								{(['draft', 'Auditing', 'live', 'ended', 'cancelled'] as const).map((status) => (
+									<button
+										key={status}
+										onClick={() => setNewStatus(status)}
+										className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition ${
+											newStatus === status
+												? 'bg-gold text-black'
+												: 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+										}`}
+									>
+										{status.charAt(0).toUpperCase() + status.slice(1)}
+									</button>
+								))}
+							</div>
+
+							<div className='flex gap-3'>
+								<button
+									onClick={() => setShowStatusModal(false)}
+									className='flex-1 px-4 py-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700 transition font-medium'
+								>
+									Cancel
+								</button>
+								<button
+									onClick={async () => {
+										try {
+											setActionLoading(true)
+											await adminService.updateEventStatus(
+												selectedEvent._id,
+												newStatus,
+												token!
+											)
+											showNotification({
+												message: 'Event status updated successfully',
+												type: 'success',
+											})
+											loadDashboard()
+											setShowStatusModal(false)
+										} catch (err: any) {
+											showNotification({
+												message: err.message || 'Failed to update status',
+												type: 'error',
+											})
+										} finally {
+											setActionLoading(false)
+										}
+									}}
+									disabled={actionLoading}
+									className='flex-1 px-4 py-2 rounded-lg bg-gold text-black hover:bg-yellow-400 transition font-medium disabled:opacity-50'
+								>
+									{actionLoading ? (
+										<Loader2 className='w-4 h-4 animate-spin mx-auto' />
+									) : (
+										'Update'
+									)}
+								</button>
+							</div>
+						</div>
+					</div>
 				)}
 			</div>
 		</div>

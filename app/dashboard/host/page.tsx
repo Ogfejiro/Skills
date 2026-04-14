@@ -4,7 +4,7 @@
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Loader2, Calendar, DollarSign, PlusCircle, Settings, Edit, Trash2, Eye } from 'lucide-react';
+import { Loader2, Calendar, DollarSign, PlusCircle, Settings, Edit, Trash2, Eye, Clock, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import eventService, { Event } from '@/app/services/eventService';
@@ -35,6 +35,9 @@ export default function HostDashboard() {
   });
   const [hostProfile, setHostProfile] = useState<HostProfile | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [showWithdrawalModal, setShowWithdrawalModal] = useState(false);
+  const [withdrawalAmount, setWithdrawalAmount] = useState('');
+  const [withdrawalLoading, setWithdrawalLoading] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
@@ -164,6 +167,47 @@ export default function HostDashboard() {
     });
   };
 
+  const handleWithdrawal = async () => {
+    try {
+      const amount = parseFloat(withdrawalAmount);
+
+      // Validation
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+      }
+
+      if (amount < 5000) {
+        alert('Minimum withdrawal amount is ₦5,000');
+        return;
+      }
+
+      if (amount > stats.totalBalance) {
+        alert(`Insufficient balance. Your balance is ₦${stats.totalBalance.toLocaleString()}`);
+        return;
+      }
+
+      setWithdrawalLoading(true);
+      if (!token) throw new Error('No authentication token');
+
+      const response = await hostProfileService.requestWithdrawal(amount, token);
+      
+      if (response.success) {
+        alert('Withdrawal request submitted successfully! You will receive your funds within 24-48 hours.');
+        setShowWithdrawalModal(false);
+        setWithdrawalAmount('');
+        // Refresh profile to update balance
+        fetchHostEvents();
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to process withdrawal';
+      alert(`Error: ${errorMessage}`);
+      console.error('Withdrawal error:', err);
+    } finally {
+      setWithdrawalLoading(false);
+    }
+  };
+
   if (authLoading || loading) {
     return (
       <main className="min-h-screen bg-black">
@@ -189,17 +233,65 @@ export default function HostDashboard() {
               Host Dashboard, <span className="text-gold">{user.firstName}</span>
             </h1>
           </div>
-          <Link
-            href="/dashboard/events/create"
-            className="px-4 py-2 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition flex items-center gap-2"
-          >
-            <PlusCircle className="w-4 h-4" />
-            Create Event
-          </Link>
+          <div className="flex gap-3 w-full sm:w-auto flex-col sm:flex-row">
+            <button
+              onClick={() => setShowWithdrawalModal(true)}
+              className="px-4 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2"
+            >
+              <DollarSign className="w-4 h-4" />
+              Withdraw Funds
+            </button>
+            <Link
+              href="/dashboard/events/create"
+              className="px-4 py-2 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition flex items-center justify-center gap-2"
+            >
+              <PlusCircle className="w-4 h-4" />
+              Create Event
+            </Link>
+          </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+          <div className="border border-gold/20 rounded-xl p-4 md:p-6 bg-gray-900/50">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-xs md:text-sm">Total Events</p>
+              <Calendar className="w-4 h-4 md:w-5 md:h-5 text-gold" />
+            </div>
+            <p className="text-2xl md:text-3xl font-bold">{stats.totalEvents}</p>
+          </div>
+
+          <div className="border border-gold/20 rounded-xl p-4 md:p-6 bg-gray-900/50">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-xs md:text-sm">Live Events</p>
+              <span className="text-green-400 text-lg">🔴</span>
+            </div>
+            <p className="text-2xl md:text-3xl font-bold">{stats.liveEvents}</p>
+          </div>
+
+          <div className="border border-gold/20 rounded-xl p-4 md:p-6 bg-gray-900/50">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-xs md:text-sm">Pending</p>
+              <Clock className="w-4 h-4 md:w-5 md:h-5 text-yellow-400" />
+            </div>
+            <p className="text-2xl md:text-3xl font-bold">{stats.pendingEvents}</p>
+          </div>
+
+          <div className="border border-gold/20 rounded-xl p-4 md:p-6 bg-gray-900/50">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-xs md:text-sm">Total Balance</p>
+              <DollarSign className="w-4 h-4 md:w-5 md:h-5 text-green-400" />
+            </div>
+            <p className="text-2xl md:text-3xl font-bold">₦{(stats.totalBalance || 0).toLocaleString()}</p>
+          </div>
+
+          <div className="border border-gold/20 rounded-xl p-4 md:p-6 bg-gray-900/50">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-gray-400 text-xs md:text-sm">Revenue</p>
+              <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-blue-400" />
+            </div>
+            <p className="text-2xl md:text-3xl font-bold">₦{(stats.revenue || 0).toLocaleString()}</p>
+          </div>
         </div>
 
         {/* Events List */}
@@ -291,6 +383,80 @@ export default function HostDashboard() {
             </div>
           )}
         </div>
+
+        {/* WITHDRAWAL MODAL */}
+        {showWithdrawalModal && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 md:p-8 max-w-md w-full">
+              <h2 className="text-2xl font-bold mb-2">Withdraw Funds</h2>
+              <p className="text-gray-400 text-sm mb-6">Your current balance: <span className="font-bold text-gold">₦{stats.totalBalance.toLocaleString()}</span></p>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Withdrawal Amount</label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-400 text-lg">₦</span>
+                    <input
+                      type="number"
+                      placeholder="5000"
+                      value={withdrawalAmount}
+                      onChange={(e) => setWithdrawalAmount(e.target.value)}
+                      className="flex-1 px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-500 focus:border-gold focus:outline-none"
+                      disabled={withdrawalLoading}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Minimum withdrawal: ₦5,000</p>
+                </div>
+
+                {withdrawalAmount && parseFloat(withdrawalAmount) < 5000 && (
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <p className="text-xs text-red-400">⚠️ Minimum withdrawal amount is ₦5,000</p>
+                  </div>
+                )}
+
+                {withdrawalAmount && parseFloat(withdrawalAmount) > stats.totalBalance && (
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <p className="text-xs text-red-400">⚠️ Insufficient balance. Max available: ₦{stats.totalBalance.toLocaleString()}</p>
+                  </div>
+                )}
+
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+                  <p className="text-xs text-blue-400"><strong>📝 Note:</strong> Withdrawals are processed within 24-48 hours to your registered bank account.</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowWithdrawalModal(false);
+                    setWithdrawalAmount('');
+                  }}
+                  disabled={withdrawalLoading}
+                  className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700 transition font-medium disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleWithdrawal}
+                  disabled={withdrawalLoading || !withdrawalAmount || parseFloat(withdrawalAmount) < 5000 || parseFloat(withdrawalAmount) > stats.totalBalance}
+                  className="flex-1 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {withdrawalLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <DollarSign className="w-4 h-4" />
+                      Withdraw
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </main>
