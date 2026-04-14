@@ -36,6 +36,7 @@ export default function CreateEventPage() {
 		>,
 	) => {
 		const { name, value } = e.target
+		console.log(name, value)
 		setFormData((prev) => ({
 			...prev,
 			[name]: value,
@@ -281,13 +282,12 @@ export default function CreateEventPage() {
 							</select>
 
 							<select
-								name='Fee Paid by User?'
-								value={formData.feeByUser}
+								name='feeByUser'
+								value={formData.feeByUser || ''}
 								onChange={handleInputChange}
-								className='px-4 py-2 bg-gray-800 border border-gold/30 rounded-lg'
 								required
 							>
-								<option value=''>
+								<option value='' disabled>
 									Payment Fee Should be paid by User?
 								</option>
 								<option value='true'>True</option>
