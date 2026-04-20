@@ -306,6 +306,81 @@ class EventService {
 			throw error
 		}
 	}
+
+	async getPreviousEvents(
+		page: number = 1,
+		limit: number = 10,
+	): Promise<{
+		success: boolean
+		data: { events: Event[]; total: number; page: number; limit: number }
+	}> {
+		try {
+			console.log('📖 Fetching previous events:', { page, limit })
+
+			const response = await fetch(
+				`${this.baseUrl}/api/event-public/previous?page=${page}&limit=${limit}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			)
+
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Get previous events error:', error)
+				throw new Error(
+					error.message || 'Failed to fetch previous events',
+				)
+			}
+
+			const result = await response.json()
+			console.log('✅ Previous events fetched successfully:', result.data)
+			return result
+		} catch (error) {
+			console.error('❌ Get previous events service error:', error)
+			throw error
+		}
+	}
+
+	async getEventsByStatus(
+		status: string,
+		page: number = 1,
+		limit: number = 10,
+	): Promise<{
+		success: boolean
+		data: { events: Event[]; total: number; page: number; limit: number }
+	}> {
+		try {
+			console.log('📖 Fetching events by status:', { status, page, limit })
+
+			const response = await fetch(
+				`${this.baseUrl}/api/event-public/by-status?status=${status}&page=${page}&limit=${limit}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			)
+
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Get events by status error:', error)
+				throw new Error(
+					error.message || 'Failed to fetch events',
+				)
+			}
+
+			const result = await response.json()
+			console.log('✅ Events fetched successfully:', result.data)
+			return result
+		} catch (error) {
+			console.error('❌ Get events by status service error:', error)
+			throw error
+		}
+	}
 }
 
 export default new EventService()

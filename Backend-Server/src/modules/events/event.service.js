@@ -48,7 +48,35 @@ export const getPublicEvents = async (query) => {
 	return {
 		page: query.page,
 		limit: query.limit,
-		Total: total,
+		total: total,
+		events,
+	}
+}
+
+export const getPreviousEvents = async (query) => {
+	const events = await Event.find({ status: { $in: ['ended'] }, approvalStatus: 'approved' })
+		.sort({ date: -1 })
+		.limit(query.limit * 1 || 10)
+		.skip((query.page - 1) * query.limit)
+	const total = await Event.countDocuments({ status: 'ended', approvalStatus: 'approved' })
+	return {
+		page: query.page,
+		limit: query.limit,
+		total: total,
+		events,
+	}
+}
+
+export const getEventsByStatus = async (query, status) => {
+	const events = await Event.find({ status: { $in: [status] }, approvalStatus: 'approved' })
+		.sort(status === 'live' ? { date: 1 } : { date: -1 })
+		.limit(query.limit * 1 || 10)
+		.skip((query.page - 1) * query.limit)
+	const total = await Event.countDocuments({ status: status, approvalStatus: 'approved' })
+	return {
+		page: query.page,
+		limit: query.limit,
+		total: total,
 		events,
 	}
 }

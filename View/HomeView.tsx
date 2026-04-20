@@ -58,8 +58,11 @@ const LOFTE3_BENEFITS = [
 
 export default function HomePage() {
 	const [publicEvents, setPublicEvents] = useState<any[]>([])
+	const [previousEvents, setPreviousEvents] = useState<any[]>([])
 	const [eventsLoading, setEventsLoading] = useState(true)
+	const [previousEventsLoading, setPreviousEventsLoading] = useState(true)
 	const [eventsError, setEventsError] = useState('')
+	const [previousEventsError, setPreviousEventsError] = useState('')
 	const [selectedEvent, setSelectedEvent] = useState<any>(null)
 	const [isViewModalOpen, setIsViewModalOpen] = useState(false)
 
@@ -89,16 +92,35 @@ export default function HomePage() {
 				setEventsLoading(true)
 				const res = await eventService.getPublicEvents(1, 6)
 
-				const events = res?.data?.events || res?.data || []
+				console.log('Events response:', res)
+				const events = res?.data?.events || []
 				setPublicEvents(Array.isArray(events) ? events : [])
 			} catch (err: any) {
 				setEventsError(err.message || 'Failed to load events')
+				setPublicEvents([])
 			} finally {
 				setEventsLoading(false)
 			}
 		}
 
+		const fetchPreviousEvents = async () => {
+			try {
+				setPreviousEventsLoading(true)
+				const res = await eventService.getPreviousEvents(1, 3)
+
+				console.log('Previous events response:', res)
+				const events = res?.data?.events || []
+				setPreviousEvents(Array.isArray(events) ? events : [])
+			} catch (err: any) {
+				setPreviousEventsError(err.message || 'Failed to load previous events')
+				setPreviousEvents([])
+			} finally {
+				setPreviousEventsLoading(false)
+			}
+		}
+
 		fetchEvents()
+		fetchPreviousEvents()
 	}, [])
 
 	// View Event Modal
@@ -378,6 +400,85 @@ export default function HomePage() {
 					onClose={handleCloseModal}
 					onGetTickets={(id) => handleGetTickets(id)}
 				/>
+			</section>
+
+			{/* PREVIOUS EVENTS */}
+			<section className='py-16 md:py-24 px-4 lg:px-6 max-w-7xl xl:max-w-[1400px] mx-auto'>
+				<div className='flex justify-between items-center mb-8 md:mb-14'>
+					<h2 className='text-2xl sm:text-3xl lg:text-4xl font-black'>
+						Previous Events
+					</h2>
+					<Link
+						href='/events'
+						className='px-6 py-2 rounded-full bg-[#c9a227] text-black font-bold text-sm hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-900/40'
+					>
+						View All →
+					</Link>
+				</div>
+
+				{previousEventsError && (
+					<div className='bg-red-500/20 p-4 rounded mb-8 text-sm flex gap-2 items-center max-w-xl mx-auto'>
+						<AlertCircle size={16} />
+						{previousEventsError}
+					</div>
+				)}
+
+				{previousEventsLoading ? (
+					<p className='text-center text-gray-400'>Loading...</p>
+				) : previousEvents.length === 0 ? (
+					<p className='text-center text-gray-500'>
+						No previous events available
+					</p>
+				) : (
+					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 lg:gap-10'>
+						{previousEvents.map((event: any) => (
+							<div
+								key={event._id}
+								className='bg-[#10101e] rounded-2xl border border-white/10 overflow-hidden hover:scale-[1.02] transition'
+							>
+								{event.banner && (
+									<img
+										src={event.banner}
+										className='h-48 lg:h-56 w-full object-cover'
+									/>
+								)}
+
+								<div className='p-5 lg:p-6'>
+									<h3 className='font-bold text-base lg:text-lg'>
+										{event.title}
+									</h3>
+
+									<p className='text-sm text-gray-400 mt-2 line-clamp-2'>
+										{event.description}
+									</p>
+
+									<div className='mt-4 text-sm text-gray-400 space-y-2'>
+										<div className='flex gap-2 items-center'>
+											<Calendar size={16} />
+											{event.date
+												? new Date(
+														event.date,
+													).toLocaleString()
+												: 'TBA'}
+										</div>
+
+										<div className='flex gap-2 items-center'>
+											<MapPin size={16} />
+											{event.venue || 'TBA'}
+										</div>
+									</div>
+
+									<button
+										onClick={() => handleViewEvent(event)}
+										className='mt-5 w-full bg-[#c9a227] text-black py-3 rounded-md text-sm font-bold hover:opacity-90 transition'
+									>
+										View Event
+									</button>
+								</div>
+							</div>
+						))}
+					</div>
+				)}
 			</section>
 
 			{/* TICKET MODAL */}

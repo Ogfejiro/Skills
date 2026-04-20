@@ -4,6 +4,8 @@ import {
 	createEvent,
 	getHostEvents,
 	getPublicEvents,
+	getPreviousEvents,
+	getEventsByStatus,
 	getEventById,
 	updateEvent,
 	deleteEvent,
@@ -89,6 +91,39 @@ export const getPublicEventsController = asyncHandler(async (req, res) => {
 	}
 
 	const events = await getPublicEvents(query)
+	res.status(200).json({
+		success: true,
+		data: events,
+	})
+})
+
+export const getPreviousEventsController = asyncHandler(async (req, res) => {
+	const { page, limit } = req.query
+	const query = {
+		page: parseInt(page) || 1,
+		limit: parseInt(limit) || 10,
+	}
+
+	const events = await getPreviousEvents(query)
+	res.status(200).json({
+		success: true,
+		data: events,
+	})
+})
+
+export const getEventsByStatusController = asyncHandler(async (req, res) => {
+	const { page, limit, status } = req.query
+	
+	if (!status) {
+		throw new AppError('Status query parameter is required', 400)
+	}
+
+	const query = {
+		page: parseInt(page) || 1,
+		limit: parseInt(limit) || 10,
+	}
+
+	const events = await getEventsByStatus(query, status)
 	res.status(200).json({
 		success: true,
 		data: events,
