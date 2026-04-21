@@ -1,7 +1,7 @@
 import express from 'express'
 import {
 	authenticateToken,
-	authorizeRoles,
+	requireHostProfile,
 } from '../../services/middleware/auth.middleware.js'
 import { profileLimiter } from '../../services/middleware/rateLimit.js'
 import {
@@ -16,7 +16,7 @@ const router = express.Router()
 router.use(profileLimiter)
 router.get('/public/:id', getTickets)
 
-router.use(authenticateToken, authorizeRoles('Host'))
+router.use(authenticateToken, requireHostProfile)
 router.get('/:id', getTickets)
 router.post('/:eventId', createTicket)
 router.put('/:id', editTicket)

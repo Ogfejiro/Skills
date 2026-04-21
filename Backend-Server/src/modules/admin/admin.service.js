@@ -3,6 +3,26 @@ import Event from '../../models/Event.model.js'
 import EventTicket from '../../models/EventTicket.model.js'
 import paymentModel from '../../models/payment.model.js'
 
+const eventHostPopulate = {
+	path: 'hostId',
+	select: 'organization profession socials userId',
+	populate: {
+		path: 'userId',
+		select: 'firstName lastName email phone',
+	},
+}
+
+function mapHostProfile(hostProfile) {
+	const user = hostProfile?.userId
+
+	return {
+		_id: hostProfile?._id,
+		name: [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim(),
+		email: user?.email,
+		organization: hostProfile?.organization,
+	}
+}
+
 export async function getAllEventsWithStats(page, limit) {
 	if (!page || !limit) {
 		throw new AppError('Page and limit are required', 400)
@@ -14,7 +34,7 @@ export async function getAllEventsWithStats(page, limit) {
 		.sort({ createdAt: -1 })
 		.skip(skip)
 		.limit(Number(limit))
-		.populate('hostId', 'firstName lastName email organization')
+		.populate(eventHostPopulate)
 
 	const totalEvents = await Event.countDocuments()
 
@@ -52,12 +72,7 @@ export async function getAllEventsWithStats(page, limit) {
 				capacity: event.capacity,
 				ticketsSold,
 				totalRevenue,
-				host: {
-					_id: event.hostId._id,
-					name: `${event.hostId.firstName} ${event.hostId.lastName}`,
-					email: event.hostId.email,
-					organization: event.hostId.organization,
-				},
+				host: mapHostProfile(event.hostId),
 			}
 		}),
 	)
@@ -166,7 +181,7 @@ export async function updateEventStatusAdmin(eventId, newStatus) {
 			new: true,
 			runValidators: true,
 		},
-	).populate('hostId', 'firstName lastName email organization')
+	).populate(eventHostPopulate)
 
 	if (!updatedEvent) {
 		throw new AppError('Failed to update event', 500)
@@ -180,10 +195,7 @@ export async function getEventByIdAdmin(eventId) {
 		throw new AppError('Event ID is required', 400)
 	}
 
-	const event = await Event.findById(eventId).populate(
-		'hostId',
-		'firstName lastName email organization',
-	)
+	const event = await Event.findById(eventId).populate(eventHostPopulate)
 
 	if (!event) {
 		throw new AppError('Event not found', 404)
@@ -223,12 +235,7 @@ export async function getEventByIdAdmin(eventId) {
 		totalRevenue,
 		totalTransactions,
 		ticketDetails: tickets,
-		host: {
-			_id: event.hostId._id,
-			name: `${event.hostId.firstName} ${event.hostId.lastName}`,
-			email: event.hostId.email,
-			organization: event.hostId.organization,
-		},
+		host: mapHostProfile(event.hostId),
 		createdAt: event.createdAt,
 		updatedAt: event.updatedAt,
 	}
@@ -256,7 +263,7 @@ export async function searchEventsAdmin(searchTerm, page, limit) {
 		.sort({ createdAt: -1 })
 		.skip(skip)
 		.limit(Number(limit))
-		.populate('hostId', 'firstName lastName email')
+		.populate(eventHostPopulate)
 
 	const total = await Event.countDocuments(query)
 
@@ -287,7 +294,7 @@ export async function searchEventsAdmin(searchTerm, page, limit) {
 				status: event.status,
 				ticketsSold,
 				totalRevenue,
-				host: event.hostId,
+				host: mapHostProfile(event.hostId),
 			}
 		}),
 	)

@@ -2,13 +2,16 @@ import mongoose from 'mongoose'
 
 const hostSchema = new mongoose.Schema(
 	{
-		hostId: {
+		userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 			required: true,
 			unique: true,
 		},
 		address: {
+			type: String,
+		},
+		profession: {
 			type: String,
 		},
 		organization: {
