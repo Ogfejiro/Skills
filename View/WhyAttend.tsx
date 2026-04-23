@@ -467,68 +467,7 @@ export default function WhyAttendPage() {
 			</section>
 
 			{/* CTA SECTION */}
-			<section className='py-20 relative px-4'>
-				<div className='container mx-auto relative z-10'>
-					<motion.div
-						initial={{ opacity: 0, y: 40 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.6 }}
-						className='text-center max-w-3xl mx-auto'
-					>
-						<div className='p-8 rounded-2xl border border-gold/30 bg-gradient-to-br from-black to-black/70'>
-							<motion.h2
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: 0.2 }}
-								className='text-2xl md:text-3xl font-bold mb-6'
-							>
-								<span className='text-white block'>
-									Ready to Experience
-								</span>
-								<span className='gold-gradient block'>
-									Event Like Never Before?
-								</span>
-							</motion.h2>
-
-							<motion.p
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.4 }}
-								className='text-gray-300 text-lg mb-8'
-							>
-								From red carpet moments to global opportunities,
-								LOFTE-3 offers everything you need to thrive in
-								the blockchain space. Limited spots available.
-							</motion.p>
-
-							<div className='flex flex-col sm:flex-row gap-4 justify-center'>
-								<Link
-									href='/#events'
-									className='px-8 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition text-center'
-								>
-									View All Events
-								</Link>
-
-								<Link
-									href='https://forms.gle/gwhB683FptSMNsE39'
-									target='_blank'
-									rel='noopener noreferrer'
-									className='px-8 py-3 rounded-full bg-gold text-black font-bold hover:bg-gold/80 transition text-center'
-								>
-									Join Waitlist Now
-								</Link>
-							</div>
-
-							<div className='mt-8 pt-6 border-t border-gold/10'>
-								<p className='text-sm text-gray-400'>
-									⚡ Early access to all experiences • VIP
-									treatment • Priority networking
-								</p>
-							</div>
-						</div>
-					</motion.div>
-				</div>
-			</section>
+			
 		</main>
 	)
 }

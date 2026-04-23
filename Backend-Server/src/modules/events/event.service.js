@@ -1,33 +1,59 @@
 import User from '../../models/User.model.js'
+import HostProfile from '../../models/Host.model.js'
 import Event from '../../models/Event.model.js'
 import EventTicket from '../../models/EventTicket.model.js'
 import AppError from '../../services/shared/appError.js'
 import cloudinary from './../../config/cloudinary.js'
 import { sendEventEmail } from '../../services/shared/sendVerificationEmail.js'
 
-export const createEvent = async (hostId, eventData) => {
-	const user = await User.findById(hostId)
-	const event = await Event.create({ ...eventData, hostId })
-
-	await sendEventEmail({
-		customerEmail: user.email,
-		title: eventData.title,
-		date: eventData.date,
-	})
-
-	return event.populate('hostId', 'firstName lastName')
+const eventHostPopulate = {
+	path: 'hostId',
+	select: 'organization profession socials userId',
+	populate: {
+		path: 'userId',
+		select: 'firstName lastName email phone',
+	},
 }
 
-export const getHostEvents = async (hostId, page, limit) => {
-	if (!hostId) throw new Error('Host ID is required')
+async function getHostProfileOrThrow(hostProfileId) {
+	const hostProfile = await HostProfile.findById(hostProfileId)
 
-	const query = { hostId: hostId }
+	if (!hostProfile) {
+		throw new AppError('Host profile not found', 404)
+	}
+
+	return hostProfile
+}
+
+export const createEvent = async (userId, hostProfileId, eventData) => {
+	const [user, hostProfile] = await Promise.all([
+		User.findById(userId),
+		getHostProfileOrThrow(hostProfileId),
+	])
+
+	if (!user) {
+		throw new AppError('User not found', 404)
+	}
+
+	const event = await Event.create({ ...eventData, hostId: hostProfile._id })
+
+	await sendEventEmail(user.email, eventData.title, eventData.date)
+
+	return event.populate(eventHostPopulate)
+}
+
+export const getHostEvents = async (hostProfileId, page, limit) => {
+	if (!hostProfileId) {
+		throw new AppError('Host profile ID is required', 400)
+	}
+
+	const query = { hostId: hostProfileId }
 
 	const events = await Event.find(query)
 		.sort({ createdAt: -1 })
 		.skip((page - 1) * limit)
 		.limit(Number(limit))
-		.select()
+		.populate(eventHostPopulate)
 
 	const total = await Event.countDocuments(query)
 
@@ -40,11 +66,20 @@ export const getHostEvents = async (hostId, page, limit) => {
 }
 
 export const getPublicEvents = async (query) => {
-	const events = await Event.find({ status: { $in: ['live'] }, approvalStatus: 'approved' })
+	const events = await Event.find({
+		status: { $in: ['live'] },
+		approvalStatus: 'approved',
+	})
 		.sort({ date: 1 })
 		.limit(query.limit * 1 || 10)
 		.skip((query.page - 1) * query.limit)
-	const total = await Event.countDocuments({ status: 'live', approvalStatus: 'approved' })
+		.populate(eventHostPopulate)
+
+	const total = await Event.countDocuments({
+		status: 'live',
+		approvalStatus: 'approved',
+	})
+
 	return {
 		page: query.page,
 		limit: query.limit,
@@ -82,13 +117,13 @@ export const getEventsByStatus = async (query, status) => {
 }
 
 export const getEventById = async (id) => {
-	const event = await Event.findById(id)
+	const event = await Event.findById(id).populate(eventHostPopulate)
 	if (!event) throw new AppError('Event not found', 404)
 	return event
 }
 
-export const updateEvent = async (id, hostId, updateData) => {
-	const event = await Event.findOne({ _id: id, hostId })
+export const updateEvent = async (id, hostProfileId, updateData) => {
+	const event = await Event.findOne({ _id: id, hostId: hostProfileId })
 	if (!event) throw new AppError('Event not found or not authorized', 404)
 
 	if (
@@ -113,20 +148,18 @@ export const updateEvent = async (id, hostId, updateData) => {
 		new: true,
 		runValidators: true,
 	})
-	return updated.populate('hostId', 'firstName lastName organization')
+
+	return updated.populate(eventHostPopulate)
 }
 
-export const deleteEvent = async (id, hostId) => {
-	const event = await Event.findOneAndDelete({ _id: id, hostId })
+export const deleteEvent = async (id, hostProfileId) => {
+	const event = await Event.findOneAndDelete({ _id: id, hostId: hostProfileId })
 	if (!event) throw new AppError('Event not found or not authorized', 404)
 	return { success: true, message: 'Event deleted' }
 }
 
-export const generateBannerSignature = async (hostId) => {
-	const user = await User.findById(hostId)
-	if (!user) {
-		throw new AppError('Invalid User', 400)
-	}
+export const generateBannerSignature = async (hostProfileId) => {
+	await getHostProfileOrThrow(hostProfileId)
 
 	const timestamp = Math.round(Date.now() / 1000)
 
@@ -151,13 +184,13 @@ export const generateBannerSignature = async (hostId) => {
 export const getPendingEvents = async (page, limit) => {
 	const skip = (page - 1) * limit
 	const events = await Event.find({ approvalStatus: 'pending' })
-		.populate('hostId', 'firstName lastName organization email')
+		.populate(eventHostPopulate)
 		.sort({ createdAt: -1 })
 		.skip(skip)
 		.limit(Number(limit))
-	
+
 	const total = await Event.countDocuments({ approvalStatus: 'pending' })
-	
+
 	return {
 		events,
 		page: Number(page),
@@ -169,7 +202,7 @@ export const getPendingEvents = async (page, limit) => {
 export const approveEvent = async (eventId) => {
 	const event = await Event.findById(eventId)
 	if (!event) throw new AppError('Event not found', 404)
-	
+
 	const updated = await Event.findByIdAndUpdate(
 		eventId,
 		{
@@ -177,16 +210,16 @@ export const approveEvent = async (eventId) => {
 			isApproved: true,
 			approvalDate: new Date(),
 		},
-		{ new: true }
-	).populate('hostId', 'firstName lastName')
-	
+		{ new: true },
+	).populate(eventHostPopulate)
+
 	return updated
 }
 
 export const rejectEvent = async (eventId, rejectionReason) => {
 	const event = await Event.findById(eventId)
 	if (!event) throw new AppError('Event not found', 404)
-	
+
 	const updated = await Event.findByIdAndUpdate(
 		eventId,
 		{
@@ -195,9 +228,8 @@ export const rejectEvent = async (eventId, rejectionReason) => {
 			approvalDate: new Date(),
 			rejectionReason,
 		},
-		{ new: true }
-	).populate('hostId', 'firstName lastName')
-	
+		{ new: true },
+	).populate(eventHostPopulate)
+
 	return updated
 }
-

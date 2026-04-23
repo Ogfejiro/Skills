@@ -4,7 +4,7 @@
 import { useAuth } from '@/app/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Loader2, Calendar, DollarSign, PlusCircle, Settings, Edit, Trash2, Eye, Clock, TrendingUp } from 'lucide-react';
+import { Loader2, Calendar, DollarSign, PlusCircle, Settings, Edit, Trash2, Eye, Clock, TrendingUp, Zap } from 'lucide-react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import eventService, { Event } from '@/app/services/eventService';
@@ -234,6 +234,20 @@ export default function HostDashboard() {
             </h1>
           </div>
           <div className="flex gap-3 w-full sm:w-auto flex-col sm:flex-row">
+            <Link
+              href="/dashboard/user"
+              className="px-4 py-2 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition flex items-center justify-center gap-2"
+            >
+              <Zap className="w-4 h-4" />
+              Switch to User
+            </Link>
+            <Link
+              href="/dashboard/host-settings"
+              className="px-4 py-2 bg-gray-800 border border-gold/30 text-white font-bold rounded-lg hover:bg-gray-700 transition flex items-center justify-center gap-2"
+            >
+              <Settings className="w-4 h-4" />
+              Settings
+            </Link>
             <button
               onClick={() => setShowWithdrawalModal(true)}
               className="px-4 py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition flex items-center justify-center gap-2"

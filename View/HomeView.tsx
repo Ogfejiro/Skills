@@ -179,7 +179,7 @@ export default function HomePage() {
 	return (
 		<div className='min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden'>
 			{/* ── Hero ── */}
-			<section className='relative min-h-screen flex flex-col items-center justify-center text-center px-4 pt-20 md:pt-24 pb-12 md:pb-16 overflow-hidden'>
+			<section className='relative w-full flex flex-col items-center justify-start text-center px-4 pt-20 md:pt-24 pb-0 overflow-hidden'>
 				{/* Stars background */}
 				<div className='absolute inset-0 pointer-events-none'>
 					{Array.from({ length: 80 }).map((_, i) => (
@@ -248,7 +248,7 @@ export default function HomePage() {
 				</div>
 
 				{/* LOFTE-3 Benefits Cards */}
-				<div className='relative mt-12 md:mt-16 w-full max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4'>
+				<div className='relative mt-8 md:mt-12 w-full max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 pb-12 md:pb-16'>
 					{LOFTE3_BENEFITS.map((benefit, idx) => (
 						<div
 							key={idx}

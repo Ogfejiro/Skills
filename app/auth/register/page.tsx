@@ -11,10 +11,8 @@ import {
 	Lock,
 	Phone,
 	User,
-	Briefcase,
 	AlertCircle,
 	Loader2,
-	ArrowLeft,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -26,8 +24,6 @@ export default function RegisterPage() {
 		phone: '',
 		password: '',
 		confirmPassword: '',
-		role: 'User' as 'User' | 'Host' | 'Admin',
-		profession: '',
 	})
 	const [isLoading, setIsLoading] = useState(false)
 	const { register, isAuthenticated } = useAuth()
@@ -35,7 +31,7 @@ export default function RegisterPage() {
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			router.push('/dashboard/events')
+			router.push('/dashboard/user')
 		}
 	}, [isAuthenticated, router])
 
@@ -74,10 +70,6 @@ export default function RegisterPage() {
 			toast.error('Passwords do not match')
 			return false
 		}
-		if (!formData.profession.trim()) {
-			toast.error('Profession is required')
-			return false
-		}
 		return true
 	}
 
@@ -97,16 +89,12 @@ export default function RegisterPage() {
 				email: formData.email,
 				phone: formData.phone,
 				password: formData.password,
-				role: formData.role,
-				profession: formData.profession,
 			})
 
-			toast.success(
-				'Registration successful! Please login with your credentials.',
-			)
+			toast.success('Registration successful! Redirecting to dashboard...')
 			setTimeout(() => {
-				router.push('/auth/login')
-			}, 2000)
+				router.push('/dashboard/user')
+			}, 1500)
 		} catch (error: any) {
 			toast.error(
 				error.message || 'Registration failed. Please try again.',
@@ -257,49 +245,6 @@ export default function RegisterPage() {
 								/>
 							</div>
 						</motion.div>
-
-						{/* Role and Profession Row */}
-						<div className='grid grid-cols-2 gap-3'>
-							<motion.div
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.5, delay: 0.3 }}
-							>
-								<label className='block text-xs font-medium text-gray-300 mb-1'>
-									Role
-								</label>
-								<select
-									name='role'
-									value={formData.role}
-									onChange={handleChange}
-									className='w-full px-3 py-2 bg-black/50 border border-gold/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all text-sm'
-								>
-									<option value='User'>User</option>
-									<option value='Host'>Host</option>
-								</select>
-							</motion.div>
-
-							<motion.div
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.5, delay: 0.31 }}
-							>
-								<label className='block text-xs font-medium text-gray-300 mb-1'>
-									Profession
-								</label>
-								<div className='relative'>
-									<Briefcase className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/50' />
-									<input
-										type='text'
-										name='profession'
-										value={formData.profession}
-										onChange={handleChange}
-										placeholder='Your profession'
-										className='w-full pl-9 pr-3 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all text-sm'
-									/>
-								</div>
-							</motion.div>
-						</div>
 
 						{/* Password */}
 						<motion.div

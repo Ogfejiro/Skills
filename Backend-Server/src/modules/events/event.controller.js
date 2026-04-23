@@ -16,7 +16,8 @@ import {
 } from './event.service.js'
 
 export const createEventController = asyncHandler(async (req, res) => {
-	const id = req.user.id
+	const userId = req.user.id
+	const hostProfileId = req.hostProfile._id
 	const {
 		title,
 		description,
@@ -52,7 +53,7 @@ export const createEventController = asyncHandler(async (req, res) => {
 		throw new AppError('Event date cannot be in the past', 400)
 	}
 
-	const event = await createEvent(id, {
+	const event = await createEvent(userId, hostProfileId, {
 		title,
 		description,
 		date,
@@ -73,9 +74,9 @@ export const createEventController = asyncHandler(async (req, res) => {
 
 export const getHostEventsController = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10 } = req.query
-	const hostId = req.user.id
+	const hostProfileId = req.hostProfile._id
 
-	const eventsData = await getHostEvents(hostId, page, limit)
+	const eventsData = await getHostEvents(hostProfileId, page, limit)
 
 	res.status(200).json({
 		success: true,
@@ -139,7 +140,7 @@ export const getEventController = asyncHandler(async (req, res) => {
 })
 
 export const updateEventController = asyncHandler(async (req, res) => {
-	const event = await updateEvent(req.params.id, req.user.id, req.body)
+	const event = await updateEvent(req.params.id, req.hostProfile._id, req.body)
 	res.status(200).json({
 		success: true,
 		message: 'Event updated',
@@ -148,7 +149,7 @@ export const updateEventController = asyncHandler(async (req, res) => {
 })
 
 export const deleteEventController = asyncHandler(async (req, res) => {
-	await deleteEvent(req.params.id, req.user.id)
+	await deleteEvent(req.params.id, req.hostProfile._id)
 	res.status(200).json({
 		success: true,
 		message: 'Event deleted',
@@ -156,9 +157,9 @@ export const deleteEventController = asyncHandler(async (req, res) => {
 })
 
 export const cloudinarySignature = asyncHandler(async (req, res) => {
-	const hostId = req.user.id
+	const hostProfileId = req.hostProfile._id
 
-	const result = await generateBannerSignature(hostId)
+	const result = await generateBannerSignature(hostProfileId)
 
 	res.status(200).json(result)
 })

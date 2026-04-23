@@ -1,26 +1,25 @@
 import express from 'express'
 import {
-    updateHostProfile,
-    getHostProfile,
-    deleteHostProfile,
-    getHostDashboard,
+	createHostProfileController,
+	updateHostProfile,
+	getHostProfile,
+	deleteHostProfile,
+	getHostDashboard,
 } from './host.controller.js'
-import {
-    authenticateToken,
-    authorizeRoles,
-} from '../../services/middleware/auth.middleware.js'
+import { authenticateToken } from '../../services/middleware/auth.middleware.js'
 import { profileLimiter } from '../../services/middleware/rateLimit.js'
 
 const router = express.Router()
 
 router.use(profileLimiter)
-router.use(authenticateToken, authorizeRoles('Host'))
+router.use(authenticateToken)
 
 router
-    .route('/profile')
-    .get(getHostProfile)
-    .post(updateHostProfile)
-    .delete(deleteHostProfile)
+	.route('/profile')
+	.get(getHostProfile)
+	.post(createHostProfileController)
+	.put(updateHostProfile)
+	.delete(deleteHostProfile)
 
 router.get('/dashboard', getHostDashboard)
 
