@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Loader2, Save, ArrowLeft, Wallet, Globe, Twitter, Instagram, Facebook, Linkedin } from 'lucide-react';
 import Link from 'next/link';
-import Navbar from '@/components/Navbar';
+import DashboardSidebar from '@/components/DashboardSidebar';
 import hostProfileService from '@/app/services/hostProfileService';
 import { toast } from 'sonner';
 
@@ -167,20 +167,18 @@ export default function HostSettingsPage() {
 
   if (authLoading || loading) {
     return (
-      <main className="min-h-screen bg-black">
-        <Navbar />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <Loader2 className="w-12 h-12 text-gold animate-spin" />
-        </div>
-      </main>
+      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
+        <Loader2 className="w-10 h-10 text-[#c9a227] animate-spin" />
+      </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <Navbar />
+    <div className="min-h-screen bg-[#0a0a0f] text-white flex">
+      <DashboardSidebar />
 
-      <div className="container mx-auto px-4 pt-28 pb-12">
+      <main className="flex-1 min-h-screen">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-16 md:pt-8">
         {/* Header */}
         <div className="mb-8 flex items-center gap-4">
           <Link
@@ -199,8 +197,8 @@ export default function HostSettingsPage() {
 
         <form onSubmit={handleSaveProfile} className="max-w-4xl">
           {/* Organization Section */}
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6 mb-6">
-            <h2 className="text-xl font-bold text-gold mb-4">Organization Information</h2>
+          <div className="bg-[#111118] border border-white/[0.06] rounded-xl p-6 mb-6">
+            <h2 className="text-lg font-bold text-[#c9a227] mb-4">Organization Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -212,7 +210,7 @@ export default function HostSettingsPage() {
                   value={formData.organization}
                   onChange={handleInputChange}
                   placeholder="Your organization name"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
               <div>
@@ -225,14 +223,14 @@ export default function HostSettingsPage() {
                   value={formData.address}
                   onChange={handleInputChange}
                   placeholder="Business address"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
             </div>
           </div>
 
           {/* Wallet Configuration Section */}
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6 mb-6">
+          <div className="bg-[#111118] border border-white/[0.06] rounded-xl p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
               <Wallet className="w-6 h-6 text-gold" />
               <h2 className="text-xl font-bold text-gold">Wallet Configuration</h2>
@@ -250,8 +248,8 @@ export default function HostSettingsPage() {
                     onClick={() => setWalletType('ethereum')}
                     className={`p-4 rounded-lg border-2 transition ${
                       walletType === 'ethereum'
-                        ? 'border-gold bg-gold/10'
-                        : 'border-gray-700 bg-black/50 hover:border-gold/50'
+                        ? 'border-[#c9a227] bg-[#c9a227]/10'
+                        : 'border-white/[0.08] bg-white/[0.03] hover:border-[#c9a227]/30'
                     }`}
                   >
                     <div className="text-lg font-bold mb-1">Ethereum (ETH)</div>
@@ -262,8 +260,8 @@ export default function HostSettingsPage() {
                     onClick={() => setWalletType('solana')}
                     className={`p-4 rounded-lg border-2 transition ${
                       walletType === 'solana'
-                        ? 'border-gold bg-gold/10'
-                        : 'border-gray-700 bg-black/50 hover:border-gold/50'
+                        ? 'border-[#c9a227] bg-[#c9a227]/10'
+                        : 'border-white/[0.08] bg-white/[0.03] hover:border-[#c9a227]/30'
                     }`}
                   >
                     <div className="text-lg font-bold mb-1">Solana (SOL)</div>
@@ -283,7 +281,7 @@ export default function HostSettingsPage() {
                   value={formData.walletAddress}
                   onChange={handleInputChange}
                   placeholder={walletType === 'ethereum' ? '0x...' : 'Your Solana wallet address'}
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition font-mono text-sm"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition font-mono text-sm"
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   {walletType === 'ethereum'
@@ -304,7 +302,7 @@ export default function HostSettingsPage() {
                   onChange={handleInputChange}
                   placeholder="1400"
                   min="100"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
                 <p className="text-xs text-gray-500 mt-2">
                   The exchange rate you'll use for converting payments
@@ -314,8 +312,8 @@ export default function HostSettingsPage() {
           </div>
 
           {/* Bank Information Section */}
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6 mb-6">
-            <h2 className="text-xl font-bold text-gold mb-4">Bank Information (Optional)</h2>
+          <div className="bg-[#111118] border border-white/[0.06] rounded-xl p-6 mb-6">
+            <h2 className="text-lg font-bold text-[#c9a227] mb-4">Bank Information (Optional)</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -327,7 +325,7 @@ export default function HostSettingsPage() {
                   value={formData.bankName}
                   onChange={handleInputChange}
                   placeholder="e.g., GTBank"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
               <div>
@@ -340,7 +338,7 @@ export default function HostSettingsPage() {
                   value={formData.accountName}
                   onChange={handleInputChange}
                   placeholder="Account holder name"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
               <div className="md:col-span-2">
@@ -353,14 +351,14 @@ export default function HostSettingsPage() {
                   value={formData.accountNo}
                   onChange={handleInputChange}
                   placeholder="Bank account number"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
             </div>
           </div>
 
           {/* Social Links Section */}
-          <div className="bg-gray-900/50 border border-gold/20 rounded-xl p-6 mb-6">
+          <div className="bg-[#111118] border border-white/[0.06] rounded-xl p-6 mb-6">
             <div className="flex items-center gap-3 mb-4">
               <Globe className="w-6 h-6 text-gold" />
               <h2 className="text-xl font-bold text-gold">Social Links</h2>
@@ -378,7 +376,7 @@ export default function HostSettingsPage() {
                   value={formData.socials.twitter}
                   onChange={handleInputChange}
                   placeholder="https://twitter.com/username"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
 
@@ -393,7 +391,7 @@ export default function HostSettingsPage() {
                   value={formData.socials.instagram}
                   onChange={handleInputChange}
                   placeholder="https://instagram.com/username"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
 
@@ -408,7 +406,7 @@ export default function HostSettingsPage() {
                   value={formData.socials.facebook}
                   onChange={handleInputChange}
                   placeholder="https://facebook.com/username"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
 
@@ -423,7 +421,7 @@ export default function HostSettingsPage() {
                   value={formData.socials.linkedin}
                   onChange={handleInputChange}
                   placeholder="https://linkedin.com/in/username"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
 
@@ -438,7 +436,7 @@ export default function HostSettingsPage() {
                   value={formData.socials.website}
                   onChange={handleInputChange}
                   placeholder="https://yourwebsite.com"
-                  className="w-full px-4 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition"
+                  className="w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition"
                 />
               </div>
             </div>
@@ -449,14 +447,14 @@ export default function HostSettingsPage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 bg-gray-900 border border-gold/30 rounded-lg hover:bg-gray-800 transition font-semibold"
+              className="px-6 py-3 bg-white/5 border border-white/[0.08] rounded-lg hover:bg-white/10 transition font-semibold"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 px-6 py-3 bg-gold text-black rounded-lg hover:bg-yellow-400 disabled:opacity-50 transition font-bold flex items-center justify-center gap-2"
+              className="flex-1 px-6 py-3 bg-[#c9a227] text-black rounded-lg hover:bg-[#d4b84a] disabled:opacity-50 transition font-bold flex items-center justify-center gap-2"
             >
               {saving ? (
                 <>
@@ -473,6 +471,7 @@ export default function HostSettingsPage() {
           </div>
         </form>
       </div>
-    </main>
+      </main>
+    </div>
   );
 }

@@ -100,49 +100,33 @@ export default function Navbar() {
 				className={`hidden md:block sticky top-0 z-50 w-full px-6 py-3 transition-all duration-300
 				${
 					scrolled
-						? 'bg-black backdrop-blur-xl border-b border-gold/20 shadow-2xl shadow-gold/5'
-						: 'bg-black/80 backdrop-blur-lg border-b border-gold/10'
+						? 'bg-[#0a0a0f]/95 backdrop-blur-xl border-b border-white/[0.06]'
+						: 'bg-[#0a0a0f]/80 backdrop-blur-lg border-b border-white/[0.04]'
 				}`}
 			>
 				<div className='container mx-auto flex items-center justify-between'>
 					{/* LOGO */}
-					<div className='flex items-center gap-3'>
-						<div className='relative'>
-							<div className='relative w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden'>
-								<div className='relative w-8 h-8 md:w-10 md:h-10'>
-									<Image
-										src='/images/image0.jpeg'
-										alt='LOFTE-3 Logo'
-										width={32}
-										height={32}
-										className='object-contain'
-										priority
-									/>
-								</div>
-							</div>
-							<motion.div
-								animate={{ rotate: 360 }}
-								transition={{
-									duration: 20,
-									repeat: Infinity,
-									ease: 'linear',
-								}}
-								className='absolute -inset-2 border border-gold/30 rounded-full'
+					<Link href='/' className='flex items-center gap-3'>
+						<div className='relative w-9 h-9 md:w-10 md:h-10 bg-gradient-to-br from-[#c9a227] to-[#a8861e] rounded-lg flex items-center justify-center overflow-hidden'>
+							<Image
+								src='/images/image0.jpeg'
+								alt='LOFTE-3 Logo'
+								width={32}
+								height={32}
+								className='object-contain w-7 h-7 md:w-8 md:h-8'
+								priority
 							/>
 						</div>
 						<div>
-							<div className='text-gold font-extrabold tracking-wider text-xl md:text-2xl'>
-								<span className='text-white'>LO</span>FTE
-								<span className='text-gold'>-3</span>
+							<div className='text-xl md:text-2xl font-black tracking-tight'>
+								<span className='text-white'>LO</span>
+								<span className='text-[#c9a227]'>FTE-3</span>
 							</div>
-							<p className='text-xs text-gray-400 tracking-wider'>
-								EVENTS
-							</p>
 						</div>
-					</div>
+					</Link>
 
 					{/* DESKTOP NAV */}
-					<div className='flex items-center gap-6'>
+					<div className='flex items-center gap-1'>
 						{navItems.map((item) => (
 							<a
 								key={item.id}
@@ -153,22 +137,17 @@ export default function Navbar() {
 										? 'noopener noreferrer'
 										: undefined
 								}
-								className='flex items-center gap-2 px-4 py-2 rounded-lg text-sm uppercase tracking-wider text-gray-300 hover:text-gold hover:bg-gold/5 transition-all group relative'
+								className='px-4 py-2 rounded-lg text-sm text-gray-400 hover:text-white transition-colors'
 							>
-								<span className='opacity-60 group-hover:opacity-100 transition'>
-									{item.icon}
-								</span>
 								{item.label}
-								<span className='absolute bottom-0 left-1/2 w-0 h-0.5 bg-gold group-hover:w-8 group-hover:left-1/4 transition-all duration-300' />
 							</a>
 						))}
 
 						{/* LIST EVENT BUTTON */}
 						<button
 							onClick={handleListEvent}
-							className='flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-gold to-yellow-500 text-black font-bold rounded-lg hover:shadow-lg hover:shadow-gold/30 transition-all text-sm uppercase tracking-wider group relative overflow-hidden'
+							className='flex items-center gap-2 px-5 py-2 bg-[#c9a227] text-black font-semibold rounded-lg hover:bg-[#d4b84a] transition-colors text-sm'
 						>
-							<div className='absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000' />
 							<PlusCircle className='w-4 h-4' />
 							<span>List Event</span>
 						</button>
@@ -180,13 +159,13 @@ export default function Navbar() {
 									onClick={() =>
 										setShowUserMenu(!showUserMenu)
 									}
-									className='flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gold/10 transition-all'
+									className='flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors'
 								>
-									<div className='w-8 h-8 bg-gradient-to-br from-gold to-yellow-600 rounded-full flex items-center justify-center text-black font-bold text-sm'>
+									<div className='w-7 h-7 bg-[#c9a227] rounded-full flex items-center justify-center text-black font-bold text-xs'>
 										{user.firstName.charAt(0)}
 										{user.lastName.charAt(0)}
 									</div>
-									<span className='text-sm text-gold font-medium'>
+									<span className='text-sm text-gray-300 font-medium'>
 										{user.firstName}
 									</span>
 								</button>
@@ -197,21 +176,21 @@ export default function Navbar() {
 										initial={{ opacity: 0, y: -10 }}
 										animate={{ opacity: 1, y: 0 }}
 										exit={{ opacity: 0, y: -10 }}
-										className='absolute right-0 mt-2 w-48 bg-black border border-gold/20 rounded-lg shadow-lg shadow-gold/10 overflow-hidden z-50'
+										className='absolute right-0 mt-2 w-48 bg-[#111118] border border-white/[0.08] rounded-lg shadow-xl overflow-hidden z-50'
 									>
-										<div className='px-4 py-3 border-b border-gold/20'>
+										<div className='px-4 py-3 border-b border-white/[0.06]'>
 											<p className='text-sm font-medium text-white'>
 												{user.firstName} {user.lastName}
 											</p>
-											<p className='text-xs text-gray-400'>
+											<p className='text-xs text-gray-500'>
 												{user.email}
 											</p>
 										</div>
 
-										<div className='py-2'>
+										<div className='py-1'>
 											<Link
 												href='/dashboard'
-												className='flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all'
+												className='flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors'
 												onClick={() =>
 													setShowUserMenu(false)
 												}
@@ -221,19 +200,19 @@ export default function Navbar() {
 											</Link>
 
 											<Link
-												href='/dashboard/profile'
-												className='flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all'
+												href={user.role === 'Host' ? '/dashboard/profile' : '/dashboard/user/settings'}
+												className='flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-colors'
 												onClick={() =>
 													setShowUserMenu(false)
 												}
 											>
 												<User className='w-4 h-4' />
-												Settings / Profile
+												Settings
 											</Link>
 
 											<button
 												onClick={handleLogout}
-												className='w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all'
+												className='w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400/80 hover:text-red-400 hover:bg-red-500/5 transition-colors'
 											>
 												<LogOut className='w-4 h-4' />
 												Logout
@@ -248,8 +227,8 @@ export default function Navbar() {
 			</nav>
 
 			{/* MOBILE BOTTOM NAVIGATION */}
-			<nav className='md:hidden fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-gold/20 shadow-2xl shadow-gold/10'>
-				<div className='flex items-center justify-around px-4 py-3'>
+			<nav className='md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0f]/95 backdrop-blur-lg border-t border-white/[0.06]'>
+				<div className='flex items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]'>
 					{navItems.map((item) => (
 						<a
 							key={item.id}
@@ -263,75 +242,46 @@ export default function Navbar() {
 							onClick={() =>
 								!item.external && setActiveNav(item.id)
 							}
-							className='flex flex-col items-center justify-center px-3 py-2 rounded-lg transition-all'
+							className='flex flex-col items-center justify-center px-3 py-1.5'
 						>
 							<div
-								className={`p-2 rounded-full transition-all ${
+								className={`transition-colors ${
 									activeNav === item.id
-										? 'bg-gold/20 border border-gold/30'
-										: 'border border-transparent'
+										? 'text-[#c9a227]'
+										: 'text-gray-500'
 								}`}
 							>
-								<div
-									className={`transition-all ${
-										activeNav === item.id
-											? 'text-gold'
-											: 'text-gray-400'
-									}`}
-								>
-									{item.icon}
-								</div>
+								{item.icon}
 							</div>
 							<span
-								className={`text-xs mt-1 transition-all ${
+								className={`text-[10px] mt-1 ${
 									activeNav === item.id
-										? 'text-gold font-medium'
-										: 'text-gray-400'
+										? 'text-[#c9a227] font-medium'
+										: 'text-gray-500'
 								}`}
 							>
 								{item.label}
 							</span>
-
-							{activeNav === item.id && (
-								<motion.div
-									layoutId='activeIndicator'
-									className='w-1 h-1 bg-gold rounded-full mt-1'
-									transition={{
-										type: 'spring',
-										stiffness: 300,
-										damping: 20,
-									}}
-								/>
-							)}
 						</a>
 					))}
 
 					{/* MOBILE LIST EVENT BUTTON */}
 					<button
 						onClick={handleListEvent}
-						className='flex flex-col items-center justify-center px-3 py-2 relative'
+						className='flex flex-col items-center justify-center px-3 py-1.5'
 					>
-						<div className='p-2 rounded-full bg-gradient-to-r from-gold to-yellow-500 border border-gold/30'>
+						<div className='w-10 h-10 rounded-full bg-[#c9a227] flex items-center justify-center -mt-4 shadow-lg shadow-[#c9a227]/20'>
 							<PlusCircle className='w-5 h-5 text-black' />
 						</div>
-						<span className='text-xs mt-1 text-gold font-medium'>
+						<span className='text-[10px] mt-1 text-[#c9a227] font-medium'>
 							List
 						</span>
-
-						{/* Live indicator - optional */}
-						<div className='absolute top-0 right-2'>
-							<motion.div
-								animate={{ scale: [1, 1.3, 1] }}
-								transition={{ duration: 2, repeat: Infinity }}
-								className='w-1.5 h-1.5 bg-red-500 rounded-full'
-							/>
-						</div>
 					</button>
 				</div>
 			</nav>
 
 			{/* MOBILE TOP BAR */}
-			<div className='md:hidden fixed top-0 left-0 right-0 z-40 bg-black/95 backdrop-blur-lg border-b border-gold/10 py-3 px-4'>
+			<div className='md:hidden fixed top-0 left-0 right-0 z-40 bg-[#0a0a0f]/95 backdrop-blur-lg border-b border-white/[0.06] py-3 px-4'>
 				<div className='flex items-center justify-between'>
 					<div className='flex items-center gap-3'>
 						<div className='relative w-10 h-10 bg-gradient-to-br from-gold to-gold/70 rounded-xl flex items-center justify-center overflow-hidden'>
@@ -357,14 +307,77 @@ export default function Navbar() {
 						</div>
 					</div>
 
+					{/* User profile or login */}
 					<div className='flex items-center gap-2'>
-						<div className='px-2 py-1 rounded-full bg-red-500/20 border border-red-500/30'>
-							<span className='text-xs text-red-400 font-bold'>
-								LIVE
-							</span>
-						</div>
+						{isAuthenticated && user ? (
+							<button
+								onClick={() =>
+									setShowUserMenu(!showUserMenu)
+								}
+								className='flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold/10 border border-gold/20'
+							>
+								<div className='w-7 h-7 bg-gradient-to-br from-gold to-yellow-600 rounded-full flex items-center justify-center text-black font-bold text-xs'>
+									{user.firstName.charAt(0)}
+									{user.lastName.charAt(0)}
+								</div>
+								<span className='text-sm text-gold font-medium max-w-[80px] truncate'>
+									{user.firstName}
+								</span>
+							</button>
+						) : (
+							<Link
+								href='/auth/login'
+								className='px-4 py-1.5 rounded-full bg-gold/10 border border-gold/20 text-sm text-gold font-medium'
+							>
+								Sign In
+							</Link>
+						)}
 					</div>
 				</div>
+
+				{/* Mobile user dropdown */}
+				{showUserMenu && isAuthenticated && user && (
+					<motion.div
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -10 }}
+						className='absolute right-4 top-16 w-48 bg-black border border-gold/20 rounded-lg shadow-lg shadow-gold/10 overflow-hidden z-50'
+					>
+						<div className='px-4 py-3 border-b border-gold/20'>
+							<p className='text-sm font-medium text-white'>
+								{user.firstName} {user.lastName}
+							</p>
+							<p className='text-xs text-gray-400'>
+								{user.email}
+							</p>
+						</div>
+						<div className='py-2'>
+							<Link
+								href='/dashboard'
+								className='flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all'
+								onClick={() => setShowUserMenu(false)}
+							>
+								<User className='w-4 h-4' />
+								Dashboard
+							</Link>
+							<Link
+								href={user.role === 'Host' ? '/dashboard/profile' : '/dashboard/user/settings'}
+								className='flex items-center gap-2 px-4 py-2 text-sm text-gray-300 hover:text-gold hover:bg-gold/10 transition-all'
+								onClick={() => setShowUserMenu(false)}
+							>
+								<User className='w-4 h-4' />
+								Profile
+							</Link>
+							<button
+								onClick={handleLogout}
+								className='w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all'
+							>
+								<LogOut className='w-4 h-4' />
+								Logout
+							</button>
+						</div>
+					</motion.div>
+				)}
 			</div>
 
 			{/* Spacer for mobile bottom nav */}

@@ -11,21 +11,6 @@ import { AuthProvider } from '@/app/context/AuthContext'
 export const metadata: Metadata = {
 	title: 'LoFTE3 | Events',
 	description: 'Exclusive events and experiences',
-	icons: {
-		icon: [
-			{
-				url: '/images/image0.jpeg',
-				sizes: '32x32',
-				type: 'image/jpeg',
-			},
-			{
-				url: '/images/image0.jpeg',
-				sizes: '16x16',
-				type: 'image/jpeg',
-			},
-		],
-		apple: '/images/image0.jpeg',
-	},
 }
 
 export const viewport: Viewport = {
@@ -44,9 +29,6 @@ export default function RootLayout({
 	return (
 		<html lang='en' suppressHydrationWarning>
 			<head>
-				<link rel='icon' href='/images/image0.jpeg' type='image/jpeg' />
-				<link rel='shortcut icon' href='/images/image0.jpeg' type='image/jpeg' />
-				<link rel='apple-touch-icon' href='/images/image0.jpeg' />
 				<meta name='theme-color' content='#000000' />
 				<link rel='preconnect' href='https://fonts.googleapis.com' />
 				<link

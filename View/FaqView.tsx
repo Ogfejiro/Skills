@@ -41,7 +41,7 @@ export default function FAQPage() {
 				'Extend reach beyond the venue through digital and community channels',
 			],
 			summary:
-				'From concept to execution, LOFTE-3 partners with brands to turn ideas into memorable experiences and create utility with your project.',
+				'From concept to execution, LOFTE-3 partners with brands to turn ideas into memorable experiences.',
 			icon: <Target className='w-6 h-6' />,
 		},
 		{
@@ -118,11 +118,11 @@ export default function FAQPage() {
 			question: 'Who typically attends LOFTE-3 events?',
 			answer: 'LOFTE-3 attracts a diverse mix of professionals, innovators, and enthusiasts including:',
 			details: [
-				'Blockchain founders & builders',
+				'Startup founders & builders',
 				'Investors & VCs',
 				'Digital creators & artists',
 				'Enterprise decision-makers',
-				'Crypto enthusiasts & traders',
+				'Industry professionals & leaders',
 			],
 			icon: <Users2 className='w-6 h-6' />,
 		},
@@ -576,7 +576,7 @@ export default function FAQPage() {
 											'0 0 20px rgba(212, 175, 55, 0.3)',
 									}}
 									whileTap={{ scale: 0.95 }}
-									href='mailto:hidreamsofweb3@gmail.com'
+									href='mailto:partnerships@lofte.live'
 									className='px-8 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition flex items-center justify-center gap-3'
 								>
 									<Mail className='w-5 h-5' />

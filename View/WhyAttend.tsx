@@ -27,7 +27,7 @@ export default function WhyAttendPage() {
 			id: 2,
 			title: 'Find Your Tech Soulmate',
 			description:
-				'Connect with like-minded individuals in the blockchain space. Our matchmaking sessions help you find partners, co-founders, and lifelong friends.',
+				'Connect with like-minded individuals in the events space. Our matchmaking sessions help you find partners, co-founders, and lifelong friends.',
 			image: 'https://plus.unsplash.com/premium_photo-1658506739004-703dabce5ebe?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTN8fGNvdXBsZSUyMHNoYWRvd3xlbnwwfHwwfHx8MA%3D%3D',
 			stats: 'Quality Connections',
 			features: [
@@ -67,37 +67,37 @@ export default function WhyAttendPage() {
 		},
 		{
 			id: 5,
-			title: 'Culture Meets Tech',
+			title: 'Culture Meets Innovation',
 			description:
-				'Experience the perfect fusion of African culture with cutting-edge technology. Art, music, fashion, and blockchain in one unforgettable experience.',
-			image: 'https://images.unsplash.com/photo-1647511256098-75416d6500d8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGNyeXB0byUyMGNoYXJ0fGVufDB8fDB8fHww',
-			stats: 'African Innovation Showcase',
+				'Experience the perfect fusion of culture with cutting-edge creativity. Art, music, fashion, and technology in one unforgettable experience.',
+			image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&auto=format&fit=crop&q=60',
+			stats: 'Creative Innovation Showcase',
 			features: [
 				'Cultural Performances',
-				'Tech Art Exhibits',
-				'Fashion Tech',
-				'Music Innovation',
+				'Creative Exhibits',
+				'Fashion Showcases',
+				'Music & Entertainment',
 			],
 		},
 		{
 			id: 6,
 			title: 'Win Amazing Prizes',
 			description:
-				'Compete for exclusive rewards including NFTs, token airdrops, luxury gifts, and investment opportunities worth thousands of dollars.',
+				'Compete for exclusive rewards including luxury gifts, exclusive experiences, and investment opportunities worth thousands of dollars.',
 			image: 'https://plus.unsplash.com/premium_photo-1744679847695-6e36a8f6956c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJpemUlMjB3aGVlbHxlbnwwfHwwfHx8MA%3D%3D',
 			stats: '$100K+ in Prizes',
 			features: [
-				'NFT Airdrops',
-				'Token Rewards',
+				'Exclusive Giveaways',
+				'Premium Rewards',
 				'Luxury Gifts',
-				'Investment Access',
+				'VIP Experiences',
 			],
 		},
 		{
 			id: 7,
 			title: 'Elite Networking',
 			description:
-				"Connect with Africa's top blockchain founders, investors, and builders in intimate settings. Build relationships that transform careers.",
+				'Connect with top founders, investors, and industry leaders in intimate settings. Build relationships that transform careers.',
 			image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop',
 			stats: '500+ Industry Leaders',
 			features: [
@@ -186,7 +186,7 @@ export default function WhyAttendPage() {
 
 						<p className='text-lg md:text-xl text-gray-300 max-w-3xl mx-auto'>
 							Discover what makes LOFTE-3 the most exclusive event
-							platform in Africa. More than just parties it's
+							platform. More than just parties — it's
 							where opportunities are born.
 						</p>
 					</motion.div>

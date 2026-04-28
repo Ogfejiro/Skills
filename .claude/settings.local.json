@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find C:UsersPreshCodesDocumentslofte3Skills -type f -name *.json -o -name *.config.* -o -name .env*)",
+      "Bash(find C:UsersPreshCodesDocumentslofte3SkillsBackend-Serversrc -type f \\\\\\(-name *.ts -o -name *.js -o -name *.json \\\\\\))",
+      "Bash(convert --version)",
+      "Bash(npx --yes sharp-cli --version)",
+      "Bash(find /c/Users/PreshCodes/Documents/lofte3/Skills/View -type f -name *.ts* -o -name *.jsx)",
+      "Bash(npx next:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e \":*)"
+    ]
+  }
+}

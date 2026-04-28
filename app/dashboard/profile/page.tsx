@@ -10,14 +10,25 @@ import {
 	Loader2,
 	Eye,
 	EyeOff,
-	X,
+	ArrowLeft,
+	User,
+	Building2,
+	Wallet,
+	Globe,
+	CreditCard,
+	Shield,
+	Twitter,
+	Instagram,
+	Facebook,
+	Linkedin,
 } from 'lucide-react'
-import Navbar from '@/components/Navbar'
+import Link from 'next/link'
+import DashboardSidebar from '@/components/DashboardSidebar'
 import hostProfileService, {
 	UpdateProfileData,
 	SetWalletData,
 } from '@/app/services/hostProfileService'
-import { showNotification } from '@/lib/showNotification'
+import { toast } from 'sonner'
 
 interface SocialLinks {
 	twitter?: string
@@ -58,8 +69,7 @@ export default function HostProfilePage() {
 	const [saving, setSaving] = useState(false)
 	const [profile, setProfile] = useState<HostProfileData | null>(null)
 	const [showWalletPassword, setShowWalletPassword] = useState(false)
-	const [error, setError] = useState('')
-	const [success, setSuccess] = useState('')
+	const [activeTab, setActiveTab] = useState('personal')
 
 	const [formData, setFormData] = useState({
 		firstName: '',
@@ -85,13 +95,13 @@ export default function HostProfilePage() {
 
 	const [walletData, setWalletData] = useState({
 		walletAddress: '',
-		walletType: 'crypto', // or 'bank'
+		walletType: 'crypto',
 	})
 
 	useEffect(() => {
 		if (!authLoading && !isAuthenticated) {
 			router.push('/auth/login')
-		} else if (user && user.role !== 'Host') {
+		} else if (user && user.role !== 'Host' && user.role !== 'Admin') {
 			router.push('/dashboard/user')
 		} else if (token) {
 			fetchProfile()
@@ -101,7 +111,6 @@ export default function HostProfilePage() {
 	const fetchProfile = async () => {
 		try {
 			setLoading(true)
-			setError('')
 			if (!token) throw new Error('No authentication token')
 
 			const response = await hostProfileService.getProfile(token)
@@ -136,11 +145,7 @@ export default function HostProfilePage() {
 				}
 			}
 		} catch (err: any) {
-			setError(err.message || 'Failed to load profile')
-			showNotification({
-				message: 'Error loading profile',
-				type: 'error',
-			})
+			toast.error('Failed to load profile')
 		} finally {
 			setLoading(false)
 		}
@@ -155,16 +160,10 @@ export default function HostProfilePage() {
 		if (section === 'socials') {
 			setFormData((prev) => ({
 				...prev,
-				socials: {
-					...prev.socials,
-					[name]: value,
-				},
+				socials: { ...prev.socials, [name]: value },
 			}))
 		} else {
-			setFormData((prev) => ({
-				...prev,
-				[name]: value,
-			}))
+			setFormData((prev) => ({ ...prev, [name]: value }))
 		}
 	}
 
@@ -172,63 +171,35 @@ export default function HostProfilePage() {
 		e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
 	) => {
 		const { name, value } = e.target
-		setWalletData((prev) => ({
-			...prev,
-			[name]: value,
-		}))
+		setWalletData((prev) => ({ ...prev, [name]: value }))
 	}
 
 	const handleSaveProfile = async () => {
 		try {
 			setSaving(true)
-			setError('')
-
 			if (!token) throw new Error('No authentication token')
 
-			// Validate account details if accountName is provided
 			if (formData.accountName && !formData.accountNo) {
-				throw new Error(
-					'Account number is required when account name is provided',
-				)
+				throw new Error('Account number is required when account name is provided')
 			}
-
 			if (formData.accountName && !formData.bankName) {
-				throw new Error(
-					'Bank name is required when account name is provided',
-				)
+				throw new Error('Bank name is required when account name is provided')
 			}
-
-			// Validate that account name matches profile name
 			if (
 				formData.accountName &&
 				user?.firstName &&
-				!formData.accountName
-					.toLowerCase()
-					.includes(user.firstName.toLowerCase())
+				!formData.accountName.toLowerCase().includes(user.firstName.toLowerCase())
 			) {
-				throw new Error(
-					'Account name must match your profile name for security verification',
-				)
+				throw new Error('Account name must match your profile name for security verification')
 			}
 
-			const response = await hostProfileService.updateProfile(
-				formData,
-				token,
-			)
-
+			const response = await hostProfileService.updateProfile(formData, token)
 			if (response.success) {
 				setProfile(response.data)
-				setSuccess('Profile updated successfully!')
-				showNotification({
-					message: 'Profile updated successfully',
-					type: 'success',
-				})
-				setTimeout(() => setSuccess(''), 3000)
+				toast.success('Profile updated successfully')
 			}
 		} catch (err: any) {
-			const errorMsg = err.message || 'Failed to save profile'
-			setError(errorMsg)
-			showNotification({ message: errorMsg, type: 'error' })
+			toast.error(err.message || 'Failed to save profile')
 		} finally {
 			setSaving(false)
 		}
@@ -237,573 +208,315 @@ export default function HostProfilePage() {
 	const handleSetWallet = async () => {
 		try {
 			setSaving(true)
-			setError('')
-
-			if (!walletData.walletAddress) {
-				throw new Error('Wallet address is required')
-			}
-
-			if (!walletData.walletType) {
-				throw new Error('Wallet type is required')
-			}
-
+			if (!walletData.walletAddress) throw new Error('Wallet address is required')
+			if (!walletData.walletType) throw new Error('Wallet type is required')
 			if (!token) throw new Error('No authentication token')
 
-			const response = await hostProfileService.setWallet(
-				walletData,
-				token,
-			)
-
+			const response = await hostProfileService.setWallet(walletData, token)
 			if (response.success) {
 				setProfile(response.data)
-				setSuccess(
-					'Wallet set successfully! (Can only be changed by support)',
-				)
-				showNotification({
-					message:
-						'Wallet set successfully! You can only change this by contacting support.',
-					type: 'success',
-				})
-				setTimeout(() => setSuccess(''), 3000)
+				toast.success('Wallet set successfully! Contact support to change it.')
 			}
 		} catch (err: any) {
-			const errorMsg = err.message || 'Failed to set wallet'
-			setError(errorMsg)
-			showNotification({ message: errorMsg, type: 'error' })
+			toast.error(err.message || 'Failed to set wallet')
 		} finally {
 			setSaving(false)
 		}
 	}
 
+	const tabs = [
+		{ id: 'personal', label: 'Personal', icon: <User className='w-4 h-4' /> },
+		{ id: 'socials', label: 'Socials', icon: <Globe className='w-4 h-4' /> },
+		{ id: 'bank', label: 'Bank', icon: <CreditCard className='w-4 h-4' /> },
+		{ id: 'wallet', label: 'Wallet', icon: <Wallet className='w-4 h-4' /> },
+	]
+
 	if (authLoading || loading) {
 		return (
-			<div className='flex items-center justify-center min-h-screen'>
-				<Loader2 className='animate-spin text-blue-500' size={32} />
+			<div className='min-h-screen bg-[#0a0a0f] flex items-center justify-center'>
+				<Loader2 className='w-10 h-10 text-[#c9a227] animate-spin' />
 			</div>
 		)
 	}
 
+	const inputClass = 'w-full px-4 py-2.5 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition'
+	const labelClass = 'block text-xs font-medium text-gray-400 mb-1.5'
+
 	return (
-		<div className='min-h-screen bg-black'>
-			<Navbar />
+		<div className='min-h-screen bg-[#0a0a0f] text-white flex'>
+			<DashboardSidebar />
 
-			<div className='max-w-6xl mx-auto px-3 sm:px-4 md:px-8 py-6 sm:py-8'>
-				<div className='mb-6 sm:mb-8'>
-					<h1 className='text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2'>
-						Host Profile Settings
-					</h1>
-					<p className='text-sm sm:text-base text-gray-400'>
-						Manage your profile information, bank details, social
-						media, and wallet settings
-					</p>
-				</div>
-
-				{error && (
-					<div className='mb-6 p-3 sm:p-4 bg-red-500/20 border border-red-500 rounded-lg flex items-start gap-2 sm:gap-3'>
-						<AlertCircle
-							className='text-red-500 mt-0.5 flex-shrink-0'
-							size={18}
-						/>
-						<div className='flex-1'>
-							<h3 className='text-red-400 font-semibold text-sm'>
-								Error
-							</h3>
-							<p className='text-red-300 text-xs sm:text-sm'>
-								{error}
-							</p>
+			<main className='flex-1 min-h-screen'>
+				<div className='max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-16 md:pt-8'>
+					{/* Header */}
+					<div className='flex items-center gap-3 mb-6'>
+						<Link href='/dashboard/host' className='p-2 hover:bg-white/5 rounded-lg transition'>
+							<ArrowLeft className='w-5 h-5 text-gray-400' />
+						</Link>
+						<div>
+							<h1 className='text-2xl font-bold'>Host Profile Settings</h1>
+							<p className='text-sm text-gray-500'>Manage your profile, bank details, and wallet</p>
 						</div>
 					</div>
-				)}
 
-				{success && (
-					<div className='mb-6 p-3 sm:p-4 bg-green-500/20 border border-green-500 rounded-lg flex items-start gap-2 sm:gap-3'>
-						<CheckCircle
-							className='text-green-500 mt-0.5 flex-shrink-0'
-							size={18}
-						/>
-						<div className='flex-1'>
-							<h3 className='text-green-400 font-semibold text-sm'>
-								Success
-							</h3>
-							<p className='text-green-300 text-xs sm:text-sm'>
-								{success}
-							</p>
-						</div>
+					{/* Tabs */}
+					<div className='flex gap-1 mb-6 bg-[#111118] rounded-lg p-1 border border-white/[0.06] overflow-x-auto'>
+						{tabs.map((tab) => (
+							<button
+								key={tab.id}
+								onClick={() => setActiveTab(tab.id)}
+								className={`flex items-center gap-2 px-4 py-2.5 rounded-md text-sm font-medium transition whitespace-nowrap ${
+									activeTab === tab.id
+										? 'bg-[#c9a227]/15 text-[#c9a227]'
+										: 'text-gray-500 hover:text-white hover:bg-white/5'
+								}`}
+							>
+								{tab.icon}
+								{tab.label}
+							</button>
+						))}
 					</div>
-				)}
 
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-8'>
-					{/* Personal Information Section */}
-					<div className='bg-neutral-900 rounded-lg p-4 sm:p-6 border border-neutral-800'>
-						<h2 className='text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6'>
-							Personal Information
-						</h2>
+					{/* Personal Info Tab */}
+					{activeTab === 'personal' && (
+						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-6 space-y-5'>
+							<h2 className='text-base font-semibold flex items-center gap-2 mb-4'>
+								<User className='w-4 h-4 text-[#c9a227]' />
+								Personal Information
+							</h2>
 
-						<div className='space-y-3 sm:space-y-4'>
-							<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+							<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
 								<div>
-									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-										First Name
-									</label>
-									<input
-										type='text'
-										name='firstName'
-										value={formData.firstName}
-										onChange={handleFormChange}
-										placeholder='Your first name'
-										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-									/>
+									<label className={labelClass}>First Name</label>
+									<input type='text' name='firstName' value={formData.firstName} onChange={handleFormChange} placeholder='First name' className={inputClass} />
 								</div>
 								<div>
-									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-										Last Name
-									</label>
-									<input
-										type='text'
-										name='lastName'
-										value={formData.lastName}
-										onChange={handleFormChange}
-										placeholder='Your last name'
-										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-									/>
+									<label className={labelClass}>Last Name</label>
+									<input type='text' name='lastName' value={formData.lastName} onChange={handleFormChange} placeholder='Last name' className={inputClass} />
 								</div>
 							</div>
 
 							<div>
-								<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-									Email (Read-only)
-								</label>
-								<input
-									type='email'
-									disabled
-									value=''
-									placeholder='Email cannot be changed'
-									className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-gray-500 placeholder-gray-600 text-sm opacity-50 cursor-not-allowed'
-								/>
+								<label className={labelClass}>Email (Read-only)</label>
+								<input type='email' disabled value={user?.email || ''} className={`${inputClass} opacity-50 cursor-not-allowed`} />
 							</div>
 
-							<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+							<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
 								<div>
-									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-										Phone
-									</label>
-									<input
-										type='tel'
-										name='phone'
-										value={formData.phone}
-										onChange={handleFormChange}
-										placeholder='Your phone number'
-										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-									/>
+									<label className={labelClass}>Phone</label>
+									<input type='tel' name='phone' value={formData.phone} onChange={handleFormChange} placeholder='Phone number' className={inputClass} />
 								</div>
 								<div>
-									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-										Profession
-									</label>
-									<input
-										type='text'
-										name='profession'
-										value={formData.profession}
-										onChange={handleFormChange}
-										placeholder='Your profession'
-										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-									/>
+									<label className={labelClass}>Profession</label>
+									<input type='text' name='profession' value={formData.profession} onChange={handleFormChange} placeholder='Your profession' className={inputClass} />
 								</div>
 							</div>
 
-							<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
+							<div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
 								<div>
-									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-										Role
-									</label>
-									<input
-										type='text'
-										name='role'
-										value={formData.role}
-										onChange={handleFormChange}
-										placeholder='Your role'
-										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-									/>
+									<label className={labelClass}>Organization</label>
+									<input type='text' name='organization' value={formData.organization} onChange={handleFormChange} placeholder='Organization name' className={inputClass} />
 								</div>
 								<div>
-									<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-										Referral ID
-									</label>
-									<input
-										type='text'
-										name='refId'
-										value={formData.refId}
-										onChange={handleFormChange}
-										placeholder='Your referral ID'
-										className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-									/>
+									<label className={labelClass}>Address</label>
+									<input type='text' name='address' value={formData.address} onChange={handleFormChange} placeholder='Business address' className={inputClass} />
 								</div>
 							</div>
 
-							<div className='p-3 sm:p-4 bg-neutral-800 rounded-lg'>
-								<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4'>
-									<div>
-										<p className='text-xs sm:text-sm font-medium text-gray-400 mb-2'>
-											Email Verified
-										</p>
-										<p className='text-sm text-gray-300 font-semibold'>
-											{profile?.emailVerified
-												? '✓ Yes'
-												: '✗ No'}
-										</p>
+							<div>
+								<label className={labelClass}>Conversion Rate (NGN per USD)</label>
+								<input type='number' name='conversionRate' value={formData.conversionRate} onChange={handleFormChange} placeholder='1400' min='100' className={inputClass} />
+							</div>
+
+							{/* Verification Status */}
+							<div className='p-4 bg-white/[0.02] rounded-lg border border-white/[0.04] space-y-3'>
+								<div className='flex items-center justify-between'>
+									<span className='text-sm text-gray-400'>Email Verified</span>
+									{profile?.emailVerified ? (
+										<span className='inline-flex items-center gap-1 text-xs text-emerald-400'><CheckCircle className='w-3.5 h-3.5' /> Yes</span>
+									) : (
+										<span className='inline-flex items-center gap-1 text-xs text-yellow-500'><AlertCircle className='w-3.5 h-3.5' /> No</span>
+									)}
+								</div>
+								<div className='flex items-center justify-between'>
+									<span className='text-sm text-gray-400'>Phone Verified</span>
+									{profile?.phoneVerified ? (
+										<span className='inline-flex items-center gap-1 text-xs text-emerald-400'><CheckCircle className='w-3.5 h-3.5' /> Yes</span>
+									) : (
+										<span className='inline-flex items-center gap-1 text-xs text-yellow-500'><AlertCircle className='w-3.5 h-3.5' /> No</span>
+									)}
+								</div>
+							</div>
+						</div>
+					)}
+
+					{/* Social Media Tab */}
+					{activeTab === 'socials' && (
+						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-6 space-y-5'>
+							<h2 className='text-base font-semibold flex items-center gap-2 mb-4'>
+								<Globe className='w-4 h-4 text-[#c9a227]' />
+								Social Media Links
+							</h2>
+
+							{[
+								{ name: 'twitter', label: 'Twitter / X', icon: <Twitter className='w-4 h-4' />, placeholder: '@yourhandle' },
+								{ name: 'instagram', label: 'Instagram', icon: <Instagram className='w-4 h-4' />, placeholder: '@yourhandle' },
+								{ name: 'facebook', label: 'Facebook', icon: <Facebook className='w-4 h-4' />, placeholder: 'Profile URL' },
+								{ name: 'linkedin', label: 'LinkedIn', icon: <Linkedin className='w-4 h-4' />, placeholder: 'Profile URL' },
+								{ name: 'website', label: 'Website', icon: <Globe className='w-4 h-4' />, placeholder: 'https://yoursite.com' },
+							].map((social) => (
+								<div key={social.name}>
+									<label className={`${labelClass} flex items-center gap-1.5`}>
+										{social.icon}
+										{social.label}
+									</label>
+									<input
+										type='text'
+										name={social.name}
+										value={(formData.socials as any)[social.name]}
+										onChange={(e) => handleFormChange(e, 'socials')}
+										placeholder={social.placeholder}
+										className={inputClass}
+									/>
+								</div>
+							))}
+						</div>
+					)}
+
+					{/* Bank Tab */}
+					{activeTab === 'bank' && (
+						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-6 space-y-5'>
+							<h2 className='text-base font-semibold flex items-center gap-2 mb-2'>
+								<CreditCard className='w-4 h-4 text-[#c9a227]' />
+								Bank Account Details
+							</h2>
+							<p className='text-xs text-gray-500 flex items-center gap-1.5'>
+								<Shield className='w-3.5 h-3.5' />
+								Account name must match your profile name for security
+							</p>
+
+							<div>
+								<label className={labelClass}>Bank Name</label>
+								<input type='text' name='bankName' value={formData.bankName} onChange={handleFormChange} placeholder='e.g., GTBank, Access Bank' className={inputClass} />
+							</div>
+							<div>
+								<label className={labelClass}>Account Name</label>
+								<input type='text' name='accountName' value={formData.accountName} onChange={handleFormChange} placeholder='Account holder name' className={inputClass} />
+								<p className='text-[11px] text-gray-600 mt-1'>Profile name: {user?.firstName} {user?.lastName}</p>
+							</div>
+							<div>
+								<label className={labelClass}>Account Number</label>
+								<input type='text' name='accountNo' value={formData.accountNo} onChange={handleFormChange} placeholder='Account number' className={inputClass} />
+							</div>
+						</div>
+					)}
+
+					{/* Wallet Tab */}
+					{activeTab === 'wallet' && (
+						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-6 space-y-5'>
+							<h2 className='text-base font-semibold flex items-center gap-2 mb-2'>
+								<Wallet className='w-4 h-4 text-[#c9a227]' />
+								Wallet Settings
+							</h2>
+							<p className='text-xs text-gray-500 flex items-center gap-1.5'>
+								<AlertCircle className='w-3.5 h-3.5' />
+								Wallet can only be set once. Contact support to change it.
+							</p>
+
+							{profile?.walletSet ? (
+								<div className='p-5 bg-emerald-500/5 border border-emerald-500/20 rounded-lg space-y-3'>
+									<div className='flex items-center gap-2'>
+										<CheckCircle className='w-5 h-5 text-emerald-400' />
+										<span className='font-semibold text-emerald-400'>Wallet Active</span>
 									</div>
-									<div>
-										<p className='text-xs sm:text-sm font-medium text-gray-400 mb-2'>
-											Phone Verified
-										</p>
-										<p className='text-sm text-gray-300 font-semibold'>
-											{profile?.phoneVerified
-												? '✓ Yes'
-												: '✗ No'}
-										</p>
+									<div className='space-y-2 text-sm'>
+										<div>
+											<span className='text-gray-500'>Type:</span>{' '}
+											<span className='text-white'>{walletData.walletType}</span>
+										</div>
+										<div>
+											<span className='text-gray-500'>Address:</span>{' '}
+											<span className='text-white font-mono text-xs break-all'>{walletData.walletAddress}</span>
+										</div>
 									</div>
+									<p className='text-[11px] text-gray-500'>To change wallet settings, contact support.</p>
 								</div>
-							</div>
+							) : (
+								<>
+									<div>
+										<label className={labelClass}>Wallet Type</label>
+										<select
+											name='walletType'
+											value={walletData.walletType}
+											onChange={handleWalletChange}
+											className={inputClass}
+										>
+											<option value='crypto'>Cryptocurrency</option>
+											<option value='bank'>Bank Transfer</option>
+										</select>
+									</div>
 
-							<div>
-								<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-									Organization / Business Name
-								</label>
-								<input
-									type='text'
-									name='organization'
-									value={formData.organization}
-									onChange={handleFormChange}
-									placeholder='Your organization name'
-									className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								/>
-							</div>
+									<div>
+										<label className={labelClass}>Wallet Address</label>
+										<div className='relative'>
+											<input
+												type={showWalletPassword ? 'text' : 'password'}
+												name='walletAddress'
+												value={walletData.walletAddress}
+												onChange={handleWalletChange}
+												placeholder={walletData.walletType === 'crypto' ? 'Your crypto wallet address' : 'Your bank wallet address'}
+												className={inputClass}
+											/>
+											<button
+												type='button'
+												onClick={() => setShowWalletPassword(!showWalletPassword)}
+												className='absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition'
+											>
+												{showWalletPassword ? <EyeOff className='w-4 h-4' /> : <Eye className='w-4 h-4' />}
+											</button>
+										</div>
+									</div>
 
-							<div>
-								<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-									Address
-								</label>
-								<input
-									type='text'
-									name='address'
-									value={formData.address}
-									onChange={handleFormChange}
-									placeholder='Your address'
-									className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								/>
-							</div>
-
-							<div>
-								<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-									Conversion Rate (NGN per USD)
-								</label>
-								<input
-									type='number'
-									name='conversionRate'
-									value={formData.conversionRate}
-									onChange={handleFormChange}
-									placeholder='1400'
-									min='100'
-									className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								/>
-							</div>
-						</div>
-					</div>
-
-					{/* Social Media Links Section */}
-					<div className='bg-neutral-900 rounded-lg p-4 sm:p-6 border border-neutral-800'>
-						<h2 className='text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6'>
-							Social Media Links
-						</h2>
-
-						<div className='space-y-3 sm:space-y-4'>
-							<div>
-								<label className='block text-xs sm:text-sm font-medium text-gray-300 mb-1.5 sm:mb-2'>
-									Twitter / X
-								</label>
-								<input
-									type='text'
-									name='twitter'
-									value={formData.socials.twitter}
-									onChange={(e) =>
-										handleFormChange(e, 'socials')
-									}
-									placeholder='@yourhandle'
-									className='w-full px-3 sm:px-4 py-2 sm:py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								/>
-							</div>
-
-							<div>
-								<label className='block text-sm font-medium text-gray-300 mb-2'>
-									Instagram
-								</label>
-								<input
-									type='text'
-									name='instagram'
-									value={formData.socials.instagram}
-									onChange={(e) =>
-										handleFormChange(e, 'socials')
-									}
-									placeholder='@yourhandle'
-									className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								/>
-							</div>
-
-							<div>
-								<label className='block text-sm font-medium text-gray-300 mb-2'>
-									Facebook
-								</label>
-								<input
-									type='text'
-									name='facebook'
-									value={formData.socials.facebook}
-									onChange={(e) =>
-										handleFormChange(e, 'socials')
-									}
-									placeholder='Your profile URL'
-									className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								/>
-							</div>
-
-							<div>
-								<label className='block text-sm font-medium text-gray-300 mb-2'>
-									LinkedIn
-								</label>
-								<input
-									type='text'
-									name='linkedin'
-									value={formData.socials.linkedin}
-									onChange={(e) =>
-										handleFormChange(e, 'socials')
-									}
-									placeholder='Your profile URL'
-									className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								/>
-							</div>
-
-							<div>
-								<label className='block text-sm font-medium text-gray-300 mb-2'>
-									Website
-								</label>
-								<input
-									type='url'
-									name='website'
-									value={formData.socials.website}
-									onChange={(e) =>
-										handleFormChange(e, 'socials')
-									}
-									placeholder='https://yourwebsite.com'
-									className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								/>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				{/* Bank Account Details Section */}
-				<div className='mt-6 bg-neutral-900 rounded-lg p-6 border border-neutral-800'>
-					<h2 className='text-xl font-bold text-white mb-6'>
-						Bank Account Details
-					</h2>
-					<p className='text-xs text-gray-400 mb-4'>
-						⚠️ Account name must match your profile name for
-						security verification
-					</p>
-
-					<div className='space-y-4'>
-						<div>
-							<label className='block text-sm font-medium text-gray-300 mb-2'>
-								Bank Name
-							</label>
-							<input
-								type='text'
-								name='bankName'
-								value={formData.bankName}
-								onChange={handleFormChange}
-								placeholder='e.g., GTBank, Access Bank'
-								className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-							/>
-						</div>
-
-						<div>
-							<label className='block text-sm font-medium text-gray-300 mb-2'>
-								Account Name
-							</label>
-							<input
-								type='text'
-								name='accountName'
-								value={formData.accountName}
-								onChange={handleFormChange}
-								placeholder='Your bank account holder name'
-								className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-							/>
-							<p className='text-xs text-gray-400 mt-1'>
-								Your profile name: {user?.firstName}{' '}
-								{user?.lastName}
-							</p>
-						</div>
-
-						<div>
-							<label className='block text-sm font-medium text-gray-300 mb-2'>
-								Account Number
-							</label>
-							<input
-								type='text'
-								name='accountNo'
-								value={formData.accountNo}
-								onChange={handleFormChange}
-								placeholder='Your account number'
-								className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-							/>
-						</div>
-					</div>
-				</div>
-
-				{/* Wallet Settings Section */}
-				<div className='mt-6 bg-neutral-900 rounded-lg p-6 border border-neutral-800'>
-					<h2 className='text-xl font-bold text-white mb-6'>
-						Wallet Settings
-					</h2>
-					<p className='text-xs text-gray-400 mb-4'>
-						⚠️ Wallet can only be set once. Contact support to
-						change it.
-					</p>
-
-					{profile?.walletSet ? (
-						<div className='space-y-4'>
-							<div className='p-4 bg-green-500/10 border border-green-500/50 rounded-lg'>
-								<p className='text-green-400 font-semibold mb-2'>
-									✓ Wallet Already Set
-								</p>
-								<p className='text-sm text-gray-300 mb-3'>
-									<strong>Wallet Type:</strong>{' '}
-									{walletData.walletType}
-								</p>
-								<p className='text-sm text-gray-300 break-all'>
-									<strong>Wallet Address:</strong>{' '}
-									{walletData.walletAddress}
-								</p>
-								<p className='text-xs text-gray-400 mt-4'>
-									To change your wallet settings, please
-									contact our support team.
-								</p>
-							</div>
-						</div>
-					) : (
-						<div className='space-y-4'>
-							<div>
-								<label className='block text-sm font-medium text-gray-300 mb-2'>
-									Wallet Type
-								</label>
-								<select
-									name='walletType'
-									value={walletData.walletType}
-									onChange={handleWalletChange}
-									disabled={profile?.walletSet}
-									className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500'
-								>
-									<option value='crypto'>
-										Cryptocurrency
-									</option>
-									<option value='bank'>Bank Transfer</option>
-								</select>
-							</div>
-
-							<div>
-								<label className='block text-sm font-medium text-gray-300 mb-2'>
-									Wallet Address
-								</label>
-								<input
-									type={
-										showWalletPassword ? 'text' : 'password'
-									}
-									name='walletAddress'
-									value={walletData.walletAddress}
-									onChange={handleWalletChange}
-									disabled={profile?.walletSet}
-									placeholder={
-										walletData.walletType === 'crypto'
-											? 'Enter your cryptocurrency wallet address'
-											: 'Enter your bank account or wallet address'
-									}
-									className='w-full px-4 py-3 bg-neutral-800 border border-neutral-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50'
-								/>
-								{!profile?.walletSet && (
 									<button
-										onClick={() =>
-											setShowWalletPassword(
-												!showWalletPassword,
-											)
-										}
-										className='mt-2 text-xs text-gray-400 hover:text-gray-300 flex items-center gap-1'
+										onClick={handleSetWallet}
+										disabled={saving || !walletData.walletAddress}
+										className='w-full px-4 py-2.5 bg-[#c9a227] text-black text-sm font-bold rounded-lg hover:bg-[#d4b84a] disabled:opacity-50 transition flex items-center justify-center gap-2'
 									>
-										{showWalletPassword ? (
-											<>
-												<EyeOff size={14} /> Hide
-											</>
+										{saving ? (
+											<><Loader2 className='w-4 h-4 animate-spin' /> Setting Wallet...</>
 										) : (
-											<>
-												<Eye size={14} /> Show
-											</>
+											<><Wallet className='w-4 h-4' /> Set Wallet</>
 										)}
 									</button>
-								)}
-							</div>
-
-							{!profile?.walletSet && (
-								<button
-									onClick={handleSetWallet}
-									disabled={
-										saving || !walletData.walletAddress
-									}
-									className='w-full mt-4 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors'
-								>
-									{saving ? (
-										<>
-											<Loader2
-												className='animate-spin'
-												size={16}
-											/>{' '}
-											Setting Wallet...
-										</>
-									) : (
-										<>
-											<Save size={16} /> Set Wallet
-										</>
-									)}
-								</button>
+								</>
 							)}
 						</div>
 					)}
-				</div>
 
-				{/* Save Button */}
-				<div className='mt-8 flex gap-4'>
-					<button
-						onClick={handleSaveProfile}
-						disabled={saving}
-						className='px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg font-medium flex items-center gap-2 transition-colors'
-					>
-						{saving ? (
-							<>
-								<Loader2 className='animate-spin' size={16} />{' '}
-								Saving...
-							</>
-						) : (
-							<>
-								<Save size={16} /> Save Changes
-							</>
-						)}
-					</button>
-
-					<button
-						onClick={() => router.back()}
-						className='px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg font-medium flex items-center gap-2 transition-colors'
-					>
-						<X size={16} /> Cancel
-					</button>
+					{/* Save Button (for non-wallet tabs) */}
+					{activeTab !== 'wallet' && (
+						<div className='flex gap-3 mt-6'>
+							<Link
+								href='/dashboard/host'
+								className='px-6 py-2.5 text-sm font-medium text-gray-400 border border-white/[0.08] rounded-lg hover:text-white hover:border-white/20 transition'
+							>
+								Cancel
+							</Link>
+							<button
+								onClick={handleSaveProfile}
+								disabled={saving}
+								className='flex-1 sm:flex-none px-8 py-2.5 bg-[#c9a227] text-black text-sm font-bold rounded-lg hover:bg-[#d4b84a] disabled:opacity-50 transition flex items-center justify-center gap-2'
+							>
+								{saving ? (
+									<><Loader2 className='w-4 h-4 animate-spin' /> Saving...</>
+								) : (
+									<><Save className='w-4 h-4' /> Save Changes</>
+								)}
+							</button>
+						</div>
+					)}
 				</div>
-			</div>
+			</main>
 		</div>
 	)
 }
