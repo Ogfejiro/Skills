@@ -207,9 +207,9 @@ export default function HomePage() {
 	return (
 		<div className='min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden'>
 			{/* Hero */}
-			<section className='relative w-full flex flex-col items-center justify-start text-center px-4 pt-24 md:pt-32 pb-16 md:pb-24'>
+			<section className='relative w-full flex flex-col items-center justify-start text-center px-4 pt-16 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-24'>
 				{/* Background glow */}
-				<div className='absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-[#c9a227]/8 rounded-full blur-[140px] pointer-events-none' />
+				<div className='absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[500px] h-[200px] sm:h-[300px] bg-[#c9a227]/8 rounded-full blur-[140px] pointer-events-none' />
 
 				<p className='text-[11px] md:text-xs text-[#c9a227]/70 tracking-[0.2em] mb-6 uppercase font-medium'>
 					An unforgettable experience awaits

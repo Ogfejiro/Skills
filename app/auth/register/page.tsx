@@ -13,6 +13,7 @@ import {
 	User,
 	AlertCircle,
 	Loader2,
+	ArrowLeft,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -105,7 +106,7 @@ export default function RegisterPage() {
 	}
 
 	return (
-		<div className='min-h-screen bg-black text-white overflow-hidden flex items-center justify-center p-4 pt-32 md:pt-0'>
+		<div className='min-h-screen bg-black text-white overflow-x-hidden flex items-center justify-center px-4 py-20 md:py-8'>
 			{/* Background Effects */}
 			<div className='absolute inset-0 overflow-hidden pointer-events-none'>
 				<motion.div
@@ -129,7 +130,7 @@ export default function RegisterPage() {
 				className='relative z-10 w-full max-w-md'
 			>
 				{/* Card */}
-				<div className='bg-black/40 backdrop-blur-xl border border-gold/20 rounded-2xl p-8 shadow-2xl shadow-gold/5'>
+				<div className='bg-black/40 backdrop-blur-xl border border-gold/20 rounded-2xl p-5 sm:p-8 shadow-2xl shadow-gold/5'>
 					{/* Header */}
 					<motion.div
 						initial={{ opacity: 0, y: -20 }}

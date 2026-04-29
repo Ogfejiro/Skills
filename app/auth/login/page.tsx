@@ -52,7 +52,7 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className='min-h-screen bg-black text-white overflow-hidden flex items-center justify-center p-4 pt-32 md:pt-0'>
+		<div className='min-h-screen bg-black text-white overflow-x-hidden flex items-center justify-center px-4 py-20 md:py-8'>
 			{/* Background Effects */}
 			<div className='absolute inset-0 overflow-hidden pointer-events-none'>
 				<motion.div
@@ -76,7 +76,7 @@ export default function LoginPage() {
 				className='relative z-10 w-full max-w-md'
 			>
 				{/* Card */}
-				<div className='bg-black/40 backdrop-blur-xl border border-gold/20 rounded-2xl p-8 shadow-2xl shadow-gold/5'>
+				<div className='bg-black/40 backdrop-blur-xl border border-gold/20 rounded-2xl p-5 sm:p-8 shadow-2xl shadow-gold/5'>
 					{/* Header */}
 					<motion.div
 						initial={{ opacity: 0, y: -20 }}
@@ -148,6 +148,21 @@ export default function LoginPage() {
 									className='w-full pl-10 pr-4 py-3 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-transparent transition-all'
 								/>
 							</div>
+						</motion.div>
+
+						{/* Forgot Password */}
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ duration: 0.5, delay: 0.35 }}
+							className='text-right'
+						>
+							<Link
+								href='/auth/forgot-password'
+								className='text-sm text-gold hover:text-yellow-400 transition-colors'
+							>
+								Forgot Password?
+							</Link>
 						</motion.div>
 
 						{/* Submit Button */}

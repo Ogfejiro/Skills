@@ -162,7 +162,7 @@ export default function WhyAttendPage() {
 	return (
 		<main id='why-attend' className='min-h-screen bg-black text-white'>
 			{/* HERO SECTION */}
-			<section className='relative pt-32 pb-20 px-4'>
+			<section className='relative pt-20 sm:pt-32 pb-12 sm:pb-20 px-4'>
 				<div className='container mx-auto relative z-10'>
 					{/* Page Header */}
 					<motion.div
@@ -177,14 +177,14 @@ export default function WhyAttendPage() {
 							</span>
 						</div>
 
-						<h1 className='text-4xl md:text-6xl font-bold mb-6'>
+						<h1 className='text-3xl sm:text-4xl md:text-6xl font-bold mb-6'>
 							<span className='text-white block'>Why Attend</span>
 							<span className='gold-gradient block mt-2'>
 								LOFTE-3 Events?
 							</span>
 						</h1>
 
-						<p className='text-lg md:text-xl text-gray-300 max-w-3xl mx-auto'>
+						<p className='text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto'>
 							Discover what makes LOFTE-3 the most exclusive event
 							platform. More than just parties — it's
 							where opportunities are born.
@@ -225,7 +225,7 @@ export default function WhyAttendPage() {
 				<div className='container mx-auto relative'>
 					<div className='max-w-6xl mx-auto'>
 						{/* Main Carousel */}
-						<div className='relative h-[500px] md:h-[600px] overflow-hidden rounded-2xl border border-gold/30'>
+						<div className='relative h-[420px] sm:h-[500px] md:h-[600px] overflow-hidden rounded-2xl border border-gold/30'>
 							{/* Current Slide */}
 							<AnimatePresence mode='wait'>
 								<motion.div
@@ -277,7 +277,7 @@ export default function WhyAttendPage() {
 										</div>
 
 										{/* Right Side - Content */}
-										<div className='md:w-1/2 h-1/2 md:h-full p-6 md:p-8 flex flex-col justify-center bg-black'>
+										<div className='md:w-1/2 h-1/2 md:h-full p-4 sm:p-6 md:p-8 flex flex-col justify-center bg-black overflow-y-auto'>
 											{/* Badge */}
 											<div className='hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 mb-6 w-fit'>
 												<div className='w-2 h-2 bg-gold rounded-full' />
@@ -323,14 +323,14 @@ export default function WhyAttendPage() {
 												initial={{ opacity: 0 }}
 												animate={{ opacity: 1 }}
 												transition={{ delay: 0.6 }}
-												className='text-gray-300 text-base md:text-lg leading-relaxed mb-6'
+												className='text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-6'
 											>
 												{reasons[currentSlide]
 													?.description || ''}
 											</motion.p>
 
 											{/* Features */}
-											<div className='space-y-2 mb-8'>
+											<div className='space-y-2 mb-4 sm:mb-8'>
 												<h4 className='text-white font-medium mb-2'>
 													What You Get:
 												</h4>

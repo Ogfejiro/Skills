@@ -151,7 +151,7 @@ export async function forgotPasswordService(email) {
 		type: 'password-reset',
 	})
 
-	const resetLink = `${process.env.FRONTEND_URL}/verify-reset-password?token=${resetToken}`
+	const resetLink = `${process.env.FRONTEND_URL}/auth/reset-password?token=${resetToken}`
 	const emailResult = await sendPasswordResetEmail(user.email, resetLink)
 
 	if (!emailResult.success) {

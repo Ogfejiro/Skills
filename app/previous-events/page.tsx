@@ -93,7 +93,7 @@ export default function PreviousEventsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <Navbar />
       
       {/* Hero Section */}
@@ -152,7 +152,7 @@ export default function PreviousEventsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4 }}
-              className="text-4xl md:text-6xl font-bold mb-4"
+              className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4"
             >
               <span className="gold-gradient">Previous</span>
               <span className="text-white ml-3">Events</span>

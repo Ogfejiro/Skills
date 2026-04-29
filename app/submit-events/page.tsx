@@ -146,7 +146,7 @@ export default function SubmitEventPage() {
         >
           {/* Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
               <span className="text-white">Submit Your</span>
               <span className="gold-gradient ml-3">Event</span>
             </h1>

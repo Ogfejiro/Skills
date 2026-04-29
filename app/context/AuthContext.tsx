@@ -28,8 +28,8 @@ interface AuthContextType {
     password: string;
     firstName: string;
     lastName: string;
-    role: 'User' | 'Host' | 'Admin';
-    profession: string;
+    role?: 'User' | 'Host' | 'Admin';
+    profession?: string;
   }) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -112,8 +112,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string;
     firstName: string;
     lastName: string;
-    role: 'User' | 'Host' | 'Admin';
-    profession: string;
+    role?: 'User' | 'Host' | 'Admin';
+    profession?: string;
   }) => {
     setLoading(true);
     setError(null);

@@ -109,7 +109,7 @@ export default function EventsPage() {
 	}
 
 	return (
-		<main className='min-h-screen bg-[#0a0a0f] text-white'>
+		<main className='min-h-screen bg-[#0a0a0f] text-white overflow-x-hidden'>
 			<Navbar />
 
 			<div className='pt-24 pb-16 px-4 max-w-7xl xl:max-w-[1400px] mx-auto'>
@@ -123,16 +123,16 @@ export default function EventsPage() {
 						Back to Home
 					</Link>
 
-					<h1 className='text-4xl md:text-5xl lg:text-6xl font-black mb-4'>
+					<h1 className='text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black mb-4'>
 						All Events
 					</h1>
-					<p className='text-gray-400 text-lg max-w-2xl'>
+					<p className='text-gray-400 text-base sm:text-lg max-w-2xl'>
 						Explore all upcoming and previous events. Toggle between live and past events to find what interests you.
 					</p>
 				</div>
 
 				{/* Toggle */}
-				<div className='mb-12 flex gap-4'>
+				<div className='mb-12 flex gap-3 sm:gap-4 flex-wrap'>
 					<button
 						onClick={() => setEventType('live')}
 						className={`px-6 py-3 rounded-full font-bold transition-all ${
