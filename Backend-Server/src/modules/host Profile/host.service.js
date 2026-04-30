@@ -114,6 +114,10 @@ async function buildHostResponse(userId) {
 }
 
 export async function createHostProfile(userId, payload) {
+	if (!userId) {
+		throw new AppError('User authentication required', 401)
+	}
+
 	const user = await getUserOrThrow(userId)
 	const existingProfile = await HostProfile.findOne({ userId })
 

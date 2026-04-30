@@ -6,7 +6,6 @@ const hostSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 			required: true,
-			unique: true,
 		},
 		address: {
 			type: String,
@@ -59,6 +58,9 @@ const hostSchema = new mongoose.Schema(
 	},
 	{ timestamps: true },
 )
+
+// Create a sparse unique index on userId to prevent duplicates while allowing null values
+hostSchema.index({ userId: 1 }, { unique: true, sparse: true })
 
 const HostProfile = mongoose.model('HostProfile', hostSchema)
 
