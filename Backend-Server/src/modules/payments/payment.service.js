@@ -6,11 +6,15 @@ import Ticket from '../../models/ticket.model.js'
 import Event from '../../models/Event.model.js'
 import EventTicket from '../../models/EventTicket.model.js'
 import Host from '../../models/Host.model.js'
-import { sendVerificationEmail } from '../../services/shared/sendVerificationEmail.js'
+import {
+	sendVerificationEmail,
+	sendCustomHostEmail,
+} from '../../services/shared/sendVerificationEmail.js'
 import {
 	generateRegularTicket,
 	generateTicket,
 } from '../../services/shared/ticket.service.js'
+import { getEventEmailTemplateByEventId } from '../event-email/eventEmail.service.js'
 import nowPaymentsService from '../../config/heleket.js'
 import AppError from '../../services/shared/appError.js'
 import {
@@ -129,28 +133,6 @@ export async function handleFlutterwaveWebhook(payload) {
 			throw ticketError
 		}
 
-		// Send email
-		try {
-			const emailResult = await sendVerificationEmail(
-				updatedPayment.customerEmail,
-				updatedPayment.ticketName,
-				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
-			)
-
-			if (!emailResult.success) {
-				console.warn(
-					`⚠️ Email sending failed but payment processed. PaymentID: ${updatedPayment._id}, Error: ${emailResult.error}`,
-				)
-				// Email failure is not fatal - ticket already generated
-			}
-		} catch (emailError) {
-			console.warn(
-				`⚠️ Email error for payment ${updatedPayment._id}:`,
-				emailError,
-			)
-			// Continue even if email fails - ticket was already generated
-		}
-
 		const updateEvent = await Event.findByIdAndUpdate(
 			existingPayment.eventId,
 			{
@@ -186,6 +168,62 @@ export async function handleFlutterwaveWebhook(payload) {
 				`Event ticket not found for ID: ${existingPayment.ticketName}`,
 				404,
 			)
+		}
+
+		// Send email
+		try {
+			const emailResult = await sendVerificationEmail(
+				updatedPayment.customerEmail,
+				updatedPayment.ticketName,
+				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
+				updateEvent.title,
+				updateEvent.venue,
+				updateEvent.date,
+			)
+
+			if (!emailResult.success) {
+				console.warn(
+					`⚠️ Email sending failed but payment processed. PaymentID: ${updatedPayment._id}, Error: ${emailResult.error}`,
+				)
+				// Email failure is not fatal - ticket already generated
+			}
+		} catch (emailError) {
+			console.warn(
+				`⚠️ Email error for payment ${updatedPayment._id}:`,
+				emailError,
+			)
+			// Continue even if email fails - ticket was already generated
+		}
+
+		// Send custom host email if template exists
+		try {
+			const hostEmailTemplate = await getEventEmailTemplateByEventId(
+				existingPayment.eventId,
+			)
+
+			if (hostEmailTemplate && hostEmailTemplate.isEnabled) {
+				const hostEmailResult = await sendCustomHostEmail(
+					updatedPayment.customerEmail,
+					hostEmailTemplate.subject,
+					hostEmailTemplate.htmlContent,
+				)
+
+				if (!hostEmailResult.success) {
+					console.warn(
+						`⚠️ Custom host email failed for payment ${updatedPayment._id}. Will continue with payment processing.`,
+					)
+				} else {
+					console.log(
+						`✅ Custom host email sent for payment ${updatedPayment._id}`,
+					)
+				}
+			}
+		} catch (hostEmailError) {
+			console.warn(
+				`⚠️ Error retrieving/sending custom host email for payment ${updatedPayment._id}:`,
+				hostEmailError.message,
+			)
+			// Continue - custom email is optional
 		}
 
 		const amount = payload.amount
@@ -387,26 +425,6 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			throw ticketError
 		}
 
-		// Send email
-		try {
-			const emailResult = await sendVerificationEmail(
-				updatedPayment.customerEmail,
-				updatedPayment.ticketName,
-				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
-			)
-
-			if (!emailResult.success) {
-				console.warn(
-					`⚠️ Email sending failed but crypto payment processed. PaymentID: ${updatedPayment._id}, Error: ${emailResult.error}`,
-				)
-			}
-		} catch (emailError) {
-			console.warn(
-				`⚠️ Email error for crypto payment ${updatedPayment._id}:`,
-				emailError,
-			)
-		}
-
 		const updateEvent = await Event.findByIdAndUpdate(
 			existingPayment.eventId,
 			{
@@ -442,6 +460,59 @@ export async function handleCryptoWebhook(rawBody, signature) {
 				`Updating Event Ticket failed, Event with ID: ${existingPayment.ticketName} not found. `,
 				404,
 			)
+		}
+
+		// Send email
+		try {
+			const emailResult = await sendVerificationEmail(
+				updatedPayment.customerEmail,
+				updatedPayment.ticketName,
+				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
+				updateEvent.title,
+				updateEvent.venue,
+				updateEvent.date,
+			)
+
+			if (!emailResult.success) {
+				console.warn(
+					`⚠️ Email sending failed but crypto payment processed. PaymentID: ${updatedPayment._id}, Error: ${emailResult.error}`,
+				)
+			}
+		} catch (emailError) {
+			console.warn(
+				`⚠️ Email error for crypto payment ${updatedPayment._id}:`,
+				emailError,
+			)
+		}
+		// Send custom host email if template exists
+		try {
+			const hostEmailTemplate = await getEventEmailTemplateByEventId(
+				existingPayment.eventId,
+			)
+
+			if (hostEmailTemplate && hostEmailTemplate.isEnabled) {
+				const hostEmailResult = await sendCustomHostEmail(
+					updatedPayment.customerEmail,
+					hostEmailTemplate.subject,
+					hostEmailTemplate.htmlContent,
+				)
+
+				if (!hostEmailResult.success) {
+					console.warn(
+						`⚠️ Custom host email failed for crypto payment ${updatedPayment._id}. Will continue with payment processing.`,
+					)
+				} else {
+					console.log(
+						`✅ Custom host email sent for crypto payment ${updatedPayment._id}`,
+					)
+				}
+			}
+		} catch (hostEmailError) {
+			console.warn(
+				`⚠️ Error retrieving/sending custom host email for crypto payment ${updatedPayment._id}:`,
+				hostEmailError.message,
+			)
+			// Continue - custom email is optional
 		}
 
 		const usdAmount = paymentData.price_amount
@@ -482,11 +553,87 @@ export async function handleCryptoWebhook(rawBody, signature) {
 
 export async function regularTicketService(email, ticketName, eventId) {
 	const event = await Event.findById(eventId)
+	if (!event) {
+		throw new AppError('Event not found', 404)
+	}
+
 	const eventName = event.title
-	const ticket = await generateRegularTicket(email, ticketName, eventName)
+	const ticket = await generateRegularTicket(
+		email,
+		ticketName,
+		eventName,
+		event.date,
+		event.venue,
+	)
 
 	const link = `https://www.lofte.live/tickets?tx_ref=${ticket.tx_ref}`
+
+	// Update Event ticketsSold counter
+	const updateEvent = await Event.findByIdAndUpdate(
+		eventId,
+		{
+			$inc: {
+				ticketsSold: 1,
+			},
+		},
+		{ new: true },
+	)
+
+	if (!updateEvent) {
+		throw new AppError(`Event not found for ID: ${eventId}`, 404)
+	}
+
+	// Update EventTicket sold counter
+	const updateEventTicket = await EventTicket.findOneAndUpdate(
+		{
+			eventId: eventId,
+			title: ticketName,
+		},
+		{
+			$inc: {
+				sold: 1,
+			},
+		},
+		{ new: true },
+	)
+
+	if (!updateEventTicket) {
+		console.warn(
+			`⚠️ EventTicket not found for ticket: ${ticketName}. Skipping EventTicket update.`,
+		)
+	}
+
+	// Send platform verification email
 	await sendVerificationEmail(email, ticketName, link)
+
+	// Send custom host email if template exists
+	try {
+		const hostEmailTemplate = await getEventEmailTemplateByEventId(eventId)
+
+		if (hostEmailTemplate && hostEmailTemplate.isEnabled) {
+			const hostEmailResult = await sendCustomHostEmail(
+				email,
+				hostEmailTemplate.subject,
+				hostEmailTemplate.htmlContent,
+			)
+
+			if (!hostEmailResult.success) {
+				console.warn(
+					`⚠️ Custom host email failed for regular ticket (${ticketName}). Will continue.`,
+				)
+			} else {
+				console.log(
+					`✅ Custom host email sent for regular ticket (${ticketName})`,
+				)
+			}
+		}
+	} catch (hostEmailError) {
+		console.warn(
+			`⚠️ Error retrieving/sending custom host email for regular ticket (${ticketName}):`,
+			hostEmailError.message,
+		)
+		// Continue - custom email is optional
+	}
 
 	return 'Ticket has been sent to your email'
 }

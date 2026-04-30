@@ -20,7 +20,10 @@ export async function createEventEmailTemplate(hostId, payload) {
 	const existingTemplate = await EventEmail.findOne({ eventId })
 
 	if (existingTemplate) {
-		throw new AppError('Custom event email already exists for this event', 409)
+		throw new AppError(
+			'Custom event email already exists for this event',
+			409,
+		)
 	}
 
 	const template = await EventEmail.create({
@@ -47,6 +50,13 @@ export async function getEventEmailTemplate(hostId, eventId) {
 	}
 
 	return template
+}
+
+// Helper function to get event email template by eventId only (for payment service)
+export async function getEventEmailTemplateByEventId(eventId) {
+	const template = await EventEmail.findOne({ eventId, isEnabled: true })
+
+	return template // Returns null if not found or not enabled
 }
 
 export async function getHostEventEmailTemplates(hostId, page, limit) {
