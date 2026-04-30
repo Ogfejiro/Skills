@@ -7,7 +7,7 @@ import { useAuth } from '@/app/context/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading, hostProfile } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -15,14 +15,14 @@ export default function DashboardPage() {
       if (!isAuthenticated) {
         router.push('/auth/login');
       } else if (user?.role === 'Admin') {
-        router.push('/dashboard/admin');     // ← Admin goes to existing admin dashboard
-      } else if (user?.role === 'Host') {
-        router.push('/dashboard/host');      // ← Host goes to host dashboard
+        router.push('/dashboard/admin');
+      } else if (user?.role === 'Host' || hostProfile.hasProfile) {
+        router.push('/dashboard/host');
       } else {
-        router.push('/dashboard/user');      // ← User goes to user dashboard
+        router.push('/dashboard/user');
       }
     }
-  }, [isAuthenticated, loading, user, router]);
+  }, [isAuthenticated, loading, user, hostProfile.hasProfile, router]);
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center">

@@ -33,14 +33,14 @@ interface NavItem {
 }
 
 export default function DashboardSidebar() {
-	const { user, logout } = useAuth()
+	const { user, logout, hostProfile: hostProfileCache } = useAuth()
 	const pathname = usePathname()
 	const router = useRouter()
 	const [collapsed, setCollapsed] = useState(false)
 	const [mobileOpen, setMobileOpen] = useState(false)
 
-	const isHost = user?.role === 'Host'
 	const isAdmin = user?.role === 'Admin'
+	const hasHostProfile = hostProfileCache.hasProfile
 
 	const userNavItems: NavItem[] = [
 		{ label: 'Dashboard', href: '/dashboard/user', icon: <LayoutDashboard className='w-5 h-5' /> },
@@ -58,12 +58,12 @@ export default function DashboardSidebar() {
 
 	const adminNavItems: NavItem[] = [
 		{ label: 'Dashboard', href: '/dashboard/admin', icon: <LayoutDashboard className='w-5 h-5' /> },
-		{ label: 'Events', href: '/events', icon: <Calendar className='w-5 h-5' /> },
-		{ label: 'Analytics', href: '/dashboard/admin', icon: <BarChart3 className='w-5 h-5' /> },
-		{ label: 'Settings', href: '/dashboard/profile', icon: <Settings className='w-5 h-5' /> },
+		{ label: 'Browse Events', href: '/events', icon: <Calendar className='w-5 h-5' /> },
+		{ label: 'Settings', href: '/dashboard/user/settings', icon: <Settings className='w-5 h-5' /> },
 	]
 
-	const navItems = isAdmin ? adminNavItems : isHost ? hostNavItems : userNavItems
+	const isOnHostDashboard = pathname.startsWith('/dashboard/host') || pathname.startsWith('/dashboard/events') || pathname.startsWith('/dashboard/profile')
+	const navItems = isAdmin ? adminNavItems : (isOnHostDashboard && hasHostProfile) ? hostNavItems : userNavItems
 
 	const handleLogout = () => {
 		logout()
@@ -72,10 +72,15 @@ export default function DashboardSidebar() {
 	}
 
 	const switchRole = () => {
-		if (isHost) {
+		// If currently on host dashboard, switch to user
+		if (pathname.startsWith('/dashboard/host')) {
 			router.push('/dashboard/user')
-		} else {
+		} else if (hasHostProfile) {
+			// Has host profile - go to host dashboard
 			router.push('/dashboard/host')
+		} else {
+			// No host profile - go to host settings to create one
+			router.push('/dashboard/host-settings?create=true')
 		}
 	}
 
@@ -159,10 +164,10 @@ export default function DashboardSidebar() {
 					<button
 						onClick={switchRole}
 						className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all ${collapsed ? 'justify-center' : ''}`}
-						title={collapsed ? (isHost ? 'Switch to User' : 'Switch to Host') : undefined}
+						title={collapsed ? (pathname.startsWith('/dashboard/host') ? 'Switch to User' : hasHostProfile ? 'Switch to Host' : 'Become a Host') : undefined}
 					>
 						<Zap className='w-5 h-5 flex-shrink-0' />
-						{!collapsed && <span>{isHost ? 'Switch to User' : 'Switch to Host'}</span>}
+						{!collapsed && <span>{pathname.startsWith('/dashboard/host') ? 'Switch to User' : hasHostProfile ? 'Switch to Host' : 'Become a Host'}</span>}
 					</button>
 				)}
 

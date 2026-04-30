@@ -12,14 +12,30 @@ export default function LoginPage() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
-	const { login, isAuthenticated } = useAuth()
+	const { login, isAuthenticated, hostProfile: hostProfileCache } = useAuth()
 	const router = useRouter()
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			router.push('/dashboard/user')
+			routeAfterLogin()
 		}
 	}, [isAuthenticated, router])
+
+	const routeAfterLogin = () => {
+		const userStr = localStorage.getItem('user')
+		if (userStr) {
+			const user = JSON.parse(userStr)
+			if (user.role === 'Admin') {
+				router.push('/dashboard/admin')
+			} else if (user.role === 'Host' || hostProfileCache.hasProfile) {
+				router.push('/dashboard/host')
+			} else {
+				router.push('/dashboard/user')
+			}
+		} else {
+			router.push('/dashboard/user')
+		}
+	}
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -28,20 +44,8 @@ export default function LoginPage() {
 		try {
 			await login(email, password)
 			toast.success('Login successful!')
-			// Get user from localStorage to determine role
-			const userStr = localStorage.getItem('user')
-			if (userStr) {
-				const user = JSON.parse(userStr)
-				if (user.role === 'Host') {
-					router.push('/dashboard/host')
-				} else if (user.role === 'Admin') {
-					router.push('/dashboard/admin')
-				} else {
-					router.push('/dashboard/user')
-				}
-			} else {
-				router.push('/dashboard/user')
-			}
+			// Route based on role - host profile check happens in context
+			routeAfterLogin()
 		} catch (error: any) {
 			toast.error(
 				error.message || 'Login failed. Please check your credentials.',

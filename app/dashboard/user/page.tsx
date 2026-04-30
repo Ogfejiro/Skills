@@ -18,11 +18,10 @@ import {
 import Link from 'next/link'
 import DashboardSidebar from '@/components/DashboardSidebar'
 import eventService from '@/app/services/eventService'
-import hostProfileService from '@/app/services/hostProfileService'
 import { toast } from 'sonner'
 
 export default function UserDashboard() {
-	const { user, isAuthenticated, loading: authLoading, token } = useAuth()
+	const { user, isAuthenticated, loading: authLoading, token, hostProfile: hostProfileCache } = useAuth()
 	const router = useRouter()
 	const [loading, setLoading] = useState(true)
 	const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
@@ -31,12 +30,14 @@ export default function UserDashboard() {
 	const [showHostModal, setShowHostModal] = useState(false)
 	const [checkingHost, setCheckingHost] = useState(false)
 
+	const hasHostProfile = hostProfileCache.hasProfile
+
 	useEffect(() => {
 		if (!authLoading && !isAuthenticated) {
 			router.push('/auth/login')
 		} else if (user && user.role === 'Admin') {
 			router.push('/dashboard/admin')
-		} else {
+		} else if (!authLoading) {
 			loadDashboardData()
 		}
 	}, [authLoading, isAuthenticated, user, router])
@@ -57,25 +58,11 @@ export default function UserDashboard() {
 		}
 	}
 
-	const handleSwitchToHost = async () => {
-		try {
-			setCheckingHost(true)
-			if (!token) {
-				toast.error('Session expired. Please login again.')
-				router.push('/auth/login')
-				return
-			}
-
-			const response = await hostProfileService.getProfile(token)
-			if (response.success && response.data) {
-				router.push('/dashboard/host')
-			} else {
-				setShowHostModal(true)
-			}
-		} catch (error: any) {
+	const handleSwitchToHost = () => {
+		if (hasHostProfile) {
+			router.push('/dashboard/host')
+		} else {
 			setShowHostModal(true)
-		} finally {
-			setCheckingHost(false)
 		}
 	}
 
@@ -91,13 +78,10 @@ export default function UserDashboard() {
 		return 'Good evening'
 	}
 
-	if (authLoading || loading) {
+	if (authLoading) {
 		return (
 			<div className='min-h-screen bg-[#0a0a0f] flex items-center justify-center'>
-				<div className='text-center'>
-					<Loader2 className='w-10 h-10 text-[#c9a227] animate-spin mx-auto mb-3' />
-					<p className='text-gray-500 text-sm'>Loading your dashboard...</p>
-				</div>
+				<Loader2 className='w-10 h-10 text-[#c9a227] animate-spin' />
 			</div>
 		)
 	}
@@ -168,12 +152,12 @@ export default function UserDashboard() {
 									<Loader2 className='w-4 h-4 animate-spin' />
 								) : (
 									<>
-										Become a Host
+										{hasHostProfile ? 'Switch to Host' : 'Become a Host'}
 										<ArrowRight className='w-3.5 h-3.5' />
 									</>
 								)}
 							</button>
-							<p className='text-xs text-gray-500 mt-1'>Start hosting events</p>
+							<p className='text-xs text-gray-500 mt-1'>{hasHostProfile ? 'Go to host dashboard' : 'Start hosting events'}</p>
 						</div>
 					</div>
 
