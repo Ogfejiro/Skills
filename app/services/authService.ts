@@ -25,8 +25,8 @@ export interface RegisterRequest {
   password: string;
   firstName: string;
   lastName: string;
-  role: 'User' | 'Host' | 'Admin';
-  profession: string;
+  role?: 'User' | 'Host' | 'Admin';
+  profession?: string;
 }
 
 export interface GoogleAuthRequest {
@@ -116,6 +116,67 @@ class AuthService {
       return result;
     } catch (error) {
       console.error('❌ Google auth service error:', error);
+      throw error;
+    }
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to send reset email');
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async verifyResetToken(token: string): Promise<{ message: string; token: string }> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/api/auth/verify-reset-password-token?token=${token}`,
+        { method: 'GET' }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Invalid or expired reset token');
+      }
+
+      return await response.json();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async resetPassword(token: string, password: string, confirmPassword: string): Promise<{ message: string }> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ password, confirmPassword }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to reset password');
+      }
+
+      return await response.json();
+    } catch (error) {
       throw error;
     }
   }

@@ -41,7 +41,7 @@ export default function FAQPage() {
 				'Extend reach beyond the venue through digital and community channels',
 			],
 			summary:
-				'From concept to execution, LOFTE-3 partners with brands to turn ideas into memorable experiences and create utility with your project.',
+				'From concept to execution, LOFTE-3 partners with brands to turn ideas into memorable experiences.',
 			icon: <Target className='w-6 h-6' />,
 		},
 		{
@@ -118,11 +118,11 @@ export default function FAQPage() {
 			question: 'Who typically attends LOFTE-3 events?',
 			answer: 'LOFTE-3 attracts a diverse mix of professionals, innovators, and enthusiasts including:',
 			details: [
-				'Blockchain founders & builders',
+				'Startup founders & builders',
 				'Investors & VCs',
 				'Digital creators & artists',
 				'Enterprise decision-makers',
-				'Crypto enthusiasts & traders',
+				'Industry professionals & leaders',
 			],
 			icon: <Users2 className='w-6 h-6' />,
 		},
@@ -133,7 +133,7 @@ export default function FAQPage() {
 	}
 
 	return (
-		<main className='min-h-screen bg-black text-white overflow-hidden'>
+		<main className='min-h-screen bg-black text-white overflow-x-hidden'>
 			{/* HERO SECTION */}
 			<section className='relative pt-32 pb-20'>
 				{/* Animated Background Elements */}
@@ -207,7 +207,7 @@ export default function FAQPage() {
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.4 }}
-							className='text-5xl md:text-7xl font-bold mb-6'
+							className='text-3xl sm:text-5xl md:text-7xl font-bold mb-6'
 						>
 							<span className='text-white'>Got Questions?</span>
 							<motion.span
@@ -224,7 +224,7 @@ export default function FAQPage() {
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ delay: 0.8 }}
-							className='text-xl text-gray-300 max-w-3xl mx-auto'
+							className='text-base sm:text-xl text-gray-300 max-w-3xl mx-auto'
 						>
 							Everything you need to know about LOFTE-3 events,
 							partnerships, and experiences.
@@ -267,16 +267,16 @@ export default function FAQPage() {
 									{/* Question Header */}
 									<button
 										onClick={() => toggleFAQ(index)}
-										className='w-full p-6 text-left flex items-center justify-between'
+										className='w-full p-4 sm:p-6 text-left flex items-center justify-between gap-3'
 									>
-										<div className='flex items-center gap-4'>
+										<div className='flex items-center gap-3 sm:gap-4 min-w-0'>
 											{/* Icon with Animation */}
 											<motion.div
 												whileHover={{
 													rotate: 10,
 													scale: 1.1,
 												}}
-												className={`p-3 rounded-xl border ${
+												className={`p-2 sm:p-3 rounded-xl border flex-shrink-0 ${
 													openIndex === index
 														? 'bg-gold/20 border-gold'
 														: 'bg-gold/10 border-gold/30'
@@ -290,7 +290,7 @@ export default function FAQPage() {
 											</motion.div>
 
 											<div className='text-left'>
-												<h3 className='text-lg md:text-xl font-bold text-white'>
+												<h3 className='text-base sm:text-lg md:text-xl font-bold text-white break-words'>
 													{faq.question}
 												</h3>
 												<div className='flex items-center gap-2 mt-1'>
@@ -311,7 +311,7 @@ export default function FAQPage() {
 														: 0,
 											}}
 											transition={{ duration: 0.3 }}
-											className={`p-2 rounded-lg border ${
+											className={`p-1.5 sm:p-2 rounded-lg border flex-shrink-0 ${
 												openIndex === index
 													? 'bg-gold/20 border-gold text-gold'
 													: 'bg-gold/10 border-gold/30 text-gold/70'
@@ -342,7 +342,7 @@ export default function FAQPage() {
 										}}
 										className='overflow-hidden'
 									>
-										<div className='px-6 pb-6 border-t border-gold/10 pt-4'>
+										<div className='px-4 sm:px-6 pb-4 sm:pb-6 border-t border-gold/10 pt-4'>
 											{/* Main Answer */}
 											<motion.p
 												initial={{ opacity: 0, y: 10 }}
@@ -576,7 +576,7 @@ export default function FAQPage() {
 											'0 0 20px rgba(212, 175, 55, 0.3)',
 									}}
 									whileTap={{ scale: 0.95 }}
-									href='mailto:hidreamsofweb3@gmail.com'
+									href='mailto:partnerships@lofte.live'
 									className='px-8 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition flex items-center justify-center gap-3'
 								>
 									<Mail className='w-5 h-5' />

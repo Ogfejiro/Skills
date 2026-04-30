@@ -5,7 +5,7 @@ import Host from '../../models/Host.model.js'
 import AppError from './../../services/shared/appError.js'
 
 export async function createEventTicket(hostId, eventId, ticketData) {
-	const host = await Host.findOne({ hostId })
+	const host = await Host.findById(hostId)
 
 	if (!host) {
 		throw new AppError(
@@ -20,7 +20,7 @@ export async function createEventTicket(hostId, eventId, ticketData) {
 		throw new AppError('Event not found', 404)
 	}
 
-	if (eventExist.hostId.toString() !== hostId) {
+	if (eventExist.hostId.toString() !== hostId.toString()) {
 		throw new AppError('Unauthorized to create ticket for this event', 403)
 	}
 
@@ -64,26 +64,35 @@ export async function getTicketsByEvent(eventId) {
 	return tickets
 }
 
-export async function editTicketById(ticketId, userId, updateData) {
-	const userEvent = await Event.findOne({ hostId: userId })
-	if (!userEvent) {
-		throw new AppError('Not Authorized to access this route', 401)
-	}
-	const ticket = await EventTicket.findByIdAndUpdate(ticketId, updateData, {
-		new: true,
-		runValidators: true,
-	})
+export async function editTicketById(ticketId, hostId, updateData) {
+	const ticket = await EventTicket.findById(ticketId)
 	if (!ticket) {
 		throw new AppError('Ticket not found', 404)
 	}
+
+	const userEvent = await Event.findOne({ _id: ticket.eventId, hostId })
+	if (!userEvent) {
+		throw new AppError('Not Authorized to access this route', 401)
+	}
+
+	await EventTicket.findByIdAndUpdate(ticketId, updateData, {
+		new: true,
+		runValidators: true,
+	})
+
 	return 'ticket updated'
 }
 
-export async function deleteTicketById(id) {
+export async function deleteTicketById(id, hostId) {
 	const ticket = await EventTicket.findById(id)
 
 	if (!ticket) {
 		throw new AppError('Event Ticket not found', 404)
+	}
+
+	const userEvent = await Event.findOne({ _id: ticket.eventId, hostId })
+	if (!userEvent) {
+		throw new AppError('Not Authorized to access this route', 401)
 	}
 
 	if (ticket.sold > 0) {

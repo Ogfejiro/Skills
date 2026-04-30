@@ -1,45 +1,68 @@
 import asyncHandler from '../../services/shared/asyncHandler.js'
+import AppError from '../../services/shared/appError.js'
 import {
+	createHostProfile,
 	updateProfile,
 	getProfile,
 	deleteProfile,
 	getDashboard,
 } from './host.service.js'
 
-export const updateHostProfile = asyncHandler(async (req, res) => {
-	const allowedFields = [
-		'firstName',
-		'lastName',
-		'profession',
-		'phone',
-		'address',
-		'accountNo',
-		'accountName',
-		'walletAddress',
-		'walletType',
-		'conversionRate',
-	]
-	const hostId = req.user.id
+const allowedFields = [
+	'firstName',
+	'lastName',
+	'phone',
+	'address',
+	'profession',
+	'organization',
+	'accountNo',
+	'accountName',
+	'walletAddress',
+	'walletType',
+	'conversionRate',
+	'bankName',
+	'socials',
+]
 
-	const updateData = {}
+function pickAllowedFields(body) {
+	const profileData = {}
 
 	for (const key of allowedFields) {
-		if (req.body[key] !== undefined) {
-			updateData[key] = req.body[key]
+		if (body[key] !== undefined) {
+			profileData[key] = body[key]
 		}
 	}
 
-	const profile = await updateProfile(hostId, updateData)
+	return profileData
+}
+
+export const createHostProfileController = asyncHandler(async (req, res) => {
+	const userId = req.user.id
+	const profileData = pickAllowedFields(req.body)
+	const profile = await createHostProfile(userId, profileData)
+
+	res.status(201).json({
+		success: true,
+		message: 'Host profile created successfully',
+		data: profile,
+	})
+})
+
+export const updateHostProfile = asyncHandler(async (req, res) => {
+	const userId = req.user.id
+	const updateData = pickAllowedFields(req.body)
+	const profile = await updateProfile(userId, updateData)
 
 	res.status(200).json({
 		success: true,
-		message: 'Profile updated successfully',
+		message: 'Host profile updated successfully',
 		data: profile,
 	})
 })
 
 export const getHostProfile = asyncHandler(async (req, res) => {
 	const profile = await getProfile(req.user.id)
+
 	res.status(200).json({
 		success: true,
 		data: profile,
@@ -48,19 +71,21 @@ export const getHostProfile = asyncHandler(async (req, res) => {
 
 export const deleteHostProfile = asyncHandler(async (req, res) => {
 	await deleteProfile(req.user.id)
+
 	res.status(200).json({
 		success: true,
-		message: 'Profile deleted successfully',
+		message: 'Host profile deleted successfully',
 	})
 })
 
 export const getHostDashboard = asyncHandler(async (req, res) => {
-	const { id } = req.user.id
-	if (!id) {
-		throw new AppError('UnAuthorized', 305)
+	const userId = req.user.id
+
+	if (!userId) {
+		throw new AppError('Unauthorized', 401)
 	}
 
-	const dashboard = await getDashboard(id)
+	const dashboard = await getDashboard(userId)
 
 	res.status(200).json({
 		success: true,

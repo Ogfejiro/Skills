@@ -33,12 +33,9 @@ const userSchema = new mongoose.Schema(
 		lastName: {
 			type: String,
 		},
-		profession: {
-			type: String,
-		},
 		role: {
 			type: String,
-			enum: ['User', 'Host', 'Admin'],
+			enum: ['User', 'Admin'],
 			default: 'User',
 			required: true,
 		},

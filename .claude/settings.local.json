@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find C:UsersPreshCodesDocumentslofte3Skills -type f -name *.json -o -name *.config.* -o -name .env*)",
+      "Bash(find C:UsersPreshCodesDocumentslofte3SkillsBackend-Serversrc -type f \\\\\\(-name *.ts -o -name *.js -o -name *.json \\\\\\))",
+      "Bash(convert --version)",
+      "Bash(npx --yes sharp-cli --version)",
+      "Bash(find /c/Users/PreshCodes/Documents/lofte3/Skills/View -type f -name *.ts* -o -name *.jsx)",
+      "Bash(npx next:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e \":*)",
+      "Bash(find /c/Users/PreshCodes/Documents/lofte3/Skills/components -type f -name *.tsx -o -name *.ts)",
+      "Bash(grep -r \"forgot\\\\|reset\\\\|password\" /c/Users/PreshCodes/Documents/lofte3/Skills/app --include=*.tsx --include=*.ts)",
+      "Bash(find /c/Users/PreshCodes/Documents/lofte3/Skills -path */View/*.tsx -type f)",
+      "Bash(find /c/Users/PreshCodes/Documents/lofte3/Skills -iname *navbar*.tsx -type f)",
+      "Bash(find . -path */View/*.tsx -type f)",
+      "Bash(find . -iname *navbar*.tsx -type f)",
+      "Bash(node:*)",
+      "Bash(find /c/Users/PreshCodes/Documents/lofte3/Skills -type f -name *admin*)",
+      "Bash(xargs grep:*)"
+    ]
+  }
+}

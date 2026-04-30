@@ -16,6 +16,7 @@ import errorMiddle from '../src/services/middleware/error.js'
 import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
 import { validateEnvironment } from '../src/services/shared/validateEnv.js'
 import { schedulePaymentCleanup } from '../src/services/shared/paymentCleanup.js'
+import emailRouter from './modules/event-email/eventEmail.route.js'
 
 dotenv.config()
 validateEnvironment()
@@ -56,6 +57,7 @@ app.use('/api/event-public', publicEventRoutes)
 app.use('/api/payments', paymentRoutes)
 app.use('/api/tickets', ticketRoutes)
 app.use('/api/admin', adminRoutes)
+app.use('/api/email', emailRouter)
 
 app.use(errorMiddle)
 const PORT = process.env.PORT

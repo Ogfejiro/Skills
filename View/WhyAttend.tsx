@@ -27,7 +27,7 @@ export default function WhyAttendPage() {
 			id: 2,
 			title: 'Find Your Tech Soulmate',
 			description:
-				'Connect with like-minded individuals in the blockchain space. Our matchmaking sessions help you find partners, co-founders, and lifelong friends.',
+				'Connect with like-minded individuals in the events space. Our matchmaking sessions help you find partners, co-founders, and lifelong friends.',
 			image: 'https://plus.unsplash.com/premium_photo-1658506739004-703dabce5ebe?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTN8fGNvdXBsZSUyMHNoYWRvd3xlbnwwfHwwfHx8MA%3D%3D',
 			stats: 'Quality Connections',
 			features: [
@@ -67,37 +67,37 @@ export default function WhyAttendPage() {
 		},
 		{
 			id: 5,
-			title: 'Culture Meets Tech',
+			title: 'Culture Meets Innovation',
 			description:
-				'Experience the perfect fusion of African culture with cutting-edge technology. Art, music, fashion, and blockchain in one unforgettable experience.',
-			image: 'https://images.unsplash.com/photo-1647511256098-75416d6500d8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGNyeXB0byUyMGNoYXJ0fGVufDB8fDB8fHww',
-			stats: 'African Innovation Showcase',
+				'Experience the perfect fusion of culture with cutting-edge creativity. Art, music, fashion, and technology in one unforgettable experience.',
+			image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&auto=format&fit=crop&q=60',
+			stats: 'Creative Innovation Showcase',
 			features: [
 				'Cultural Performances',
-				'Tech Art Exhibits',
-				'Fashion Tech',
-				'Music Innovation',
+				'Creative Exhibits',
+				'Fashion Showcases',
+				'Music & Entertainment',
 			],
 		},
 		{
 			id: 6,
 			title: 'Win Amazing Prizes',
 			description:
-				'Compete for exclusive rewards including NFTs, token airdrops, luxury gifts, and investment opportunities worth thousands of dollars.',
+				'Compete for exclusive rewards including luxury gifts, exclusive experiences, and investment opportunities worth thousands of dollars.',
 			image: 'https://plus.unsplash.com/premium_photo-1744679847695-6e36a8f6956c?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8cHJpemUlMjB3aGVlbHxlbnwwfHwwfHx8MA%3D%3D',
 			stats: '$100K+ in Prizes',
 			features: [
-				'NFT Airdrops',
-				'Token Rewards',
+				'Exclusive Giveaways',
+				'Premium Rewards',
 				'Luxury Gifts',
-				'Investment Access',
+				'VIP Experiences',
 			],
 		},
 		{
 			id: 7,
 			title: 'Elite Networking',
 			description:
-				"Connect with Africa's top blockchain founders, investors, and builders in intimate settings. Build relationships that transform careers.",
+				'Connect with top founders, investors, and industry leaders in intimate settings. Build relationships that transform careers.',
 			image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop',
 			stats: '500+ Industry Leaders',
 			features: [
@@ -162,7 +162,7 @@ export default function WhyAttendPage() {
 	return (
 		<main id='why-attend' className='min-h-screen bg-black text-white'>
 			{/* HERO SECTION */}
-			<section className='relative pt-32 pb-20 px-4'>
+			<section className='relative pt-20 sm:pt-32 pb-12 sm:pb-20 px-4'>
 				<div className='container mx-auto relative z-10'>
 					{/* Page Header */}
 					<motion.div
@@ -177,16 +177,16 @@ export default function WhyAttendPage() {
 							</span>
 						</div>
 
-						<h1 className='text-4xl md:text-6xl font-bold mb-6'>
+						<h1 className='text-3xl sm:text-4xl md:text-6xl font-bold mb-6'>
 							<span className='text-white block'>Why Attend</span>
 							<span className='gold-gradient block mt-2'>
 								LOFTE-3 Events?
 							</span>
 						</h1>
 
-						<p className='text-lg md:text-xl text-gray-300 max-w-3xl mx-auto'>
+						<p className='text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto'>
 							Discover what makes LOFTE-3 the most exclusive event
-							platform in Africa. More than just parties it's
+							platform. More than just parties — it's
 							where opportunities are born.
 						</p>
 					</motion.div>
@@ -225,7 +225,7 @@ export default function WhyAttendPage() {
 				<div className='container mx-auto relative'>
 					<div className='max-w-6xl mx-auto'>
 						{/* Main Carousel */}
-						<div className='relative h-[500px] md:h-[600px] overflow-hidden rounded-2xl border border-gold/30'>
+						<div className='relative h-[420px] sm:h-[500px] md:h-[600px] overflow-hidden rounded-2xl border border-gold/30'>
 							{/* Current Slide */}
 							<AnimatePresence mode='wait'>
 								<motion.div
@@ -277,7 +277,7 @@ export default function WhyAttendPage() {
 										</div>
 
 										{/* Right Side - Content */}
-										<div className='md:w-1/2 h-1/2 md:h-full p-6 md:p-8 flex flex-col justify-center bg-black'>
+										<div className='md:w-1/2 h-1/2 md:h-full p-4 sm:p-6 md:p-8 flex flex-col justify-center bg-black overflow-y-auto'>
 											{/* Badge */}
 											<div className='hidden md:inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold/10 border border-gold/20 mb-6 w-fit'>
 												<div className='w-2 h-2 bg-gold rounded-full' />
@@ -323,14 +323,14 @@ export default function WhyAttendPage() {
 												initial={{ opacity: 0 }}
 												animate={{ opacity: 1 }}
 												transition={{ delay: 0.6 }}
-												className='text-gray-300 text-base md:text-lg leading-relaxed mb-6'
+												className='text-gray-300 text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-6'
 											>
 												{reasons[currentSlide]
 													?.description || ''}
 											</motion.p>
 
 											{/* Features */}
-											<div className='space-y-2 mb-8'>
+											<div className='space-y-2 mb-4 sm:mb-8'>
 												<h4 className='text-white font-medium mb-2'>
 													What You Get:
 												</h4>
@@ -467,68 +467,7 @@ export default function WhyAttendPage() {
 			</section>
 
 			{/* CTA SECTION */}
-			<section className='py-20 relative px-4'>
-				<div className='container mx-auto relative z-10'>
-					<motion.div
-						initial={{ opacity: 0, y: 40 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.6 }}
-						className='text-center max-w-3xl mx-auto'
-					>
-						<div className='p-8 rounded-2xl border border-gold/30 bg-gradient-to-br from-black to-black/70'>
-							<motion.h2
-								initial={{ opacity: 0, y: 20 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={{ delay: 0.2 }}
-								className='text-2xl md:text-3xl font-bold mb-6'
-							>
-								<span className='text-white block'>
-									Ready to Experience
-								</span>
-								<span className='gold-gradient block'>
-									Event Like Never Before?
-								</span>
-							</motion.h2>
-
-							<motion.p
-								initial={{ opacity: 0 }}
-								animate={{ opacity: 1 }}
-								transition={{ delay: 0.4 }}
-								className='text-gray-300 text-lg mb-8'
-							>
-								From red carpet moments to global opportunities,
-								LOFTE-3 offers everything you need to thrive in
-								the blockchain space. Limited spots available.
-							</motion.p>
-
-							<div className='flex flex-col sm:flex-row gap-4 justify-center'>
-								<Link
-									href='/#events'
-									className='px-8 py-3 rounded-full border border-gold text-gold font-bold hover:bg-gold/10 transition text-center'
-								>
-									View All Events
-								</Link>
-
-								<Link
-									href='https://forms.gle/gwhB683FptSMNsE39'
-									target='_blank'
-									rel='noopener noreferrer'
-									className='px-8 py-3 rounded-full bg-gold text-black font-bold hover:bg-gold/80 transition text-center'
-								>
-									Join Waitlist Now
-								</Link>
-							</div>
-
-							<div className='mt-8 pt-6 border-t border-gold/10'>
-								<p className='text-sm text-gray-400'>
-									⚡ Early access to all experiences • VIP
-									treatment • Priority networking
-								</p>
-							</div>
-						</div>
-					</motion.div>
-				</div>
-			</section>
+			
 		</main>
 	)
 }

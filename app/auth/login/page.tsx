@@ -12,14 +12,30 @@ export default function LoginPage() {
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 	const [isLoading, setIsLoading] = useState(false)
-	const { login, isAuthenticated } = useAuth()
+	const { login, isAuthenticated, hostProfile: hostProfileCache } = useAuth()
 	const router = useRouter()
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			router.push('/dashboard/user')
+			routeAfterLogin()
 		}
 	}, [isAuthenticated, router])
+
+	const routeAfterLogin = () => {
+		const userStr = localStorage.getItem('user')
+		if (userStr) {
+			const user = JSON.parse(userStr)
+			if (user.role === 'Admin') {
+				router.push('/dashboard/admin')
+			} else if (user.role === 'Host' || hostProfileCache.hasProfile) {
+				router.push('/dashboard/host')
+			} else {
+				router.push('/dashboard/user')
+			}
+		} else {
+			router.push('/dashboard/user')
+		}
+	}
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
@@ -28,20 +44,8 @@ export default function LoginPage() {
 		try {
 			await login(email, password)
 			toast.success('Login successful!')
-			// Get user from localStorage to determine role
-			const userStr = localStorage.getItem('user')
-			if (userStr) {
-				const user = JSON.parse(userStr)
-				if (user.role === 'Host') {
-					router.push('/dashboard/host')
-				} else if (user.role === 'Admin') {
-					router.push('/dashboard/admin')
-				} else {
-					router.push('/dashboard/user')
-				}
-			} else {
-				router.push('/dashboard/user')
-			}
+			// Route based on role - host profile check happens in context
+			routeAfterLogin()
 		} catch (error: any) {
 			toast.error(
 				error.message || 'Login failed. Please check your credentials.',
@@ -52,7 +56,7 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className='min-h-screen bg-black text-white overflow-hidden flex items-center justify-center p-4 pt-32 md:pt-0'>
+		<div className='min-h-screen bg-black text-white overflow-x-hidden flex items-center justify-center px-4 py-20 md:py-8'>
 			{/* Background Effects */}
 			<div className='absolute inset-0 overflow-hidden pointer-events-none'>
 				<motion.div
@@ -76,7 +80,7 @@ export default function LoginPage() {
 				className='relative z-10 w-full max-w-md'
 			>
 				{/* Card */}
-				<div className='bg-black/40 backdrop-blur-xl border border-gold/20 rounded-2xl p-8 shadow-2xl shadow-gold/5'>
+				<div className='bg-black/40 backdrop-blur-xl border border-gold/20 rounded-2xl p-5 sm:p-8 shadow-2xl shadow-gold/5'>
 					{/* Header */}
 					<motion.div
 						initial={{ opacity: 0, y: -20 }}
@@ -148,6 +152,21 @@ export default function LoginPage() {
 									className='w-full pl-10 pr-4 py-3 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-transparent transition-all'
 								/>
 							</div>
+						</motion.div>
+
+						{/* Forgot Password */}
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ duration: 0.5, delay: 0.35 }}
+							className='text-right'
+						>
+							<Link
+								href='/auth/forgot-password'
+								className='text-sm text-gold hover:text-yellow-400 transition-colors'
+							>
+								Forgot Password?
+							</Link>
 						</motion.div>
 
 						{/* Submit Button */}

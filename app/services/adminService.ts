@@ -9,6 +9,7 @@ export interface AdminEvent {
 	capacity: number
 	ticketsSold: number
 	totalRevenue: number
+	banner?: string
 	host: {
 		_id: string
 		name: string

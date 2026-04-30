@@ -20,7 +20,7 @@ export default function PreviousEventsPage() {
     {
       id: 0,
       title: "LOFTE-3 Dinner Night",
-      description: "An exclusive dinner night showcasing the best of Web3 culture and luxury. Held at the prestigious Eko Hotels & Suites in Lagos, this event brought together 342+ ticketed attendees for an evening of fine dining, networking, and celebrating the LOFTE-3 community. Attendees enjoyed premium refreshments, exclusive merch, and red carpet access.",
+      description: "An exclusive dinner night showcasing culture and luxury. Held at the prestigious Eko Hotels & Suites in Lagos, this event brought together 342+ ticketed attendees for an evening of fine dining, networking, and celebrating the LOFTE-3 community. Attendees enjoyed premium refreshments, exclusive merch, and red carpet access.",
       date: "March, 2026",
       location: "Eko Hotels & Suites, Lagos",
       attendees: "342+",
@@ -31,7 +31,7 @@ export default function PreviousEventsPage() {
     {
       id: 1,
       title: "Afriverse CTFFCT",
-      description: "Hosted the groundbreaking Afriverse CTFFCT (Code The Future - Finance The Change Together) event in Jos, Plateau State. This pioneering event brought together traders, investors, and crypto enthusiasts to explore the future of digital assets and commodity trading in Africa.",
+      description: "Hosted the groundbreaking CTFFCT (Code The Future - Finance The Change Together) event in Jos, Plateau State. This pioneering event brought together traders, investors, and enthusiasts to explore the future of digital assets and commodity trading.",
       date: "November, 2025",
       location: "Jos",
       attendees: "1000+",
@@ -41,26 +41,26 @@ export default function PreviousEventsPage() {
     },
     {
       id: 2,
-      title: "NFT Holders Games Weekend by THE Boiz",
-      description: "An exclusive gaming extravaganza for NFT holders featuring competitive tournaments, strategic gameplay sessions, and premium networking opportunities. This event celebrated the intersection of gaming culture and blockchain technology.",
+      title: "Exclusive Games Weekend by THE Boiz",
+      description: "An exclusive gaming extravaganza featuring competitive tournaments, strategic gameplay sessions, and premium networking opportunities. This event celebrated the intersection of gaming culture and technology.",
       date: "August, 2025",
       location: "Port Harcourt",
       attendees: "100+",
       image: "/images/dboys.jpg",
       link: "https://x.com/i/status/2007340472709296637", // Replace with your actual NFT Games link
-      highlights: ["Gaming Tournaments", "Premium Catering", "Exclusive House Party", "NFT Holder Networking", "Prize Pool Events"]
+      highlights: ["Gaming Tournaments", "Premium Catering", "Exclusive House Party", "VIP Networking", "Prize Pool Events"]
     },
 
     {
       id: 3,
       title: "Community Impact Activation-Founder-Led Initiative",
-      description: "A grassroots Web3 community activation where the LOFTE-3 founder as a birthday outreach, alongside ecosystem collaborators, coordinated the distribution of essential supplies to 100+ young girls, reinforcing our commitment to impact-driven community building beyound technology.",
+      description: "A grassroots community activation where the LOFTE-3 founder, as a birthday outreach alongside ecosystem collaborators, coordinated the distribution of essential supplies to 100+ young girls, reinforcing our commitment to impact-driven community building beyond technology.",
       date: "November, 2025",
       location: "Zang",
       attendees: "500+",
       image: "/images/pad.jpg",
       link: "https://x.com/hidreams__/status/1993212190061408515", // Replace with your actual NFT Games link
-      highlights: ["Purpose Beyound Tech", "200+ Direct Beneficaries", "CSR Execution", "Inclusion and Utility"]
+      highlights: ["Purpose Beyond Tech", "200+ Direct Beneficiaries", "CSR Execution", "Inclusion & Impact"]
     },
 
     {
@@ -77,7 +77,7 @@ export default function PreviousEventsPage() {
     {
       id: 6,
       title: "MetaMask Community Builders Night, Abuja",
-      description: "Community Builder Night is a commuinty first version of MetaMask's global Builder Nights bringing Web3 education, onbording, ards and conversations closo local ecosystem.",
+      description: "Community Builder Night is a community-first version of global Builder Nights, bringing education, onboarding, and conversations closer to the local ecosystem.",
       date: "March, 2026",
       location: "Abuja",
       attendees: "100+",
@@ -93,7 +93,7 @@ export default function PreviousEventsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black text-white overflow-x-hidden">
       <Navbar />
       
       {/* Hero Section */}
@@ -152,7 +152,7 @@ export default function PreviousEventsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4 }}
-              className="text-4xl md:text-6xl font-bold mb-4"
+              className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4"
             >
               <span className="gold-gradient">Previous</span>
               <span className="text-white ml-3">Events</span>
@@ -163,7 +163,7 @@ export default function PreviousEventsPage() {
               transition={{ delay: 0.1, duration: 0.4 }}
               className="text-gray-400 text-lg max-w-2xl mx-auto"
             >
-              Relive the memories from our past successful events across Africa
+              Relive the memories from our past successful events
             </motion.p>
           </motion.div>
 

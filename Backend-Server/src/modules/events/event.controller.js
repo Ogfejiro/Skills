@@ -4,6 +4,8 @@ import {
 	createEvent,
 	getHostEvents,
 	getPublicEvents,
+	getPreviousEvents,
+	getEventsByStatus,
 	getEventById,
 	updateEvent,
 	deleteEvent,
@@ -14,7 +16,8 @@ import {
 } from './event.service.js'
 
 export const createEventController = asyncHandler(async (req, res) => {
-	const id = req.user.id
+	const userId = req.user.id
+	const hostProfileId = req.hostProfile._id
 	const {
 		title,
 		description,
@@ -50,7 +53,7 @@ export const createEventController = asyncHandler(async (req, res) => {
 		throw new AppError('Event date cannot be in the past', 400)
 	}
 
-	const event = await createEvent(id, {
+	const event = await createEvent(userId, hostProfileId, {
 		title,
 		description,
 		date,
@@ -71,9 +74,9 @@ export const createEventController = asyncHandler(async (req, res) => {
 
 export const getHostEventsController = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10 } = req.query
-	const hostId = req.user.id
+	const hostProfileId = req.hostProfile._id
 
-	const eventsData = await getHostEvents(hostId, page, limit)
+	const eventsData = await getHostEvents(hostProfileId, page, limit)
 
 	res.status(200).json({
 		success: true,
@@ -95,6 +98,39 @@ export const getPublicEventsController = asyncHandler(async (req, res) => {
 	})
 })
 
+export const getPreviousEventsController = asyncHandler(async (req, res) => {
+	const { page, limit } = req.query
+	const query = {
+		page: parseInt(page) || 1,
+		limit: parseInt(limit) || 10,
+	}
+
+	const events = await getPreviousEvents(query)
+	res.status(200).json({
+		success: true,
+		data: events,
+	})
+})
+
+export const getEventsByStatusController = asyncHandler(async (req, res) => {
+	const { page, limit, status } = req.query
+	
+	if (!status) {
+		throw new AppError('Status query parameter is required', 400)
+	}
+
+	const query = {
+		page: parseInt(page) || 1,
+		limit: parseInt(limit) || 10,
+	}
+
+	const events = await getEventsByStatus(query, status)
+	res.status(200).json({
+		success: true,
+		data: events,
+	})
+})
+
 export const getEventController = asyncHandler(async (req, res) => {
 	const event = await getEventById(req.params.id)
 	res.status(200).json({
@@ -104,7 +140,7 @@ export const getEventController = asyncHandler(async (req, res) => {
 })
 
 export const updateEventController = asyncHandler(async (req, res) => {
-	const event = await updateEvent(req.params.id, req.user.id, req.body)
+	const event = await updateEvent(req.params.id, req.hostProfile._id, req.body)
 	res.status(200).json({
 		success: true,
 		message: 'Event updated',
@@ -113,7 +149,7 @@ export const updateEventController = asyncHandler(async (req, res) => {
 })
 
 export const deleteEventController = asyncHandler(async (req, res) => {
-	await deleteEvent(req.params.id, req.user.id)
+	await deleteEvent(req.params.id, req.hostProfile._id)
 	res.status(200).json({
 		success: true,
 		message: 'Event deleted',
@@ -121,9 +157,9 @@ export const deleteEventController = asyncHandler(async (req, res) => {
 })
 
 export const cloudinarySignature = asyncHandler(async (req, res) => {
-	const hostId = req.user.id
+	const hostProfileId = req.hostProfile._id
 
-	const result = await generateBannerSignature(hostId)
+	const result = await generateBannerSignature(hostProfileId)
 
 	res.status(200).json(result)
 })

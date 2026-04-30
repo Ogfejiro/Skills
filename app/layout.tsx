@@ -11,9 +11,6 @@ import { AuthProvider } from '@/app/context/AuthContext'
 export const metadata: Metadata = {
 	title: 'LoFTE3 | Events',
 	description: 'Exclusive events and experiences',
-	icons: {
-		icon: '/images/image0.jpeg',
-	},
 }
 
 export const viewport: Viewport = {
@@ -32,7 +29,7 @@ export default function RootLayout({
 	return (
 		<html lang='en' suppressHydrationWarning>
 			<head>
-				<link rel='icon' href='/images/image0.jpeg' type='image/jpeg' />
+				<meta name='theme-color' content='#000000' />
 				<link rel='preconnect' href='https://fonts.googleapis.com' />
 				<link
 					rel='preconnect'
