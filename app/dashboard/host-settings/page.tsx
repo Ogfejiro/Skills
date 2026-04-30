@@ -10,7 +10,7 @@ import hostProfileService from '@/app/services/hostProfileService';
 import { toast } from 'sonner';
 
 export default function HostSettingsPage() {
-  const { user, isAuthenticated, loading: authLoading, token } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, token, refreshHostProfile } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const isCreating = searchParams.get('create') === 'true';
@@ -121,11 +121,6 @@ export default function HostSettingsPage() {
       return;
     }
 
-    if (!formData.walletAddress.trim()) {
-      toast.error('Wallet address is required');
-      return;
-    }
-
     try {
       setSaving(true);
       const updateData = {
@@ -151,12 +146,15 @@ export default function HostSettingsPage() {
         );
       }
 
+      // Refresh the cached host profile so all pages get updated instantly
+      await refreshHostProfile();
+
       toast.success(isCreating ? 'Host profile created successfully!' : 'Profile updated successfully!');
-      
+
       if (isCreating) {
         setTimeout(() => {
           router.push('/dashboard/host');
-        }, 1500);
+        }, 1000);
       }
     } catch (error: any) {
       toast.error(error.message || 'Failed to save profile');
@@ -240,7 +238,7 @@ export default function HostSettingsPage() {
               {/* Wallet Type Selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-3">
-                  Select Wallet Type *
+                  Select Wallet Type
                 </label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
@@ -273,7 +271,7 @@ export default function HostSettingsPage() {
               {/* Wallet Address */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Wallet Address *
+                  Wallet Address (Optional)
                 </label>
                 <input
                   type="text"

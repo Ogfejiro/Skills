@@ -34,7 +34,7 @@ interface HostStats {
 }
 
 export default function HostDashboard() {
-	const { user, isAuthenticated, loading: authLoading, token } = useAuth()
+	const { user, isAuthenticated, loading: authLoading, token, hostProfile: hostProfileCache, refreshHostProfile } = useAuth()
 	const router = useRouter()
 	const [loading, setLoading] = useState(true)
 	const [events, setEvents] = useState<Event[]>([])
@@ -53,18 +53,37 @@ export default function HostDashboard() {
 	const [filterStatus, setFilterStatus] = useState<string>('all')
 
 	useEffect(() => {
-		if (!authLoading && !isAuthenticated) {
+		if (authLoading) return
+
+		if (!isAuthenticated) {
 			router.push('/auth/login')
-		} else if (user && user.role !== 'Host' && user.role !== 'Admin') {
+			return
+		}
+
+		// Use cached host profile for instant decision
+		if (hostProfileCache.hasProfile && hostProfileCache.data) {
+			setHostProfile(hostProfileCache.data as HostProfile)
+			loadEvents(hostProfileCache.data as HostProfile)
+		} else if (hostProfileCache.lastChecked > 0) {
+			// Cache says no profile and has been checked - redirect
 			router.push('/dashboard/user')
 		} else if (token) {
-			fetchHostData()
+			// No cache yet - check API
+			checkHostAndLoad()
 		}
-	}, [authLoading, isAuthenticated, user, router, token])
+	}, [authLoading, isAuthenticated, token, hostProfileCache.lastChecked])
 
-	const fetchHostData = async () => {
+	const checkHostAndLoad = async () => {
 		try {
-			setLoading(true)
+			if (!token) return
+			await refreshHostProfile()
+		} catch (err) {
+			router.push('/dashboard/user')
+		}
+	}
+
+	const loadEvents = async (profile: HostProfile) => {
+		try {
 			if (!token) throw new Error('No authentication token')
 
 			const response = await eventService.getHostEvents(token, 1, 100)
@@ -74,30 +93,47 @@ export default function HostDashboard() {
 				const liveCount = response.data.events.filter((e) => e.status === 'live').length
 				const pendingCount = response.data.events.filter((e) => e.status === 'draft' || e.status === 'Auditing').length
 
-				const profileResponse = await hostProfileService.getProfile(token)
-				if (profileResponse.success && profileResponse.data) {
-					setHostProfile(profileResponse.data)
-					setStats({
-						totalEvents: response.data.events.length,
-						liveEvents: liveCount,
-						pendingEvents: pendingCount,
-						totalBalance: profileResponse.data.balance || 0,
-						revenue: profileResponse.data.balance || 0,
-					})
-				} else {
-					setStats({
-						totalEvents: response.data.events.length,
-						liveEvents: liveCount,
-						pendingEvents: pendingCount,
-						totalBalance: 0,
-						revenue: 0,
-					})
-				}
+				setStats({
+					totalEvents: response.data.events.length,
+					liveEvents: liveCount,
+					pendingEvents: pendingCount,
+					totalBalance: profile.balance || 0,
+					revenue: profile.balance || 0,
+				})
+			} else {
+				setStats({
+					totalEvents: 0,
+					liveEvents: 0,
+					pendingEvents: 0,
+					totalBalance: profile.balance || 0,
+					revenue: profile.balance || 0,
+				})
+			}
+		} catch (err) {
+			console.error('Error fetching host events:', err)
+			setStats({
+				totalEvents: 0,
+				liveEvents: 0,
+				pendingEvents: 0,
+				totalBalance: profile.balance || 0,
+				revenue: profile.balance || 0,
+			})
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	const fetchHostData = async () => {
+		try {
+			setLoading(true)
+			await refreshHostProfile()
+			if (hostProfileCache.data) {
+				setHostProfile(hostProfileCache.data as HostProfile)
+				await loadEvents(hostProfileCache.data as HostProfile)
 			}
 		} catch (err) {
 			console.error('Error fetching host data:', err)
 			toast.error('Failed to load host dashboard')
-		} finally {
 			setLoading(false)
 		}
 	}
@@ -197,13 +233,10 @@ export default function HostDashboard() {
 		return 'Good evening'
 	}
 
-	if (authLoading || loading) {
+	if (authLoading) {
 		return (
 			<div className='min-h-screen bg-[#0a0a0f] flex items-center justify-center'>
-				<div className='text-center'>
-					<Loader2 className='w-10 h-10 text-[#c9a227] animate-spin mx-auto mb-3' />
-					<p className='text-gray-500 text-sm'>Loading host dashboard...</p>
-				</div>
+				<Loader2 className='w-10 h-10 text-[#c9a227] animate-spin' />
 			</div>
 		)
 	}
@@ -243,6 +276,16 @@ export default function HostDashboard() {
 					</div>
 
 					{/* Stats */}
+					{loading ? (
+						<div className='grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8'>
+							{[1, 2, 3, 4, 5].map((i) => (
+								<div key={i} className='bg-[#111118] rounded-xl border border-white/[0.06] p-4 animate-pulse'>
+									<div className='h-3 bg-white/[0.06] rounded w-16 mb-3' />
+									<div className='h-7 bg-white/[0.06] rounded w-10' />
+								</div>
+							))}
+						</div>
+					) : (
 					<div className='grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8'>
 						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-4 hover:border-[#c9a227]/20 transition'>
 							<div className='flex items-center justify-between mb-2'>
@@ -284,6 +327,7 @@ export default function HostDashboard() {
 							<p className='text-2xl font-bold'>{'\u20a6'}{(stats.revenue || 0).toLocaleString()}</p>
 						</div>
 					</div>
+					)}
 
 					{/* Host Profile Card */}
 					{hostProfile && (
@@ -319,6 +363,23 @@ export default function HostDashboard() {
 					)}
 
 					{/* Events List */}
+					{loading ? (
+						<div className='bg-[#111118] rounded-xl border border-white/[0.06] overflow-hidden'>
+							<div className='p-5 border-b border-white/[0.06]'>
+								<div className='h-5 bg-white/[0.06] rounded w-32 animate-pulse' />
+							</div>
+							{[1, 2, 3].map((i) => (
+								<div key={i} className='p-5 border-b border-white/[0.04] animate-pulse'>
+									<div className='h-4 bg-white/[0.06] rounded w-2/3 mb-3' />
+									<div className='flex gap-4'>
+										<div className='h-3 bg-white/[0.04] rounded w-20' />
+										<div className='h-3 bg-white/[0.04] rounded w-24' />
+										<div className='h-3 bg-white/[0.04] rounded w-16' />
+									</div>
+								</div>
+							))}
+						</div>
+					) : (
 					<div className='bg-[#111118] rounded-xl border border-white/[0.06] overflow-hidden'>
 						<div className='p-5 border-b border-white/[0.06] flex flex-col sm:flex-row sm:items-center justify-between gap-3'>
 							<h2 className='text-lg font-semibold flex items-center gap-2'>
@@ -427,6 +488,7 @@ export default function HostDashboard() {
 							</div>
 						)}
 					</div>
+					)}
 				</div>
 			</main>
 
