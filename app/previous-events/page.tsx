@@ -1,30 +1,74 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  MapPin, 
-  Users, 
+import {
+  Calendar,
+  MapPin,
+  Users,
   History,
   ArrowLeft,
   Sparkles,
   Coins,
   Home,
-  ExternalLink
+  ExternalLink,
+  Loader2
 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
+import eventService, { Event } from '@/app/services/eventService';
+
+interface PreviousEvent {
+  id: number | string;
+  title: string;
+  description: string;
+  date: string;
+  location: string;
+  attendees: string;
+  image: string;
+  link?: string;
+  highlights: string[];
+}
 
 export default function PreviousEventsPage() {
-  const previousEvents = [
+  const [dynamicEvents, setDynamicEvents] = useState<PreviousEvent[]>([]);
+  const [loadingDynamic, setLoadingDynamic] = useState(true);
+
+  useEffect(() => {
+    const fetchEndedEvents = async () => {
+      try {
+        const res = await eventService.getPreviousEvents(1, 50);
+        const events = res?.data?.events ?? [];
+        const mapped: PreviousEvent[] = events.map((e: Event) => ({
+          id: e._id,
+          title: e.title,
+          description: e.description || '',
+          date: new Date(e.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+          location: e.venue || 'Nigeria',
+          attendees: `${e.ticketsSold || 0}+`,
+          image: e.banner || '/images/hde.jpg',
+          link: undefined,
+          highlights: e.tags?.length ? e.tags : (e.category ? [e.category] : ['Event']),
+        }));
+        setDynamicEvents(mapped);
+      } catch (err) {
+        console.error('Failed to fetch previous events:', err);
+      } finally {
+        setLoadingDynamic(false);
+      }
+    };
+    fetchEndedEvents();
+  }, []);
+
+  const hardcodedEvents: PreviousEvent[] = [
     {
       id: 0,
       title: "LOFTE-3 Dinner Night",
       description: "An exclusive dinner night showcasing culture and luxury. Held at the prestigious Eko Hotels & Suites in Lagos, this event brought together 342+ ticketed attendees for an evening of fine dining, networking, and celebrating the LOFTE-3 community. Attendees enjoyed premium refreshments, exclusive merch, and red carpet access.",
       date: "March, 2026",
-      location: "Eko Hotels & Suites, Lagos",
+      location: "Owerri, Nigeria",
       attendees: "342+",
-      image: "/images/event1.jpg",
+      image: "/images/hde.jpg",
       link: "#",
       highlights: ["Event Access", "Premium Seating", "Networking", "Complimentary Refreshments", "Exclusive Merch", "Red Carpet Access"]
     },
@@ -86,6 +130,9 @@ export default function PreviousEventsPage() {
       highlights: ["Connections", "Networking", "Onboarding"]
     },
   ];
+
+  // Combine hardcoded events with dynamic ended events from the database
+  const previousEvents = [...hardcodedEvents, ...dynamicEvents];
 
   // Function to open external link
   const openLink = (url: string) => {
@@ -175,9 +222,9 @@ export default function PreviousEventsPage() {
             className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-20"
           >
             {[
-              { icon: <History className="w-6 h-6" />, value: "4", label: "Past Events" },
+              { icon: <History className="w-6 h-6" />, value: `${previousEvents.length}`, label: "Past Events" },
               { icon: <Users className="w-6 h-6" />, value: "2500+", label: "Total Attendees" },
-              { icon: <MapPin className="w-6 h-6" />, value: "4", label: "States" },
+              { icon: <MapPin className="w-6 h-6" />, value: `${new Set(previousEvents.map(e => e.location)).size}`, label: "Locations" },
               { icon: <Sparkles className="w-6 h-6" />, value: "100%", label: "Success Rate" },
             ].map((stat, idx) => (
               <motion.div
@@ -204,6 +251,11 @@ export default function PreviousEventsPage() {
       <section className="py-10 pb-20">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {loadingDynamic && (
+              <div className="col-span-full flex justify-center py-8">
+                <Loader2 className="w-6 h-6 text-gold animate-spin" />
+              </div>
+            )}
             {previousEvents.map((event, index) => (
               <motion.div
                 key={event.id}
@@ -293,7 +345,7 @@ export default function PreviousEventsPage() {
                       <motion.button
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        onClick={() => openLink(event.link)}
+                        onClick={() => openLink(event.link!)}
                         className="w-full mt-6 px-4 py-2 rounded-lg border border-gold text-gold text-sm font-medium hover:bg-gold/10 transition flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <span>View Video Highlight</span>

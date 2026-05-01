@@ -17,7 +17,11 @@
       "Bash(find . -iname *navbar*.tsx -type f)",
       "Bash(node:*)",
       "Bash(find /c/Users/PreshCodes/Documents/lofte3/Skills -type f -name *admin*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts|jsx|js\\)$\")",
+      "Bash(rm -rf .next)",
+      "Bash(npm run:*)",
+      "Bash(taskkill //F //IM node.exe)"
     ]
   }
 }
