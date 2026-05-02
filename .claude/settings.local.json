@@ -21,7 +21,11 @@
       "Bash(grep -E \"\\\\.\\(tsx|ts|jsx|js\\)$\")",
       "Bash(rm -rf .next)",
       "Bash(npm run:*)",
-      "Bash(taskkill //F //IM node.exe)"
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(tasklist)",
+      "Bash(npm --version)",
+      "Bash(NODE_OPTIONS=\"--max-old-space-size=4096\" npx next build)",
+      "Bash(NEXT_PRIVATE_DEBUG_CACHE=1 NODE_OPTIONS=\"--trace-uncaught\" npx next build)"
     ]
   }
 }
