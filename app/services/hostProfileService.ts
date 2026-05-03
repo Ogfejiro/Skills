@@ -133,7 +133,7 @@ class HostProfileService {
 			console.log('💰 Setting wallet:', data.walletType)
 
 			const response = await fetch(`${this.baseUrl}/api/host/profile`, {
-				method: 'POST',
+				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${token}`,
