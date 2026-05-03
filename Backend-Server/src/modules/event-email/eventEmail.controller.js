@@ -15,23 +15,25 @@ export const creteEventEmail = asyncHandler(async (req, res) => {
 		throw new AppError('Unauthorized', 409)
 	}
 
-	if (!eventId || !subject || !htmlContent || !isEnabled) {
+	if (!eventId || !subject || !htmlContent) {
 		throw new AppError('All Fields are required', 401)
 	}
 
-	const result = createEventEmailTemplate(hostId, {
+	const result = await createEventEmailTemplate(hostId, {
 		eventId,
 		subject,
 		htmlContent,
-		isEnabled,
+		isEnabled: isEnabled ?? true,
 	})
 
-	return res.status(201).json({ message: 'Event Email set successfully' })
+	return res
+		.status(201)
+		.json({ message: 'Event Email set successfully', data: result })
 })
 
 export const getEventEmail = asyncHandler(async (req, res) => {
 	const hostId = req.hostProfile._id
-	const eventId = req.params.id
+	const eventId = req.params.eventId
 	if (!eventId) {
 		throw new AppError('Event ID is required', 401)
 	}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
 import {
@@ -13,11 +13,20 @@ import {
 	Pencil,
 	Trash2,
 	X,
+	Bold,
+	Italic,
+	Underline,
+	List,
+	ListOrdered,
+	Mail,
 } from 'lucide-react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import eventService, { Event } from '@/app/services/eventService'
 import ticketService, { Ticket, TicketData } from '@/app/services/ticketService'
+import eventEmailService, {
+	EventEmail,
+} from '@/app/services/eventEmailService'
 
 export default function ViewEventPage() {
 	const router = useRouter()
@@ -35,6 +44,17 @@ export default function ViewEventPage() {
 	const [showModal, setShowModal] = useState(false)
 	const [editingTicket, setEditingTicket] = useState<Ticket | null>(null)
 	const [creating, setProcessing] = useState(false)
+
+	const [eventEmail, setEventEmail] = useState<EventEmail | null>(null)
+	const [emailLoading, setEmailLoading] = useState(true)
+	const [showEmailModal, setShowEmailModal] = useState(false)
+	const [emailMode, setEmailMode] = useState<'create' | 'view' | 'edit'>(
+		'create',
+	)
+	const [emailSubject, setEmailSubject] = useState('')
+	const [emailHtml, setEmailHtml] = useState('')
+	const [emailSaving, setEmailSaving] = useState(false)
+	const editorRef = useRef<HTMLDivElement | null>(null)
 
 	const [ticketForm, setTicketForm] = useState({
 		title: '',
@@ -56,10 +76,17 @@ export default function ViewEventPage() {
 
 				console.log('Fetching tickets for event:', eventId)
 
-				const [eventRes, ticketRes] = await Promise.all([
+				const [eventRes, ticketRes, emailRes] = await Promise.all([
 					eventService.getEventById(eventId, token),
 					ticketService.getEventTickets(eventId, token),
+					eventEmailService
+						.getEventEmail(eventId, token)
+						.catch(() => null),
 				])
+
+				if (emailRes) {
+					setEventEmail(emailRes)
+				}
 
 				if (eventRes?.success && eventRes.data) {
 					setEvent(eventRes.data)
@@ -82,6 +109,7 @@ export default function ViewEventPage() {
 			} finally {
 				setLoading(false)
 				setTicketsLoading(false)
+				setEmailLoading(false)
 			}
 		}
 
@@ -220,6 +248,90 @@ export default function ViewEventPage() {
 			setTickets((prev) => prev.filter((t) => t._id !== ticketId))
 		} catch (err) {
 			console.error(err)
+		}
+	}
+
+	const openEmailModal = () => {
+		if (eventEmail) {
+			setEmailMode('view')
+			setEmailSubject(eventEmail.subject)
+			setEmailHtml(eventEmail.htmlContent)
+		} else {
+			setEmailMode('create')
+			setEmailSubject('')
+			setEmailHtml('')
+		}
+		setShowEmailModal(true)
+	}
+
+	const switchToEdit = () => {
+		setEmailMode('edit')
+		setEmailSubject(eventEmail?.subject || '')
+		setEmailHtml(eventEmail?.htmlContent || '')
+	}
+
+	const execFormat = (command: string, value?: string) => {
+		document.execCommand(command, false, value)
+		if (editorRef.current) {
+			setEmailHtml(editorRef.current.innerHTML)
+			editorRef.current.focus()
+		}
+	}
+
+	const handleSaveEmail = async () => {
+		if (!token) {
+			alert('Authentication required')
+			return
+		}
+		const html = editorRef.current?.innerHTML ?? emailHtml
+		if (!emailSubject.trim()) {
+			alert('Please enter a subject')
+			return
+		}
+		if (!html || html === '<br>' || !html.replace(/<[^>]*>/g, '').trim()) {
+			alert('Please enter email content')
+			return
+		}
+
+		setEmailSaving(true)
+		try {
+			if (emailMode === 'create') {
+				await eventEmailService.createEventEmail(
+					eventId,
+					{
+						subject: emailSubject.trim(),
+						htmlContent: html,
+						isEnabled: true,
+					},
+					token,
+				)
+				const fresh = await eventEmailService
+					.getEventEmail(eventId, token)
+					.catch(() => null)
+				if (fresh) setEventEmail(fresh)
+				setEmailHtml(html)
+				setEmailMode('view')
+				alert('Event email created successfully!')
+			} else if (emailMode === 'edit') {
+				const updated = await eventEmailService.updateEventEmail(
+					eventId,
+					{
+						subject: emailSubject.trim(),
+						htmlContent: html,
+						isEnabled: eventEmail?.isEnabled ?? true,
+					},
+					token,
+				)
+				setEventEmail(updated)
+				setEmailHtml(html)
+				setEmailMode('view')
+				alert('Event email updated successfully!')
+			}
+		} catch (err: any) {
+			console.error('Email save error:', err)
+			alert(err?.message || 'Failed to save event email')
+		} finally {
+			setEmailSaving(false)
 		}
 	}
 
@@ -380,13 +492,18 @@ export default function ViewEventPage() {
 						{' '}
 						Edit Event{' '}
 					</Link>
-					<Link
-						href='/dashboard/host'
-						className='flex-1 px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center'
+					<button
+						onClick={openEmailModal}
+						disabled={emailLoading}
+						className='flex-1 px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center flex items-center justify-center gap-2 disabled:opacity-50'
 					>
-						{' '}
-						Back to Dashboard{' '}
-					</Link>
+						<Mail className='w-4 h-4' />
+						{emailLoading
+							? 'Loading...'
+							: eventEmail
+								? 'View Event Email'
+								: 'Create Event Email'}
+					</button>
 				</div>
 			</div>
 
@@ -621,6 +738,230 @@ export default function ViewEventPage() {
 									? 'Save Ticket'
 									: 'Create Ticket'}
 						</button>
+					</div>
+				</div>
+			)}
+
+			{/* Event Email Modal */}
+			{showEmailModal && (
+				<div className='fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4'>
+					<div className='bg-gray-900 p-6 rounded-xl w-full max-w-2xl space-y-4 border border-gold/20 max-h-[90vh] overflow-y-auto'>
+						<div className='flex justify-between items-center'>
+							<h2 className='text-xl font-bold flex items-center gap-2'>
+								<Mail className='w-5 h-5 text-gold' />
+								{emailMode === 'create' && 'Create Event Email'}
+								{emailMode === 'view' && 'Event Email'}
+								{emailMode === 'edit' && 'Edit Event Email'}
+							</h2>
+							<button onClick={() => setShowEmailModal(false)}>
+								<X />
+							</button>
+						</div>
+
+						{emailMode === 'view' ? (
+							<div className='space-y-4'>
+								<div>
+									<p className='text-sm text-gray-400 mb-1'>
+										Subject
+									</p>
+									<p className='text-white font-semibold'>
+										{eventEmail?.subject}
+									</p>
+								</div>
+								<div>
+									<p className='text-sm text-gray-400 mb-1'>
+										Content
+									</p>
+									<div
+										className='bg-gray-800 border border-gold/20 rounded p-4 text-white prose prose-invert max-w-none'
+										dangerouslySetInnerHTML={{
+											__html:
+												eventEmail?.htmlContent || '',
+										}}
+									/>
+								</div>
+								<button
+									onClick={switchToEdit}
+									className='w-full py-2 bg-gold text-black rounded-lg font-bold flex items-center justify-center gap-2'
+								>
+									<Pencil className='w-4 h-4' /> Edit Email
+								</button>
+							</div>
+						) : (
+							<div className='space-y-3'>
+								<div>
+									<label className='block text-sm text-gray-300 mb-1'>
+										Subject
+									</label>
+									<input
+										type='text'
+										placeholder='Email subject line'
+										value={emailSubject}
+										onChange={(e) =>
+											setEmailSubject(e.target.value)
+										}
+										className='w-full px-3 py-2 bg-gray-800 border border-gold/20 rounded text-white'
+									/>
+								</div>
+
+								<div>
+									<label className='block text-sm text-gray-300 mb-1'>
+										Email Content
+									</label>
+									<div className='border border-gold/20 rounded bg-gray-800'>
+										<div className='flex flex-wrap gap-1 p-2 border-b border-gold/20'>
+											<button
+												type='button'
+												onClick={() =>
+													execFormat('bold')
+												}
+												className='p-2 hover:bg-gray-700 rounded'
+												title='Bold'
+											>
+												<Bold className='w-4 h-4' />
+											</button>
+											<button
+												type='button'
+												onClick={() =>
+													execFormat('italic')
+												}
+												className='p-2 hover:bg-gray-700 rounded'
+												title='Italic'
+											>
+												<Italic className='w-4 h-4' />
+											</button>
+											<button
+												type='button'
+												onClick={() =>
+													execFormat('underline')
+												}
+												className='p-2 hover:bg-gray-700 rounded'
+												title='Underline'
+											>
+												<Underline className='w-4 h-4' />
+											</button>
+											<button
+												type='button'
+												onClick={() =>
+													execFormat(
+														'insertUnorderedList',
+													)
+												}
+												className='p-2 hover:bg-gray-700 rounded'
+												title='Bullet list'
+											>
+												<List className='w-4 h-4' />
+											</button>
+											<button
+												type='button'
+												onClick={() =>
+													execFormat(
+														'insertOrderedList',
+													)
+												}
+												className='p-2 hover:bg-gray-700 rounded'
+												title='Numbered list'
+											>
+												<ListOrdered className='w-4 h-4' />
+											</button>
+											<button
+												type='button'
+												onClick={() =>
+													execFormat(
+														'formatBlock',
+														'h2',
+													)
+												}
+												className='px-2 hover:bg-gray-700 rounded text-sm font-bold'
+												title='Heading'
+											>
+												H2
+											</button>
+											<button
+												type='button'
+												onClick={() => {
+													const url =
+														prompt('Link URL:')
+													if (url)
+														execFormat(
+															'createLink',
+															url,
+														)
+												}}
+												className='px-2 hover:bg-gray-700 rounded text-sm'
+												title='Insert link'
+											>
+												Link
+											</button>
+											<button
+												type='button'
+												onClick={() =>
+													execFormat(
+														'removeFormat',
+													)
+												}
+												className='px-2 hover:bg-gray-700 rounded text-sm'
+												title='Clear formatting'
+											>
+												Clear
+											</button>
+										</div>
+										<div
+											ref={editorRef}
+											contentEditable
+											suppressContentEditableWarning
+											onInput={(e) =>
+												setEmailHtml(
+													(
+														e.target as HTMLDivElement
+													).innerHTML,
+												)
+											}
+											dangerouslySetInnerHTML={{
+												__html: emailHtml,
+											}}
+											className='min-h-[200px] p-3 text-white focus:outline-none prose prose-invert max-w-none'
+										/>
+									</div>
+									<p className='text-xs text-gray-500 mt-1'>
+										Use the toolbar to format text. You
+										can include links, lists, and
+										headings.
+									</p>
+								</div>
+
+								<div className='flex gap-2'>
+									{emailMode === 'edit' && (
+										<button
+											onClick={() => {
+												setEmailMode('view')
+												setEmailSubject(
+													eventEmail?.subject || '',
+												)
+												setEmailHtml(
+													eventEmail?.htmlContent ||
+														'',
+												)
+											}}
+											className='flex-1 py-2 border border-gold/30 rounded-lg'
+										>
+											Cancel
+										</button>
+									)}
+									<button
+										onClick={handleSaveEmail}
+										disabled={emailSaving}
+										className='flex-1 py-2 bg-gold text-black rounded-lg font-bold disabled:opacity-50'
+									>
+										{emailSaving
+											? 'Saving...'
+											: emailMode === 'create'
+												? 'Create Email'
+												: 'Save Changes'}
+									</button>
+								</div>
+							</div>
+						)}
 					</div>
 				</div>
 			)}
