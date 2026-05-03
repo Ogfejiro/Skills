@@ -1,7 +1,18 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, MapPin, AlertCircle, ArrowRight, Zap, Shield, Globe, Ticket, Users, ExternalLink } from 'lucide-react'
+import {
+	Calendar,
+	MapPin,
+	AlertCircle,
+	ArrowRight,
+	Zap,
+	Shield,
+	Globe,
+	Ticket,
+	Users,
+	ExternalLink,
+} from 'lucide-react'
 import Link from 'next/link'
 import eventService from '@/app/services/eventService'
 import ticketService from '@/app/services/ticketService'
@@ -32,45 +43,72 @@ const FEATURES = [
 ]
 
 const BENEFITS = [
-	{ icon: <Globe className='w-5 h-5' />, title: 'Networking', desc: 'Connect with innovators and leaders.' },
-	{ icon: <Zap className='w-5 h-5' />, title: 'Premium Events', desc: 'Exclusively curated experiences.' },
-	{ icon: <Ticket className='w-5 h-5' />, title: 'Seamless Payments', desc: 'Quick and easy ticket purchasing.' },
-	{ icon: <Shield className='w-5 h-5' />, title: 'Wide Reach', desc: 'Connect with everyone.' },
+	{
+		icon: <Globe className='w-5 h-5' />,
+		title: 'Networking',
+		desc: 'Connect with innovators and leaders.',
+	},
+	{
+		icon: <Zap className='w-5 h-5' />,
+		title: 'Premium Events',
+		desc: 'Exclusively curated experiences.',
+	},
+	{
+		icon: <Ticket className='w-5 h-5' />,
+		title: 'Seamless Payments',
+		desc: 'Quick and easy ticket purchasing.',
+	},
+	{
+		icon: <Shield className='w-5 h-5' />,
+		title: 'Wide Reach',
+		desc: 'Connect with everyone.',
+	},
 ]
 
 const PREVIOUS_EVENTS = [
 	{
 		id: 'prev-1',
 		title: 'LOFTE-3 Dinner Night',
-		description: 'An exclusive dinner night showcasing culture and luxury at Eko Hotels & Suites, Lagos.',
+		description:
+			'An exclusive dinner night showcasing culture and luxury at Eko Hotels & Suites, Lagos.',
 		date: 'March, 2026',
 		location: 'Eko Hotels & Suites, Lagos',
 		attendees: '342+',
-		image: '/images/event1.jpg',
+		image: '/images/hde.jpg',
 		link: '#',
 		highlights: ['Event Access', 'Premium Seating', 'Networking'],
 	},
 	{
 		id: 'prev-2',
 		title: 'Afriverse CTFFCT',
-		description: 'The groundbreaking CTFFCT event bringing together traders, investors, and enthusiasts in Jos.',
+		description:
+			'The groundbreaking CTFFCT event bringing together traders, investors, and enthusiasts in Jos.',
 		date: 'November, 2025',
 		location: 'Jos',
 		attendees: '1000+',
 		image: '/images/ctffct.jpg',
 		link: 'https://x.com/i/status/1993282618797048112',
-		highlights: ['Trading Workshops', 'Networking Sessions', 'Market Analysis'],
+		highlights: [
+			'Trading Workshops',
+			'Networking Sessions',
+			'Market Analysis',
+		],
 	},
 	{
 		id: 'prev-3',
 		title: 'Exclusive Games Weekend by THE Boiz',
-		description: 'An exclusive gaming extravaganza featuring competitive tournaments and premium networking.',
+		description:
+			'An exclusive gaming extravaganza featuring competitive tournaments and premium networking.',
 		date: 'August, 2025',
 		location: 'Port Harcourt',
 		attendees: '100+',
 		image: '/images/dboys.jpg',
 		link: 'https://x.com/i/status/2007340472709296637',
-		highlights: ['Gaming Tournaments', 'Premium Catering', 'Prize Pool Events'],
+		highlights: [
+			'Gaming Tournaments',
+			'Premium Catering',
+			'Prize Pool Events',
+		],
 	},
 ]
 
@@ -126,7 +164,11 @@ export default function HomePage() {
 
 			const res = await ticketService.getEventTicketsPublic(eventId)
 
-			if (res?.success && Array.isArray(res.data) && res.data.length > 0) {
+			if (
+				res?.success &&
+				Array.isArray(res.data) &&
+				res.data.length > 0
+			) {
 				setModalTickets(res.data)
 			} else {
 				setModalTickets([])
@@ -186,7 +228,14 @@ export default function HomePage() {
 				<div className='mt-4 space-y-2'>
 					<div className='flex gap-2 items-center text-sm text-gray-400'>
 						<Calendar size={14} className='text-[#c9a227]/70' />
-						{event.date ? new Date(event.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'TBA'}
+						{event.date
+							? new Date(event.date).toLocaleDateString('en-US', {
+									weekday: 'short',
+									month: 'short',
+									day: 'numeric',
+									year: 'numeric',
+								})
+							: 'TBA'}
 					</div>
 					<div className='flex gap-2 items-center text-sm text-gray-400'>
 						<MapPin size={14} className='text-[#c9a227]/70' />
@@ -222,7 +271,9 @@ export default function HomePage() {
 				</h1>
 
 				<p className='text-gray-400 max-w-lg text-sm md:text-base mt-2 mb-8 leading-relaxed'>
-					Where every moment is designed to inspire. Discover curated events that bring together the best in culture, innovation, and community.
+					Where every moment is designed to inspire. Discover curated
+					events that bring together the best in culture, innovation,
+					and community.
 				</p>
 
 				<div className='flex flex-col sm:flex-row items-center gap-4'>
@@ -275,7 +326,9 @@ export default function HomePage() {
 							<span className='text-[#c9a227]'>in one place</span>
 						</h2>
 						<p className='text-gray-400 text-sm md:text-base leading-relaxed mt-4 max-w-md'>
-							Our platform makes it easy to discover events, purchase tickets, and connect with communities — all with a seamless experience.
+							Our platform makes it easy to discover events,
+							purchase tickets, and connect with communities — all
+							with a seamless experience.
 						</p>
 					</div>
 
@@ -298,7 +351,10 @@ export default function HomePage() {
 			</section>
 
 			{/* Current Events */}
-			<section id='events' className='py-16 md:py-24 px-4 lg:px-6 max-w-7xl mx-auto'>
+			<section
+				id='events'
+				className='py-16 md:py-24 px-4 lg:px-6 max-w-7xl mx-auto'
+			>
 				<div className='flex items-end justify-between mb-10'>
 					<div>
 						<p className='text-xs text-[#c9a227]/70 tracking-[0.2em] uppercase font-medium mb-2'>
@@ -326,7 +382,10 @@ export default function HomePage() {
 				{eventsLoading ? (
 					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
 						{[1, 2, 3].map((i) => (
-							<div key={i} className='bg-white/[0.03] rounded-2xl border border-white/[0.06] overflow-hidden animate-pulse'>
+							<div
+								key={i}
+								className='bg-white/[0.03] rounded-2xl border border-white/[0.06] overflow-hidden animate-pulse'
+							>
 								<div className='h-48 bg-white/[0.04]' />
 								<div className='p-6 space-y-3'>
 									<div className='h-4 bg-white/[0.06] rounded w-3/4' />
@@ -339,8 +398,12 @@ export default function HomePage() {
 				) : publicEvents.length === 0 ? (
 					<div className='text-center py-16'>
 						<Calendar className='w-12 h-12 text-gray-700 mx-auto mb-4' />
-						<p className='text-gray-500'>No events available right now</p>
-						<p className='text-gray-600 text-sm mt-1'>Check back soon for upcoming events</p>
+						<p className='text-gray-500'>
+							No events available right now
+						</p>
+						<p className='text-gray-600 text-sm mt-1'>
+							Check back soon for upcoming events
+						</p>
 					</div>
 				) : (
 					<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
@@ -383,7 +446,10 @@ export default function HomePage() {
 							key={event.id}
 							className='group bg-[#111118] rounded-2xl border border-white/[0.06] overflow-hidden transition-all duration-300 hover:border-[#c9a227]/30 hover:shadow-lg hover:shadow-[#c9a227]/5'
 						>
-							<div className='relative h-48 lg:h-52 overflow-hidden cursor-pointer' onClick={() => openLink(event.link)}>
+							<div
+								className='relative h-48 lg:h-52 overflow-hidden cursor-pointer'
+								onClick={() => openLink(event.link)}
+							>
 								<img
 									src={event.image}
 									alt={event.title}
@@ -396,7 +462,9 @@ export default function HomePage() {
 									</div>
 								</div>
 								<div className='absolute top-3 left-3 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-sm border border-[#c9a227]/50'>
-									<span className='text-[10px] text-[#c9a227] font-semibold tracking-wide'>PAST EVENT</span>
+									<span className='text-[10px] text-[#c9a227] font-semibold tracking-wide'>
+										PAST EVENT
+									</span>
 								</div>
 							</div>
 
@@ -410,22 +478,34 @@ export default function HomePage() {
 
 								<div className='mt-4 space-y-2'>
 									<div className='flex gap-2 items-center text-sm text-gray-400'>
-										<Calendar size={14} className='text-[#c9a227]/70' />
+										<Calendar
+											size={14}
+											className='text-[#c9a227]/70'
+										/>
 										{event.date}
 									</div>
 									<div className='flex gap-2 items-center text-sm text-gray-400'>
-										<MapPin size={14} className='text-[#c9a227]/70' />
+										<MapPin
+											size={14}
+											className='text-[#c9a227]/70'
+										/>
 										{event.location}
 									</div>
 									<div className='flex gap-2 items-center text-sm text-gray-400'>
-										<Users size={14} className='text-[#c9a227]/70' />
+										<Users
+											size={14}
+											className='text-[#c9a227]/70'
+										/>
 										{event.attendees} attendees
 									</div>
 								</div>
 
 								<div className='mt-4 flex flex-wrap gap-1.5'>
 									{event.highlights.map((h, idx) => (
-										<span key={idx} className='px-2.5 py-1 rounded-full bg-[#c9a227]/10 border border-[#c9a227]/15 text-[11px] text-gray-400'>
+										<span
+											key={idx}
+											className='px-2.5 py-1 rounded-full bg-[#c9a227]/10 border border-[#c9a227]/15 text-[11px] text-gray-400'
+										>
 											{h}
 										</span>
 									))}
@@ -464,11 +544,15 @@ export default function HomePage() {
 
 						<div className='flex-1 overflow-y-auto p-6 lg:p-8'>
 							{ticketLoading && (
-								<p className='text-gray-400 text-center py-8'>Loading tickets...</p>
+								<p className='text-gray-400 text-center py-8'>
+									Loading tickets...
+								</p>
 							)}
 
 							{!ticketLoading && ticketError && (
-								<p className='text-red-400 text-center py-8'>{ticketError}</p>
+								<p className='text-red-400 text-center py-8'>
+									{ticketError}
+								</p>
 							)}
 
 							{!ticketLoading && modalTickets.length > 0 && (
@@ -479,27 +563,50 @@ export default function HomePage() {
 											className='border border-white/[0.08] rounded-xl p-5 bg-white/[0.02] flex flex-col justify-between hover:border-[#c9a227]/30 transition'
 										>
 											<div>
-												<h3 className='font-semibold text-base mb-1'>{ticket.title}</h3>
-												<p className='text-sm text-gray-500 mb-4'>{ticket.description}</p>
+												<h3 className='font-semibold text-base mb-1'>
+													{ticket.title}
+												</h3>
+												<p className='text-sm text-gray-500 mb-4'>
+													{ticket.description}
+												</p>
 
-												{ticket.benefits && ticket.benefits.length > 0 && (
-													<ul className='space-y-1.5 mb-4'>
-														{ticket.benefits.map((benefit: string, index: number) => (
-															<li key={index} className='text-sm text-gray-400 flex gap-2 items-start'>
-																<span className='text-[#c9a227] mt-0.5'>&#10003;</span>
-																{benefit}
-															</li>
-														))}
-													</ul>
-												)}
+												{ticket.benefits &&
+													ticket.benefits.length >
+														0 && (
+														<ul className='space-y-1.5 mb-4'>
+															{ticket.benefits.map(
+																(
+																	benefit: string,
+																	index: number,
+																) => (
+																	<li
+																		key={
+																			index
+																		}
+																		className='text-sm text-gray-400 flex gap-2 items-start'
+																	>
+																		<span className='text-[#c9a227] mt-0.5'>
+																			&#10003;
+																		</span>
+																		{
+																			benefit
+																		}
+																	</li>
+																),
+															)}
+														</ul>
+													)}
 											</div>
 
 											<div className='mt-4'>
 												<p className='text-[#c9a227] font-bold text-lg mb-3'>
-													{ticket.currency} {ticket.price}
+													{ticket.currency}{' '}
+													{ticket.price}
 												</p>
 												<button
-													onClick={() => handleBuyTicket(ticket)}
+													onClick={() =>
+														handleBuyTicket(ticket)
+													}
 													className='w-full bg-[#c9a227] hover:bg-[#d4b84a] text-black py-2.5 rounded-lg font-semibold transition-colors text-sm'
 												>
 													Buy Ticket
@@ -510,9 +617,13 @@ export default function HomePage() {
 								</div>
 							)}
 
-							{!ticketLoading && modalTickets.length === 0 && !ticketError && (
-								<p className='text-gray-500 text-center py-8'>No tickets available.</p>
-							)}
+							{!ticketLoading &&
+								modalTickets.length === 0 &&
+								!ticketError && (
+									<p className='text-gray-500 text-center py-8'>
+										No tickets available.
+									</p>
+								)}
 						</div>
 
 						<PaymentModal
