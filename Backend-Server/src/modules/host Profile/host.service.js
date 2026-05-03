@@ -1,6 +1,13 @@
 import HostProfile from '../../models/Host.model.js'
 import User from '../../models/User.model.js'
 import AppError from '../../services/shared/appError.js'
+import {
+	sendWithdrawalAdminEmail,
+	sendWithdrawalUserEmail,
+} from '../../services/shared/sendVerificationEmail.js'
+
+const MIN_WITHDRAWAL = 5000
+const WITHDRAWAL_METHODS = ['bank', 'crypto']
 
 const USER_FIELDS = ['firstName', 'lastName', 'phone']
 const HOST_FIELDS = [
@@ -173,6 +180,183 @@ export const deleteProfile = async (userId) => {
 	}
 
 	return { success: true, message: 'Host profile deleted successfully' }
+}
+
+function resolveWithdrawalMethod(profile, requestedMethod) {
+	if (requestedMethod) {
+		if (!WITHDRAWAL_METHODS.includes(requestedMethod)) {
+			throw new AppError('Invalid withdrawal method', 400)
+		}
+		return requestedMethod
+	}
+
+	const hasBank = Boolean(profile.accountNo && profile.accountName)
+	const hasCrypto = Boolean(profile.walletAddress && profile.walletType)
+
+	if (hasBank && hasCrypto) {
+		throw new AppError(
+			'Please select a withdrawal method (bank or crypto)',
+			400,
+		)
+	}
+
+	if (hasBank) return 'bank'
+	if (hasCrypto) return 'crypto'
+
+	return null
+}
+
+function ensureMethodConfigured(profile, method) {
+	if (method === 'bank') {
+		if (!profile.accountNo || !profile.accountName || !profile.bankName) {
+			throw new AppError(
+				'You must set your bank details before withdrawing',
+				400,
+			)
+		}
+		return
+	}
+
+	if (!profile.walletAddress || !profile.walletType) {
+		throw new AppError(
+			'You must set your crypto wallet before withdrawing',
+			400,
+		)
+	}
+}
+
+function ensurePaymentInfoMatches(profile, method, paymentInfo) {
+	if (!paymentInfo) return
+
+	if (method === 'bank') {
+		const mismatch =
+			(paymentInfo.accountNo && paymentInfo.accountNo !== profile.accountNo) ||
+			(paymentInfo.accountName &&
+				paymentInfo.accountName !== profile.accountName) ||
+			(paymentInfo.bankName && paymentInfo.bankName !== profile.bankName)
+
+		if (mismatch) {
+			throw new AppError(
+				'Selected bank details do not match your saved profile',
+				400,
+			)
+		}
+		return
+	}
+
+	const mismatch =
+		(paymentInfo.walletAddress &&
+			paymentInfo.walletAddress !== profile.walletAddress) ||
+		(paymentInfo.walletType &&
+			paymentInfo.walletType !== profile.walletType)
+
+	if (mismatch) {
+		throw new AppError(
+			'Selected wallet details do not match your saved profile',
+			400,
+		)
+	}
+}
+
+function buildPaymentInfo(profile, method) {
+	if (method === 'bank') {
+		return {
+			bankName: profile.bankName,
+			accountName: profile.accountName,
+			accountNo: profile.accountNo,
+		}
+	}
+
+	return {
+		walletType: profile.walletType,
+		walletAddress: profile.walletAddress,
+	}
+}
+
+export async function requestWithdrawal(userId, payload) {
+	if (!userId) {
+		throw new AppError('User authentication required', 401)
+	}
+
+	const amount = Number(payload?.amount)
+
+	if (!amount || Number.isNaN(amount) || amount <= 0) {
+		throw new AppError('Please enter a valid withdrawal amount', 400)
+	}
+
+	if (amount < MIN_WITHDRAWAL) {
+		throw new AppError(
+			`Minimum withdrawal amount is ₦${MIN_WITHDRAWAL.toLocaleString()}`,
+			400,
+		)
+	}
+
+	const user = await getUserOrThrow(userId)
+	const profile = await getHostProfileOrThrow(userId)
+
+	if ((profile.balance || 0) < amount) {
+		throw new AppError('Insufficient balance', 400)
+	}
+
+	const method = resolveWithdrawalMethod(profile, payload?.method)
+
+	if (!method) {
+		throw new AppError(
+			'You must set a withdrawal method (bank or crypto) first',
+			400,
+		)
+	}
+
+	ensureMethodConfigured(profile, method)
+	ensurePaymentInfoMatches(profile, method, payload?.paymentInfo)
+
+	const updatedProfile = await HostProfile.findOneAndUpdate(
+		{ userId, balance: { $gte: amount } },
+		{ $inc: { balance: -amount } },
+		{ new: true },
+	)
+
+	if (!updatedProfile) {
+		throw new AppError('Insufficient balance', 400)
+	}
+
+	const paymentInfo = buildPaymentInfo(profile, method)
+	const hostName = `${user.firstName || ''} ${user.lastName || ''}`.trim()
+	const requestedAt = new Date().toISOString()
+
+	const [adminResult, userResult] = await Promise.all([
+		sendWithdrawalAdminEmail({
+			hostName,
+			hostEmail: user.email,
+			hostPhone: user.phone,
+			amount,
+			method,
+			paymentInfo,
+			requestedAt,
+		}),
+		sendWithdrawalUserEmail({
+			customerEmail: user.email,
+			hostName,
+			amount,
+			method,
+			paymentInfo,
+		}),
+	])
+
+	if (!adminResult.success || !userResult.success) {
+		console.error('Withdrawal email failure:', {
+			admin: adminResult,
+			user: userResult,
+		})
+	}
+
+	return {
+		amount,
+		method,
+		paymentInfo,
+		balance: updatedProfile.balance,
+		requestedAt,
+	}
 }
 
 export const getDashboard = async (userId) => {

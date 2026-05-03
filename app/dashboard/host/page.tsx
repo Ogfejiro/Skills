@@ -59,6 +59,9 @@ export default function HostDashboard() {
 	const [showWithdrawalModal, setShowWithdrawalModal] = useState(false)
 	const [withdrawalAmount, setWithdrawalAmount] = useState('')
 	const [withdrawalLoading, setWithdrawalLoading] = useState(false)
+	const [withdrawalMethod, setWithdrawalMethod] = useState<
+		'bank' | 'crypto' | ''
+	>('')
 	const [filterStatus, setFilterStatus] = useState<string>('all')
 
 	useEffect(() => {
@@ -172,6 +175,40 @@ export default function HostDashboard() {
 		}
 	}
 
+	const hasBankInfo = Boolean(
+		hostProfile?.accountNo &&
+			hostProfile?.accountName &&
+			hostProfile?.bankName,
+	)
+	const hasCryptoInfo = Boolean(
+		hostProfile?.walletAddress && hostProfile?.walletType,
+	)
+	const hasAnyPaymentMethod = hasBankInfo || hasCryptoInfo
+
+	const buildPaymentInfo = (method: 'bank' | 'crypto') => {
+		if (method === 'bank') {
+			return {
+				bankName: hostProfile?.bankName,
+				accountName: hostProfile?.accountName,
+				accountNo: hostProfile?.accountNo,
+			}
+		}
+		return {
+			walletType: hostProfile?.walletType,
+			walletAddress: hostProfile?.walletAddress,
+		}
+	}
+
+	const openWithdrawalModal = () => {
+		const defaultMethod: 'bank' | 'crypto' | '' = hasBankInfo
+			? 'bank'
+			: hasCryptoInfo
+				? 'crypto'
+				: ''
+		setWithdrawalMethod(defaultMethod)
+		setShowWithdrawalModal(true)
+	}
+
 	const handleWithdrawal = async () => {
 		try {
 			const amount = parseFloat(withdrawalAmount)
@@ -193,12 +230,21 @@ export default function HostDashboard() {
 				return
 			}
 
+			if (!withdrawalMethod) {
+				toast.error('Please select a withdrawal method')
+				return
+			}
+
 			setWithdrawalLoading(true)
 			if (!token) throw new Error('No authentication token')
 
 			const response = await hostProfileService.requestWithdrawal(
 				amount,
 				token,
+				{
+					method: withdrawalMethod,
+					paymentInfo: buildPaymentInfo(withdrawalMethod),
+				},
 			)
 
 			if (response.success) {
@@ -207,6 +253,7 @@ export default function HostDashboard() {
 				)
 				setShowWithdrawalModal(false)
 				setWithdrawalAmount('')
+				setWithdrawalMethod('')
 				fetchHostData()
 			}
 		} catch (err) {
@@ -298,7 +345,7 @@ export default function HostDashboard() {
 						</div>
 						<div className='flex gap-2'>
 							<button
-								onClick={() => setShowWithdrawalModal(true)}
+								onClick={openWithdrawalModal}
 								className='px-4 py-2 text-sm font-medium border border-emerald-500/30 text-emerald-400 rounded-lg hover:bg-emerald-500/10 transition flex items-center gap-1.5'
 							>
 								<DollarSign className='w-4 h-4' />
@@ -587,6 +634,92 @@ export default function HostDashboard() {
 						</p>
 
 						<div className='space-y-4'>
+							{!hasAnyPaymentMethod && (
+								<div className='p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20'>
+									<div className='flex items-start gap-2 mb-3'>
+										<AlertCircle className='w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5' />
+										<p className='text-xs text-yellow-400'>
+											You must set a payment method (bank or
+											crypto) before you can withdraw.
+										</p>
+									</div>
+									<button
+										onClick={() => {
+											setShowWithdrawalModal(false)
+											router.push('/dashboard/host-settings')
+										}}
+										className='w-full px-3 py-2 rounded-lg text-xs font-semibold bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30 transition'
+									>
+										Add Payment Info
+									</button>
+								</div>
+							)}
+
+							{hasAnyPaymentMethod && (
+								<div>
+									<label className='block text-xs font-medium text-gray-400 mb-1.5'>
+										Withdrawal Method
+									</label>
+									<select
+										value={withdrawalMethod}
+										onChange={(e) =>
+											setWithdrawalMethod(
+												e.target.value as
+													| 'bank'
+													| 'crypto'
+													| '',
+											)
+										}
+										disabled={withdrawalLoading}
+										className='w-full px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[#c9a227]/50 transition'
+									>
+										{hasBankInfo && (
+											<option value='bank'>
+												Bank Transfer
+												{hostProfile?.bankName
+													? ` - ${hostProfile.bankName}`
+													: ''}
+											</option>
+										)}
+										{hasCryptoInfo && (
+											<option value='crypto'>
+												Crypto
+												{hostProfile?.walletType
+													? ` - ${hostProfile.walletType}`
+													: ''}
+											</option>
+										)}
+									</select>
+
+									{withdrawalMethod === 'bank' && (
+										<p className='text-[11px] text-gray-500 mt-1.5'>
+											{hostProfile?.accountName} •{' '}
+											{hostProfile?.accountNo}
+										</p>
+									)}
+									{withdrawalMethod === 'crypto' && (
+										<p className='text-[11px] text-gray-500 mt-1.5 break-all'>
+											{hostProfile?.walletAddress}
+										</p>
+									)}
+
+									{!(hasBankInfo && hasCryptoInfo) && (
+										<button
+											onClick={() => {
+												setShowWithdrawalModal(false)
+												router.push(
+													'/dashboard/host-settings',
+												)
+											}}
+											className='text-[11px] text-[#c9a227] hover:underline mt-2'
+										>
+											+ Add{' '}
+											{hasBankInfo ? 'crypto' : 'bank'} method
+										</button>
+									)}
+								</div>
+							)}
+
 							<div>
 								<label className='block text-xs font-medium text-gray-400 mb-1.5'>
 									Amount
@@ -603,7 +736,9 @@ export default function HostDashboard() {
 											setWithdrawalAmount(e.target.value)
 										}
 										className='flex-1 px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#c9a227]/50 transition'
-										disabled={withdrawalLoading}
+										disabled={
+											withdrawalLoading || !hasAnyPaymentMethod
+										}
 									/>
 								</div>
 								<p className='text-[11px] text-gray-600 mt-1.5'>
@@ -647,6 +782,7 @@ export default function HostDashboard() {
 								onClick={() => {
 									setShowWithdrawalModal(false)
 									setWithdrawalAmount('')
+									setWithdrawalMethod('')
 								}}
 								disabled={withdrawalLoading}
 								className='flex-1 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 border border-white/[0.08] hover:bg-white/5 transition disabled:opacity-50'
@@ -657,6 +793,8 @@ export default function HostDashboard() {
 								onClick={handleWithdrawal}
 								disabled={
 									withdrawalLoading ||
+									!hasAnyPaymentMethod ||
+									!withdrawalMethod ||
 									!withdrawalAmount ||
 									parseFloat(withdrawalAmount) < 5000 ||
 									parseFloat(withdrawalAmount) >

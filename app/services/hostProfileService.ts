@@ -158,6 +158,16 @@ class HostProfileService {
 	async requestWithdrawal(
 		amount: number,
 		token: string,
+		options?: {
+			method?: 'bank' | 'crypto'
+			paymentInfo?: {
+				bankName?: string
+				accountName?: string
+				accountNo?: string
+				walletType?: string
+				walletAddress?: string
+			}
+		},
 	): Promise<{ success: boolean; message: string }> {
 		try {
 			console.log('💸 Requesting withdrawal:', amount)
@@ -170,7 +180,11 @@ class HostProfileService {
 						'Content-Type': 'application/json',
 						Authorization: `Bearer ${token}`,
 					},
-					body: JSON.stringify({ amount }),
+					body: JSON.stringify({
+						amount,
+						method: options?.method,
+						paymentInfo: options?.paymentInfo,
+					}),
 				},
 			)
 

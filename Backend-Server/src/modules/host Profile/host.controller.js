@@ -6,6 +6,7 @@ import {
 	getProfile,
 	deleteProfile,
 	getDashboard,
+	requestWithdrawal,
 } from './host.service.js'
 
 const allowedFields = [
@@ -75,6 +76,29 @@ export const deleteHostProfile = asyncHandler(async (req, res) => {
 	res.status(200).json({
 		success: true,
 		message: 'Host profile deleted successfully',
+	})
+})
+
+export const requestHostWithdrawal = asyncHandler(async (req, res) => {
+	const userId = req.user.id
+
+	if (!userId) {
+		throw new AppError('Unauthorized', 401)
+	}
+
+	const { amount, method, paymentInfo } = req.body
+
+	const result = await requestWithdrawal(userId, {
+		amount,
+		method,
+		paymentInfo,
+	})
+
+	res.status(200).json({
+		success: true,
+		message:
+			'Withdrawal request submitted. Your payment will be processed within 24 hours.',
+		data: result,
 	})
 })
 

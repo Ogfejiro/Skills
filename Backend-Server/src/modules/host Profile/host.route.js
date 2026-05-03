@@ -5,6 +5,7 @@ import {
 	getHostProfile,
 	deleteHostProfile,
 	getHostDashboard,
+	requestHostWithdrawal,
 } from './host.controller.js'
 import { authenticateToken } from '../../services/middleware/auth.middleware.js'
 import { profileLimiter } from '../../services/middleware/rateLimit.js'
@@ -22,5 +23,6 @@ router
 	.delete(deleteHostProfile)
 
 router.get('/dashboard', getHostDashboard)
+router.post('/withdrawal', requestHostWithdrawal)
 
 export default router
