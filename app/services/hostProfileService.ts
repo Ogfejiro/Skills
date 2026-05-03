@@ -102,7 +102,7 @@ class HostProfileService {
 			console.log('✏️ Updating host profile:', data)
 
 			const response = await fetch(`${this.baseUrl}/api/host/profile`, {
-				method: 'POST',
+				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json',
 					Authorization: `Bearer ${token}`,
