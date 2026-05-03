@@ -40,6 +40,11 @@ const hostSchema = new mongoose.Schema(
 			default: 0,
 			min: 0,
 		},
+		revenue: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
 		conversionRate: {
 			type: Number,
 			default: 1400, // NGN per USD unit, host editable

@@ -237,6 +237,7 @@ export async function handleFlutterwaveWebhook(payload) {
 			{
 				$inc: {
 					balance: hostEarnings,
+					revenue: hostEarnings,
 				},
 			},
 		)

@@ -43,27 +43,78 @@ export default function DashboardSidebar() {
 	const hasHostProfile = hostProfileCache.hasProfile
 
 	const userNavItems: NavItem[] = [
-		{ label: 'Dashboard', href: '/dashboard/user', icon: <LayoutDashboard className='w-5 h-5' /> },
-		{ label: 'Browse Events', href: '/events', icon: <Calendar className='w-5 h-5' /> },
-		{ label: 'My Tickets', href: '/tickets', icon: <Ticket className='w-5 h-5' /> },
-		{ label: 'Settings', href: '/dashboard/user/settings', icon: <Settings className='w-5 h-5' /> },
+		{
+			label: 'Dashboard',
+			href: '/dashboard/user',
+			icon: <LayoutDashboard className='w-5 h-5' />,
+		},
+		{
+			label: 'Browse Events',
+			href: '/events',
+			icon: <Calendar className='w-5 h-5' />,
+		},
+		{
+			label: 'My Tickets',
+			href: '/tickets',
+			icon: <Ticket className='w-5 h-5' />,
+		},
+		{
+			label: 'Settings',
+			href: '/dashboard/user/settings',
+			icon: <Settings className='w-5 h-5' />,
+		},
 	]
 
 	const hostNavItems: NavItem[] = [
-		{ label: 'Dashboard', href: '/dashboard/host', icon: <LayoutDashboard className='w-5 h-5' /> },
-		{ label: 'Create Event', href: '/dashboard/events/create', icon: <PlusCircle className='w-5 h-5' /> },
-		{ label: 'Browse Events', href: '/events', icon: <Calendar className='w-5 h-5' /> },
-		{ label: 'Settings', href: '/dashboard/profile', icon: <Settings className='w-5 h-5' /> },
+		{
+			label: 'Dashboard',
+			href: '/dashboard/host',
+			icon: <LayoutDashboard className='w-5 h-5' />,
+		},
+		{
+			label: 'Create Event',
+			href: '/dashboard/events/create',
+			icon: <PlusCircle className='w-5 h-5' />,
+		},
+		{
+			label: 'Browse Events',
+			href: '/events',
+			icon: <Calendar className='w-5 h-5' />,
+		},
+		{
+			label: 'Settings',
+			href: '/dashboard/host-settings',
+			icon: <Settings className='w-5 h-5' />,
+		},
 	]
 
 	const adminNavItems: NavItem[] = [
-		{ label: 'Dashboard', href: '/dashboard/admin', icon: <LayoutDashboard className='w-5 h-5' /> },
-		{ label: 'Browse Events', href: '/events', icon: <Calendar className='w-5 h-5' /> },
-		{ label: 'Settings', href: '/dashboard/user/settings', icon: <Settings className='w-5 h-5' /> },
+		{
+			label: 'Dashboard',
+			href: '/dashboard/admin',
+			icon: <LayoutDashboard className='w-5 h-5' />,
+		},
+		{
+			label: 'Browse Events',
+			href: '/events',
+			icon: <Calendar className='w-5 h-5' />,
+		},
+		{
+			label: 'Settings',
+			href: '/dashboard/user/settings',
+			icon: <Settings className='w-5 h-5' />,
+		},
 	]
 
-	const isOnHostDashboard = pathname.startsWith('/dashboard/host') || pathname.startsWith('/dashboard/events') || pathname.startsWith('/dashboard/profile')
-	const navItems = isAdmin ? adminNavItems : (isOnHostDashboard && hasHostProfile) ? hostNavItems : userNavItems
+	const isOnHostDashboard =
+		pathname.startsWith('/dashboard/host') ||
+		pathname.startsWith('/dashboard/events') ||
+		pathname.startsWith('/dashboard/host-settings')
+	const navItems = isAdmin
+		? adminNavItems
+		: isOnHostDashboard && hasHostProfile
+			? hostNavItems
+			: userNavItems
 
 	const handleLogout = () => {
 		logout()
@@ -111,19 +162,27 @@ export default function DashboardSidebar() {
 			</div>
 
 			{/* User info */}
-			<div className={`p-4 border-b border-white/[0.06] ${collapsed ? 'flex justify-center' : ''}`}>
+			<div
+				className={`p-4 border-b border-white/[0.06] ${collapsed ? 'flex justify-center' : ''}`}
+			>
 				{collapsed ? (
 					<div className='w-9 h-9 bg-gradient-to-br from-[#c9a227] to-[#a8861e] rounded-full flex items-center justify-center text-black font-bold text-sm'>
-						{user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+						{user?.firstName?.charAt(0)}
+						{user?.lastName?.charAt(0)}
 					</div>
 				) : (
 					<div className='flex items-center gap-3'>
 						<div className='w-10 h-10 bg-gradient-to-br from-[#c9a227] to-[#a8861e] rounded-full flex items-center justify-center text-black font-bold text-sm flex-shrink-0'>
-							{user?.firstName?.charAt(0)}{user?.lastName?.charAt(0)}
+							{user?.firstName?.charAt(0)}
+							{user?.lastName?.charAt(0)}
 						</div>
 						<div className='min-w-0'>
-							<p className='text-sm font-semibold text-white truncate'>{user?.firstName} {user?.lastName}</p>
-							<p className='text-xs text-gray-500 truncate'>{user?.email}</p>
+							<p className='text-sm font-semibold text-white truncate'>
+								{user?.firstName} {user?.lastName}
+							</p>
+							<p className='text-xs text-gray-500 truncate'>
+								{user?.email}
+							</p>
 							<span className='inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-[#c9a227]/15 text-[#c9a227] border border-[#c9a227]/20'>
 								{user?.role || 'User'}
 							</span>
@@ -164,10 +223,26 @@ export default function DashboardSidebar() {
 					<button
 						onClick={switchRole}
 						className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all ${collapsed ? 'justify-center' : ''}`}
-						title={collapsed ? (pathname.startsWith('/dashboard/host') ? 'Switch to User' : hasHostProfile ? 'Switch to Host' : 'Become a Host') : undefined}
+						title={
+							collapsed
+								? pathname.startsWith('/dashboard/host')
+									? 'Switch to User'
+									: hasHostProfile
+										? 'Switch to Host'
+										: 'Become a Host'
+								: undefined
+						}
 					>
 						<Zap className='w-5 h-5 flex-shrink-0' />
-						{!collapsed && <span>{pathname.startsWith('/dashboard/host') ? 'Switch to User' : hasHostProfile ? 'Switch to Host' : 'Become a Host'}</span>}
+						{!collapsed && (
+							<span>
+								{pathname.startsWith('/dashboard/host')
+									? 'Switch to User'
+									: hasHostProfile
+										? 'Switch to Host'
+										: 'Become a Host'}
+							</span>
+						)}
 					</button>
 				)}
 
@@ -197,7 +272,11 @@ export default function DashboardSidebar() {
 				onClick={() => setCollapsed(!collapsed)}
 				className='hidden md:flex items-center justify-center p-3 border-t border-white/[0.06] text-gray-500 hover:text-white transition-colors'
 			>
-				{collapsed ? <ChevronRight className='w-4 h-4' /> : <ChevronLeft className='w-4 h-4' />}
+				{collapsed ? (
+					<ChevronRight className='w-4 h-4' />
+				) : (
+					<ChevronLeft className='w-4 h-4' />
+				)}
 			</button>
 		</div>
 	)
@@ -223,7 +302,10 @@ export default function DashboardSidebar() {
 						onClick={(e) => e.stopPropagation()}
 					>
 						<div className='absolute top-4 right-4'>
-							<button onClick={() => setMobileOpen(false)} className='text-gray-400 hover:text-white'>
+							<button
+								onClick={() => setMobileOpen(false)}
+								className='text-gray-400 hover:text-white'
+							>
 								<X className='w-5 h-5' />
 							</button>
 						</div>
@@ -242,7 +324,9 @@ export default function DashboardSidebar() {
 			</aside>
 
 			{/* Spacer for content */}
-			<div className={`hidden md:block flex-shrink-0 transition-all duration-300 ${collapsed ? 'w-[72px]' : 'w-64'}`} />
+			<div
+				className={`hidden md:block flex-shrink-0 transition-all duration-300 ${collapsed ? 'w-[72px]' : 'w-64'}`}
+			/>
 		</>
 	)
 }

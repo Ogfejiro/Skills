@@ -62,6 +62,11 @@ async function getHostProfileOrThrow(userId) {
 		throw new AppError('Host profile not found', 404)
 	}
 
+	if (profile.revenue === undefined || profile.revenue === null) {
+		profile.revenue = profile.balance || 0
+		await profile.save()
+	}
+
 	return profile
 }
 
@@ -364,8 +369,9 @@ export const getDashboard = async (userId) => {
 
 	return {
 		profile,
-		totalEarnings: 0,
+		totalEarnings: profile.revenue || 0,
 		balance: profile.balance || 0,
+		revenue: profile.revenue || 0,
 		eventEarnings: {},
 	}
 }

@@ -19,6 +19,7 @@ export interface HostProfile {
 	walletType?: string
 	walletSet: boolean
 	balance: number
+	revenue: number
 	conversionRate: number
 	socials?: {
 		twitter?: string

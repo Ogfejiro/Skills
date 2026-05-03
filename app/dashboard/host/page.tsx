@@ -114,7 +114,7 @@ export default function HostDashboard() {
 					liveEvents: liveCount,
 					pendingEvents: pendingCount,
 					totalBalance: profile.balance || 0,
-					revenue: profile.balance || 0,
+					revenue: profile.revenue || 0,
 				})
 			} else {
 				setStats({
@@ -122,7 +122,7 @@ export default function HostDashboard() {
 					liveEvents: 0,
 					pendingEvents: 0,
 					totalBalance: profile.balance || 0,
-					revenue: profile.balance || 0,
+					revenue: profile.revenue || 0,
 				})
 			}
 		} catch (err) {
@@ -177,8 +177,8 @@ export default function HostDashboard() {
 
 	const hasBankInfo = Boolean(
 		hostProfile?.accountNo &&
-			hostProfile?.accountName &&
-			hostProfile?.bankName,
+		hostProfile?.accountName &&
+		hostProfile?.bankName,
 	)
 	const hasCryptoInfo = Boolean(
 		hostProfile?.walletAddress && hostProfile?.walletType,
@@ -639,14 +639,16 @@ export default function HostDashboard() {
 									<div className='flex items-start gap-2 mb-3'>
 										<AlertCircle className='w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5' />
 										<p className='text-xs text-yellow-400'>
-											You must set a payment method (bank or
-											crypto) before you can withdraw.
+											You must set a payment method (bank
+											or crypto) before you can withdraw.
 										</p>
 									</div>
 									<button
 										onClick={() => {
 											setShowWithdrawalModal(false)
-											router.push('/dashboard/host-settings')
+											router.push(
+												'/dashboard/host-settings',
+											)
 										}}
 										className='w-full px-3 py-2 rounded-lg text-xs font-semibold bg-yellow-500/20 text-yellow-300 hover:bg-yellow-500/30 transition'
 									>
@@ -714,7 +716,8 @@ export default function HostDashboard() {
 											className='text-[11px] text-[#c9a227] hover:underline mt-2'
 										>
 											+ Add{' '}
-											{hasBankInfo ? 'crypto' : 'bank'} method
+											{hasBankInfo ? 'crypto' : 'bank'}{' '}
+											method
 										</button>
 									)}
 								</div>
@@ -737,7 +740,8 @@ export default function HostDashboard() {
 										}
 										className='flex-1 px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#c9a227]/50 transition'
 										disabled={
-											withdrawalLoading || !hasAnyPaymentMethod
+											withdrawalLoading ||
+											!hasAnyPaymentMethod
 										}
 									/>
 								</div>
