@@ -25,6 +25,7 @@ export default function HostSettingsPage() {
 		isAuthenticated,
 		loading: authLoading,
 		token,
+		hostProfile: hostProfileCache,
 		refreshHostProfile,
 	} = useAuth()
 	const router = useRouter()
@@ -56,21 +57,39 @@ export default function HostSettingsPage() {
 	})
 
 	useEffect(() => {
-		if (!authLoading && !isAuthenticated) {
+		if (authLoading) return
+
+		if (!isAuthenticated) {
 			router.push('/auth/login')
-		} else if (user && user.role !== 'Host' && user.role !== 'Admin') {
-			// Allow non-hosts to create a profile if coming from user dashboard
-			if (!isCreating) {
-				router.push('/dashboard/user')
-			} else {
-				setLoading(false)
-			}
-		} else if (token && !isCreating) {
-			loadHostProfile()
-		} else {
-			setLoading(false)
+			return
 		}
-	}, [authLoading, isAuthenticated, user, router, token, isCreating])
+
+		if (isCreating) {
+			setLoading(false)
+			return
+		}
+
+		if (hostProfileCache.hasProfile) {
+			loadHostProfile()
+			return
+		}
+
+		if (hostProfileCache.lastChecked > 0) {
+			router.push('/dashboard/user')
+			return
+		}
+
+		if (token) {
+			refreshHostProfile()
+		}
+	}, [
+		authLoading,
+		isAuthenticated,
+		token,
+		isCreating,
+		hostProfileCache.hasProfile,
+		hostProfileCache.lastChecked,
+	])
 
 	const loadHostProfile = async () => {
 		try {
