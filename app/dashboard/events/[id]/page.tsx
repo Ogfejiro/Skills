@@ -251,6 +251,19 @@ export default function ViewEventPage() {
 		}
 	}
 
+	useEffect(() => {
+		if (
+			showEmailModal &&
+			(emailMode === 'create' || emailMode === 'edit') &&
+			editorRef.current
+		) {
+			if (editorRef.current.innerHTML !== emailHtml) {
+				editorRef.current.innerHTML = emailHtml
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [showEmailModal, emailMode])
+
 	const openEmailModal = () => {
 		if (eventEmail) {
 			setEmailMode('view')
@@ -910,6 +923,7 @@ export default function ViewEventPage() {
 											ref={editorRef}
 											contentEditable
 											suppressContentEditableWarning
+											dir='ltr'
 											onInput={(e) =>
 												setEmailHtml(
 													(
@@ -917,10 +931,11 @@ export default function ViewEventPage() {
 													).innerHTML,
 												)
 											}
-											dangerouslySetInnerHTML={{
-												__html: emailHtml,
+											className='min-h-[200px] p-3 text-white focus:outline-none prose prose-invert max-w-none text-left'
+											style={{
+												direction: 'ltr',
+												unicodeBidi: 'plaintext',
 											}}
-											className='min-h-[200px] p-3 text-white focus:outline-none prose prose-invert max-w-none'
 										/>
 									</div>
 									<p className='text-xs text-gray-500 mt-1'>
