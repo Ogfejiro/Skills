@@ -21,7 +21,13 @@ import eventService from '@/app/services/eventService'
 import { toast } from 'sonner'
 
 export default function UserDashboard() {
-	const { user, isAuthenticated, loading: authLoading, token, hostProfile: hostProfileCache } = useAuth()
+	const {
+		user,
+		isAuthenticated,
+		loading: authLoading,
+		token,
+		hostProfile: hostProfileCache,
+	} = useAuth()
 	const router = useRouter()
 	const [loading, setLoading] = useState(true)
 	const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
@@ -47,7 +53,9 @@ export default function UserDashboard() {
 			setEventsLoading(true)
 			const res = await eventService.getPublicEvents(1, 6)
 			if (res?.data?.events) {
-				setUpcomingEvents(Array.isArray(res.data.events) ? res.data.events : [])
+				setUpcomingEvents(
+					Array.isArray(res.data.events) ? res.data.events : [],
+				)
 			}
 			setMyTickets([])
 		} catch (error) {
@@ -96,11 +104,18 @@ export default function UserDashboard() {
 				<div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-16 md:pt-8'>
 					{/* Header */}
 					<div className='mb-8'>
-						<p className='text-sm text-gray-500 mb-1'>{getGreeting()},</p>
+						<p className='text-sm text-gray-500 mb-1'>
+							{getGreeting()},
+						</p>
 						<h1 className='text-2xl sm:text-3xl font-bold'>
-							Welcome back, <span className='text-[#c9a227]'>{user.firstName}</span>
+							Welcome back,{' '}
+							<span className='text-[#c9a227]'>
+								{user.firstName}
+							</span>
 						</h1>
-						<p className='text-gray-500 text-sm mt-1'>Here&apos;s what&apos;s happening with your events</p>
+						<p className='text-gray-500 text-sm mt-1'>
+							Here&apos;s what&apos;s happening with your events
+						</p>
 					</div>
 
 					{/* Stats */}
@@ -112,8 +127,12 @@ export default function UserDashboard() {
 								</div>
 								<TrendingUp className='w-4 h-4 text-green-500' />
 							</div>
-							<p className='text-2xl font-bold'>{myTickets.length}</p>
-							<p className='text-xs text-gray-500 mt-1'>My Tickets</p>
+							<p className='text-2xl font-bold'>
+								{myTickets.length}
+							</p>
+							<p className='text-xs text-gray-500 mt-1'>
+								My Tickets
+							</p>
 						</div>
 
 						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-5 hover:border-purple-500/20 transition'>
@@ -123,8 +142,12 @@ export default function UserDashboard() {
 								</div>
 								<Clock className='w-4 h-4 text-purple-400' />
 							</div>
-							<p className='text-2xl font-bold'>{upcomingEvents.length}</p>
-							<p className='text-xs text-gray-500 mt-1'>Upcoming Events</p>
+							<p className='text-2xl font-bold'>
+								{upcomingEvents.length}
+							</p>
+							<p className='text-xs text-gray-500 mt-1'>
+								Upcoming Events
+							</p>
 						</div>
 
 						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-5 hover:border-emerald-500/20 transition'>
@@ -133,8 +156,12 @@ export default function UserDashboard() {
 									<CreditCard className='w-4 h-4 text-emerald-400' />
 								</div>
 							</div>
-							<p className='text-2xl font-bold text-[#c9a227]'>$0.00</p>
-							<p className='text-xs text-gray-500 mt-1'>Total Spent</p>
+							<p className='text-2xl font-bold text-[#c9a227]'>
+								$0.00
+							</p>
+							<p className='text-xs text-gray-500 mt-1'>
+								Total Spent
+							</p>
 						</div>
 
 						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-5 hover:border-blue-500/20 transition'>
@@ -152,47 +179,31 @@ export default function UserDashboard() {
 									<Loader2 className='w-4 h-4 animate-spin' />
 								) : (
 									<>
-										{hasHostProfile ? 'Switch to Host' : 'Become a Host'}
+										{hasHostProfile
+											? 'Switch to Host'
+											: 'Become a Host'}
 										<ArrowRight className='w-3.5 h-3.5' />
 									</>
 								)}
 							</button>
-							<p className='text-xs text-gray-500 mt-1'>{hasHostProfile ? 'Go to host dashboard' : 'Start hosting events'}</p>
-						</div>
-					</div>
-
-					{/* Profile Card */}
-					<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-6 mb-8'>
-						<div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4'>
-							<div className='flex items-center gap-4'>
-								<div className='w-14 h-14 bg-gradient-to-br from-[#c9a227] to-[#a8861e] rounded-full flex items-center justify-center text-black font-bold text-lg flex-shrink-0'>
-									{user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-								</div>
-								<div>
-									<h3 className='font-semibold text-lg'>{user.firstName} {user.lastName}</h3>
-									<p className='text-sm text-gray-500'>{user.email}</p>
-									<div className='flex items-center gap-3 mt-1'>
-										{user.phone && <span className='text-xs text-gray-400'>{user.phone}</span>}
-										<span className='inline-block px-2 py-0.5 text-[10px] font-semibold rounded-full bg-[#c9a227]/15 text-[#c9a227]'>
-											{user.role || 'User'}
-										</span>
-									</div>
-								</div>
-							</div>
-							<Link
-								href='/dashboard/user/settings'
-								className='px-4 py-2 text-sm font-medium text-gray-400 border border-white/[0.08] rounded-lg hover:text-white hover:border-white/20 transition'
-							>
-								Edit Profile
-							</Link>
+							<p className='text-xs text-gray-500 mt-1'>
+								{hasHostProfile
+									? 'Go to host dashboard'
+									: 'Start hosting events'}
+							</p>
 						</div>
 					</div>
 
 					{/* Upcoming Events */}
 					<div className='mb-8'>
 						<div className='flex items-center justify-between mb-5'>
-							<h2 className='text-lg font-semibold'>Upcoming Events</h2>
-							<Link href='/events' className='text-sm text-[#c9a227] font-medium hover:underline flex items-center gap-1'>
+							<h2 className='text-lg font-semibold'>
+								Upcoming Events
+							</h2>
+							<Link
+								href='/events'
+								className='text-sm text-[#c9a227] font-medium hover:underline flex items-center gap-1'
+							>
 								View all <ArrowRight className='w-3.5 h-3.5' />
 							</Link>
 						</div>
@@ -200,7 +211,10 @@ export default function UserDashboard() {
 						{eventsLoading ? (
 							<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 								{[1, 2, 3].map((i) => (
-									<div key={i} className='bg-[#111118] rounded-xl border border-white/[0.06] overflow-hidden animate-pulse'>
+									<div
+										key={i}
+										className='bg-[#111118] rounded-xl border border-white/[0.06] overflow-hidden animate-pulse'
+									>
 										<div className='h-36 bg-white/[0.04]' />
 										<div className='p-4 space-y-2'>
 											<div className='h-4 bg-white/[0.06] rounded w-3/4' />
@@ -212,10 +226,17 @@ export default function UserDashboard() {
 						) : upcomingEvents.length > 0 ? (
 							<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'>
 								{upcomingEvents.map((event) => (
-									<div key={event._id} className='group bg-[#111118] rounded-xl border border-white/[0.06] overflow-hidden hover:border-[#c9a227]/20 transition'>
+									<div
+										key={event._id}
+										className='group bg-[#111118] rounded-xl border border-white/[0.06] overflow-hidden hover:border-[#c9a227]/20 transition'
+									>
 										{event.banner ? (
 											<div className='relative h-36 overflow-hidden'>
-												<img src={event.banner} alt={event.title} className='w-full h-full object-cover group-hover:scale-105 transition duration-300' />
+												<img
+													src={event.banner}
+													alt={event.title}
+													className='w-full h-full object-cover group-hover:scale-105 transition duration-300'
+												/>
 												<div className='absolute inset-0 bg-gradient-to-t from-[#111118] via-transparent to-transparent' />
 											</div>
 										) : (
@@ -224,18 +245,31 @@ export default function UserDashboard() {
 											</div>
 										)}
 										<div className='p-4'>
-											<h3 className='font-semibold text-sm text-white mb-2 line-clamp-1'>{event.title}</h3>
+											<h3 className='font-semibold text-sm text-white mb-2 line-clamp-1'>
+												{event.title}
+											</h3>
 											<div className='space-y-1.5 text-xs text-gray-500'>
 												{event.date && (
 													<div className='flex items-center gap-2'>
 														<Calendar className='w-3.5 h-3.5 text-[#c9a227]/60' />
-														{new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+														{new Date(
+															event.date,
+														).toLocaleDateString(
+															'en-US',
+															{
+																month: 'short',
+																day: 'numeric',
+																year: 'numeric',
+															},
+														)}
 													</div>
 												)}
 												{event.venue && (
 													<div className='flex items-center gap-2'>
 														<MapPin className='w-3.5 h-3.5 text-[#c9a227]/60' />
-														<span className='line-clamp-1'>{event.venue}</span>
+														<span className='line-clamp-1'>
+															{event.venue}
+														</span>
 													</div>
 												)}
 											</div>
@@ -252,7 +286,9 @@ export default function UserDashboard() {
 						) : (
 							<div className='text-center py-12 bg-[#111118] rounded-xl border border-white/[0.06]'>
 								<Search className='w-10 h-10 text-gray-700 mx-auto mb-3' />
-								<p className='text-gray-500 text-sm mb-3'>No upcoming events yet</p>
+								<p className='text-gray-500 text-sm mb-3'>
+									No upcoming events yet
+								</p>
 								<Link
 									href='/events'
 									className='inline-block px-5 py-2 bg-[#c9a227] text-black text-sm font-semibold rounded-lg hover:bg-[#d4b84a] transition'
@@ -265,7 +301,9 @@ export default function UserDashboard() {
 
 					{/* Quick Actions */}
 					<div>
-						<h2 className='text-lg font-semibold mb-5'>Quick Actions</h2>
+						<h2 className='text-lg font-semibold mb-5'>
+							Quick Actions
+						</h2>
 						<div className='grid grid-cols-2 sm:grid-cols-4 gap-3'>
 							<Link
 								href='/events'
@@ -274,7 +312,9 @@ export default function UserDashboard() {
 								<div className='p-2.5 rounded-lg bg-[#c9a227]/10 mb-2.5 group-hover:bg-[#c9a227]/15 transition'>
 									<Calendar className='w-5 h-5 text-[#c9a227]' />
 								</div>
-								<span className='text-xs font-medium text-gray-400 group-hover:text-white transition'>Browse Events</span>
+								<span className='text-xs font-medium text-gray-400 group-hover:text-white transition'>
+									Browse Events
+								</span>
 							</Link>
 							<Link
 								href='/tickets'
@@ -283,7 +323,9 @@ export default function UserDashboard() {
 								<div className='p-2.5 rounded-lg bg-purple-500/10 mb-2.5 group-hover:bg-purple-500/15 transition'>
 									<Ticket className='w-5 h-5 text-purple-400' />
 								</div>
-								<span className='text-xs font-medium text-gray-400 group-hover:text-white transition'>My Tickets</span>
+								<span className='text-xs font-medium text-gray-400 group-hover:text-white transition'>
+									My Tickets
+								</span>
 							</Link>
 							<Link
 								href='/dashboard/user/settings'
@@ -292,7 +334,9 @@ export default function UserDashboard() {
 								<div className='p-2.5 rounded-lg bg-blue-500/10 mb-2.5 group-hover:bg-blue-500/15 transition'>
 									<Zap className='w-5 h-5 text-blue-400' />
 								</div>
-								<span className='text-xs font-medium text-gray-400 group-hover:text-white transition'>Settings</span>
+								<span className='text-xs font-medium text-gray-400 group-hover:text-white transition'>
+									Settings
+								</span>
 							</Link>
 							<a
 								href='https://t.me/Lofte3'
@@ -303,7 +347,9 @@ export default function UserDashboard() {
 								<div className='p-2.5 rounded-lg bg-emerald-500/10 mb-2.5 group-hover:bg-emerald-500/15 transition'>
 									<Search className='w-5 h-5 text-emerald-400' />
 								</div>
-								<span className='text-xs font-medium text-gray-400 group-hover:text-white transition'>Support</span>
+								<span className='text-xs font-medium text-gray-400 group-hover:text-white transition'>
+									Support
+								</span>
 							</a>
 						</div>
 					</div>
@@ -317,9 +363,13 @@ export default function UserDashboard() {
 						<div className='w-14 h-14 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-5'>
 							<Zap className='w-7 h-7 text-purple-400' />
 						</div>
-						<h2 className='text-xl font-bold text-center mb-2'>Ready to Host Events?</h2>
+						<h2 className='text-xl font-bold text-center mb-2'>
+							Ready to Host Events?
+						</h2>
 						<p className='text-gray-400 text-sm text-center mb-6'>
-							You don&apos;t have a host profile yet. Create one to start hosting and managing your events with LOFTE-3.
+							You don&apos;t have a host profile yet. Create one
+							to start hosting and managing your events with
+							LOFTE-3.
 						</p>
 						<div className='flex flex-col gap-3'>
 							<button
@@ -327,7 +377,9 @@ export default function UserDashboard() {
 								disabled={checkingHost}
 								className='w-full px-4 py-3 bg-[#c9a227] text-black font-bold rounded-lg hover:bg-[#d4b84a] disabled:opacity-50 transition text-sm'
 							>
-								{checkingHost ? 'Setting up...' : 'Create Host Profile'}
+								{checkingHost
+									? 'Setting up...'
+									: 'Create Host Profile'}
 							</button>
 							<button
 								onClick={() => setShowHostModal(false)}
