@@ -72,9 +72,9 @@ const PREVIOUS_EVENTS = [
 		description:
 			'An exclusive dinner night showcasing culture and luxury at Eko Hotels & Suites, Lagos.',
 		date: 'March, 2026',
-		location: 'Eko Hotels & Suites, Lagos',
+		location: 'Owerri, Nigeria',
 		attendees: '342+',
-		image: '/images/hde.jpg',
+		image: '/images/new.jpg',
 		link: '#',
 		highlights: ['Event Access', 'Premium Seating', 'Networking'],
 	},

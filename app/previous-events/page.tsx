@@ -1,364 +1,441 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
-  Calendar,
-  MapPin,
-  Users,
-  History,
-  ArrowLeft,
-  Sparkles,
-  Coins,
-  Home,
-  ExternalLink,
-  Loader2
-} from 'lucide-react';
-import Navbar from '@/components/Navbar';
-import Link from 'next/link';
-import eventService, { Event } from '@/app/services/eventService';
+	Calendar,
+	MapPin,
+	Users,
+	History,
+	ArrowLeft,
+	Sparkles,
+	Coins,
+	Home,
+	ExternalLink,
+	Loader2,
+} from 'lucide-react'
+import Navbar from '@/components/Navbar'
+import Link from 'next/link'
+import eventService, { Event } from '@/app/services/eventService'
 
 interface PreviousEvent {
-  id: number | string;
-  title: string;
-  description: string;
-  date: string;
-  location: string;
-  attendees: string;
-  image: string;
-  link?: string;
-  highlights: string[];
+	id: number | string
+	title: string
+	description: string
+	date: string
+	location: string
+	attendees: string
+	image: string
+	link?: string
+	highlights: string[]
 }
 
 export default function PreviousEventsPage() {
-  const [dynamicEvents, setDynamicEvents] = useState<PreviousEvent[]>([]);
-  const [loadingDynamic, setLoadingDynamic] = useState(true);
+	const [dynamicEvents, setDynamicEvents] = useState<PreviousEvent[]>([])
+	const [loadingDynamic, setLoadingDynamic] = useState(true)
 
-  useEffect(() => {
-    const fetchEndedEvents = async () => {
-      try {
-        const res = await eventService.getPreviousEvents(1, 50);
-        const events = res?.data?.events ?? [];
-        const mapped: PreviousEvent[] = events.map((e: Event) => ({
-          id: e._id,
-          title: e.title,
-          description: e.description || '',
-          date: new Date(e.date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-          location: e.venue || 'Nigeria',
-          attendees: `${e.ticketsSold || 0}+`,
-          image: e.banner || '/images/hde.jpg',
-          link: undefined,
-          highlights: e.tags?.length ? e.tags : (e.category ? [e.category] : ['Event']),
-        }));
-        setDynamicEvents(mapped);
-      } catch (err) {
-        console.error('Failed to fetch previous events:', err);
-      } finally {
-        setLoadingDynamic(false);
-      }
-    };
-    fetchEndedEvents();
-  }, []);
+	useEffect(() => {
+		const fetchEndedEvents = async () => {
+			try {
+				const res = await eventService.getPreviousEvents(1, 50)
+				const events = res?.data?.events ?? []
+				const mapped: PreviousEvent[] = events.map((e: Event) => ({
+					id: e._id,
+					title: e.title,
+					description: e.description || '',
+					date: new Date(e.date).toLocaleDateString('en-US', {
+						month: 'long',
+						year: 'numeric',
+					}),
+					location: e.venue || 'Nigeria',
+					attendees: `${e.ticketsSold || 0}+`,
+					image: e.banner || '/images/hde.jpg',
+					link: undefined,
+					highlights: e.tags?.length
+						? e.tags
+						: e.category
+							? [e.category]
+							: ['Event'],
+				}))
+				setDynamicEvents(mapped)
+			} catch (err) {
+				console.error('Failed to fetch previous events:', err)
+			} finally {
+				setLoadingDynamic(false)
+			}
+		}
+		fetchEndedEvents()
+	}, [])
 
-  const hardcodedEvents: PreviousEvent[] = [
-    {
-      id: 0,
-      title: "LOFTE-3 Dinner Night",
-      description: "An exclusive dinner night showcasing culture and luxury. Held at the prestigious Eko Hotels & Suites in Lagos, this event brought together 342+ ticketed attendees for an evening of fine dining, networking, and celebrating the LOFTE-3 community. Attendees enjoyed premium refreshments, exclusive merch, and red carpet access.",
-      date: "March, 2026",
-      location: "Owerri, Nigeria",
-      attendees: "342+",
-      image: "/images/hde.jpg",
-      link: "#",
-      highlights: ["Event Access", "Premium Seating", "Networking", "Complimentary Refreshments", "Exclusive Merch", "Red Carpet Access"]
-    },
-    {
-      id: 1,
-      title: "Afriverse CTFFCT",
-      description: "Hosted the groundbreaking CTFFCT (Code The Future - Finance The Change Together) event in Jos, Plateau State. This pioneering event brought together traders, investors, and enthusiasts to explore the future of digital assets and commodity trading.",
-      date: "November, 2025",
-      location: "Jos",
-      attendees: "1000+",
-      image: "/images/ctffct.jpg",
-      link: "https://x.com/i/status/1993282618797048112", // Replace with your actual CCFTC link
-      highlights: ["Trading Workshops", "Merch Giveaways", "Networking Sessions", "Market Analysis", "Commodity Trading Demos"]
-    },
-    {
-      id: 2,
-      title: "Exclusive Games Weekend by THE Boiz",
-      description: "An exclusive gaming extravaganza featuring competitive tournaments, strategic gameplay sessions, and premium networking opportunities. This event celebrated the intersection of gaming culture and technology.",
-      date: "August, 2025",
-      location: "Port Harcourt",
-      attendees: "100+",
-      image: "/images/dboys.jpg",
-      link: "https://x.com/i/status/2007340472709296637", // Replace with your actual NFT Games link
-      highlights: ["Gaming Tournaments", "Premium Catering", "Exclusive House Party", "VIP Networking", "Prize Pool Events"]
-    },
+	const hardcodedEvents: PreviousEvent[] = [
+		{
+			id: 0,
+			title: 'LOFTE-3 Dinner Night',
+			description:
+				'An exclusive dinner night showcasing culture and luxury. Held at the prestigious Eko Hotels & Suites in Lagos, this event brought together 342+ ticketed attendees for an evening of fine dining, networking, and celebrating the LOFTE-3 community. Attendees enjoyed premium refreshments, exclusive merch, and red carpet access.',
+			date: 'March, 2026',
+			location: 'Owerri, Nigeria',
+			attendees: '342+',
+			image: '/images/new.jpg',
+			link: '#',
+			highlights: [
+				'Event Access',
+				'Premium Seating',
+				'Networking',
+				'Complimentary Refreshments',
+				'Exclusive Merch',
+				'Red Carpet Access',
+			],
+		},
+		{
+			id: 1,
+			title: 'Afriverse CTFFCT',
+			description:
+				'Hosted the groundbreaking CTFFCT (Code The Future - Finance The Change Together) event in Jos, Plateau State. This pioneering event brought together traders, investors, and enthusiasts to explore the future of digital assets and commodity trading.',
+			date: 'November, 2025',
+			location: 'Jos',
+			attendees: '1000+',
+			image: '/images/ctffct.jpg',
+			link: 'https://x.com/i/status/1993282618797048112', // Replace with your actual CCFTC link
+			highlights: [
+				'Trading Workshops',
+				'Merch Giveaways',
+				'Networking Sessions',
+				'Market Analysis',
+				'Commodity Trading Demos',
+			],
+		},
+		{
+			id: 2,
+			title: 'Exclusive Games Weekend by THE Boiz',
+			description:
+				'An exclusive gaming extravaganza featuring competitive tournaments, strategic gameplay sessions, and premium networking opportunities. This event celebrated the intersection of gaming culture and technology.',
+			date: 'August, 2025',
+			location: 'Port Harcourt',
+			attendees: '100+',
+			image: '/images/dboys.jpg',
+			link: 'https://x.com/i/status/2007340472709296637', // Replace with your actual NFT Games link
+			highlights: [
+				'Gaming Tournaments',
+				'Premium Catering',
+				'Exclusive House Party',
+				'VIP Networking',
+				'Prize Pool Events',
+			],
+		},
 
-    {
-      id: 3,
-      title: "Community Impact Activation-Founder-Led Initiative",
-      description: "A grassroots community activation where the LOFTE-3 founder, as a birthday outreach alongside ecosystem collaborators, coordinated the distribution of essential supplies to 100+ young girls, reinforcing our commitment to impact-driven community building beyond technology.",
-      date: "November, 2025",
-      location: "Zang",
-      attendees: "500+",
-      image: "/images/pad.jpg",
-      link: "https://x.com/hidreams__/status/1993212190061408515", // Replace with your actual NFT Games link
-      highlights: ["Purpose Beyond Tech", "200+ Direct Beneficiaries", "CSR Execution", "Inclusion & Impact"]
-    },
+		{
+			id: 3,
+			title: 'Community Impact Activation-Founder-Led Initiative',
+			description:
+				'A grassroots community activation where the LOFTE-3 founder, as a birthday outreach alongside ecosystem collaborators, coordinated the distribution of essential supplies to 100+ young girls, reinforcing our commitment to impact-driven community building beyond technology.',
+			date: 'November, 2025',
+			location: 'Zang',
+			attendees: '500+',
+			image: '/images/pad.jpg',
+			link: 'https://x.com/hidreams__/status/1993212190061408515', // Replace with your actual NFT Games link
+			highlights: [
+				'Purpose Beyond Tech',
+				'200+ Direct Beneficiaries',
+				'CSR Execution',
+				'Inclusion & Impact',
+			],
+		},
 
-    {
-      id: 4,
-      title: "Tech-Sphere International GLOBAL SUMMIT",
-      description: "Massive Impact across 40+ Nations Raising Global Tech.",
-      date: "June, 2025",
-      location: "Window on America",
-      attendees: "1000+",
-      image: "/images/jerry.jpg",
-      link: "https://www.facebook.com/share/p/17V3KRYxNw/", // Replace with your actual NFT Games link
-      highlights: ["Tech Lectures", "Networking", "Games"]
-    },
-    {
-      id: 6,
-      title: "MetaMask Community Builders Night, Abuja",
-      description: "Community Builder Night is a community-first version of global Builder Nights, bringing education, onboarding, and conversations closer to the local ecosystem.",
-      date: "March, 2026",
-      location: "Abuja",
-      attendees: "100+",
-      image: "/images/meta.jpg",
-      link: "https://x.com/i/status/2030529869453414767", // Replace with your actual NFT Games link
-      highlights: ["Connections", "Networking", "Onboarding"]
-    },
-  ];
+		{
+			id: 4,
+			title: 'Tech-Sphere International GLOBAL SUMMIT',
+			description:
+				'Massive Impact across 40+ Nations Raising Global Tech.',
+			date: 'June, 2025',
+			location: 'Window on America',
+			attendees: '1000+',
+			image: '/images/jerry.jpg',
+			link: 'https://www.facebook.com/share/p/17V3KRYxNw/', // Replace with your actual NFT Games link
+			highlights: ['Tech Lectures', 'Networking', 'Games'],
+		},
+		{
+			id: 6,
+			title: 'MetaMask Community Builders Night, Abuja',
+			description:
+				'Community Builder Night is a community-first version of global Builder Nights, bringing education, onboarding, and conversations closer to the local ecosystem.',
+			date: 'March, 2026',
+			location: 'Abuja',
+			attendees: '100+',
+			image: '/images/meta.jpg',
+			link: 'https://x.com/i/status/2030529869453414767', // Replace with your actual NFT Games link
+			highlights: ['Connections', 'Networking', 'Onboarding'],
+		},
+	]
 
-  // Combine hardcoded events with dynamic ended events from the database
-  const previousEvents = [...hardcodedEvents, ...dynamicEvents];
+	// Combine hardcoded events with dynamic ended events from the database
+	const previousEvents = [...hardcodedEvents, ...dynamicEvents]
 
-  // Function to open external link
-  const openLink = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
+	// Function to open external link
+	const openLink = (url: string) => {
+		window.open(url, '_blank', 'noopener,noreferrer')
+	}
 
-  return (
-    <main className="min-h-screen bg-black text-white overflow-x-hidden">
-      <Navbar />
-      
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.2 }}
-            transition={{ duration: 0.6 }}
-            className="absolute top-20 left-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl"
-          />
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.2 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="absolute bottom-20 right-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl"
-          />
-        </div>
+	return (
+		<main className='min-h-screen bg-black text-white overflow-x-hidden'>
+			<Navbar />
 
-        <div className="container mx-auto px-4 relative z-10">
-          {/* Back Button */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="mb-12"
-          >
-            <Link href="/">
-              <motion.button
-                whileHover={{ scale: 1.05, x: -5 }}
-                whileTap={{ scale: 0.95 }}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gold text-gold font-medium hover:bg-gold/10 transition cursor-pointer"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                <span>Back to Home</span>
-              </motion.button>
-            </Link>
-          </motion.div>
+			{/* Hero Section */}
+			<section className='relative pt-32 pb-20 overflow-hidden'>
+				<div className='absolute inset-0 overflow-hidden'>
+					<motion.div
+						initial={{ scale: 0.8, opacity: 0 }}
+						animate={{ scale: 1, opacity: 0.2 }}
+						transition={{ duration: 0.6 }}
+						className='absolute top-20 left-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl'
+					/>
+					<motion.div
+						initial={{ scale: 0.8, opacity: 0 }}
+						animate={{ scale: 1, opacity: 0.2 }}
+						transition={{ duration: 0.6, delay: 0.15 }}
+						className='absolute bottom-20 right-10 w-72 h-72 bg-gold/5 rounded-full blur-3xl'
+					/>
+				</div>
 
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 200 }}
-              className="inline-block p-3 rounded-full bg-gold/10 border border-gold/20 mb-6"
-            >
-              <History className="w-12 h-12 text-gold" />
-            </motion.div>
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="text-3xl sm:text-4xl md:text-6xl font-bold mb-4"
-            >
-              <span className="gold-gradient">Previous</span>
-              <span className="text-white ml-3">Events</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.1, duration: 0.4 }}
-              className="text-gray-400 text-lg max-w-2xl mx-auto"
-            >
-              Relive the memories from our past successful events
-            </motion.p>
-          </motion.div>
+				<div className='container mx-auto px-4 relative z-10'>
+					{/* Back Button */}
+					<motion.div
+						initial={{ opacity: 0, y: -20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5 }}
+						className='mb-12'
+					>
+						<Link href='/'>
+							<motion.button
+								whileHover={{ scale: 1.05, x: -5 }}
+								whileTap={{ scale: 0.95 }}
+								className='inline-flex items-center gap-2 px-6 py-3 rounded-full border border-gold text-gold font-medium hover:bg-gold/10 transition cursor-pointer'
+							>
+								<ArrowLeft className='w-5 h-5' />
+								<span>Back to Home</span>
+							</motion.button>
+						</Link>
+					</motion.div>
 
-          {/* Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-20"
-          >
-            {[
-              { icon: <History className="w-6 h-6" />, value: `${previousEvents.length}`, label: "Past Events" },
-              { icon: <Users className="w-6 h-6" />, value: "2500+", label: "Total Attendees" },
-              { icon: <MapPin className="w-6 h-6" />, value: `${new Set(previousEvents.map(e => e.location)).size}`, label: "Locations" },
-              { icon: <Sparkles className="w-6 h-6" />, value: "100%", label: "Success Rate" },
-            ].map((stat, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 + idx * 0.1 }}
-                className="text-center p-6 rounded-2xl bg-gold/5 border border-gold/10"
-              >
-                <div className="text-gold flex justify-center mb-3">
-                  {stat.icon}
-                </div>
-                <div className="text-2xl md:text-3xl font-bold text-white mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-400">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
+					{/* Header */}
+					<motion.div
+						initial={{ opacity: 0, y: 30 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.6 }}
+						className='text-center mb-16'
+					>
+						<motion.div
+							initial={{ scale: 0 }}
+							animate={{ scale: 1 }}
+							transition={{ type: 'spring', stiffness: 200 }}
+							className='inline-block p-3 rounded-full bg-gold/10 border border-gold/20 mb-6'
+						>
+							<History className='w-12 h-12 text-gold' />
+						</motion.div>
+						<motion.h1
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ duration: 0.4 }}
+							className='text-3xl sm:text-4xl md:text-6xl font-bold mb-4'
+						>
+							<span className='gold-gradient'>Previous</span>
+							<span className='text-white ml-3'>Events</span>
+						</motion.h1>
+						<motion.p
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							transition={{ delay: 0.1, duration: 0.4 }}
+							className='text-gray-400 text-lg max-w-2xl mx-auto'
+						>
+							Relive the memories from our past successful events
+						</motion.p>
+					</motion.div>
 
-      {/* Events Grid */}
-      <section className="py-10 pb-20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {loadingDynamic && (
-              <div className="col-span-full flex justify-center py-8">
-                <Loader2 className="w-6 h-6 text-gold animate-spin" />
-              </div>
-            )}
-            {previousEvents.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -10 }}
-                className="group"
-              >
-                <div className="bg-black/50 rounded-2xl overflow-hidden border border-gold/20 hover:border-gold/50 transition-all duration-300 h-full">
-                  {/* Clickable Event Image - Each with its own link */}
-                  <div className="relative h-48 overflow-hidden">
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.3 }}
-                      onClick={() => event.link && openLink(event.link)}
-                      className="w-full h-full cursor-pointer"
-                    >
-                      <img
-                        src={event.image}
-                        alt={event.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                      
-                      {/* Clickable overlay with external link icon */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40">
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          whileHover={{ scale: 1.1 }}
-                          className="p-4 rounded-full bg-gold/20 backdrop-blur-sm border border-gold"
-                        >
-                          <ExternalLink className="w-6 h-6 text-gold" />
-                        </motion.div>
-                      </div>
-                      
-                      <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 backdrop-blur-sm border border-gold">
-                        <span className="text-xs text-gold font-medium">PAST EVENT</span>
-                      </div>
-                    </motion.div>
-                  </div>
+					{/* Stats */}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.2 }}
+						className='grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto mb-20'
+					>
+						{[
+							{
+								icon: <History className='w-6 h-6' />,
+								value: `${previousEvents.length}`,
+								label: 'Past Events',
+							},
+							{
+								icon: <Users className='w-6 h-6' />,
+								value: '2500+',
+								label: 'Total Attendees',
+							},
+							{
+								icon: <MapPin className='w-6 h-6' />,
+								value: `${new Set(previousEvents.map((e) => e.location)).size}`,
+								label: 'Locations',
+							},
+							{
+								icon: <Sparkles className='w-6 h-6' />,
+								value: '100%',
+								label: 'Success Rate',
+							},
+						].map((stat, idx) => (
+							<motion.div
+								key={idx}
+								initial={{ opacity: 0, scale: 0.8 }}
+								animate={{ opacity: 1, scale: 1 }}
+								transition={{ delay: 0.3 + idx * 0.1 }}
+								className='text-center p-6 rounded-2xl bg-gold/5 border border-gold/10'
+							>
+								<div className='text-gold flex justify-center mb-3'>
+									{stat.icon}
+								</div>
+								<div className='text-2xl md:text-3xl font-bold text-white mb-1'>
+									{stat.value}
+								</div>
+								<div className='text-sm text-gray-400'>
+									{stat.label}
+								</div>
+							</motion.div>
+						))}
+					</motion.div>
+				</div>
+			</section>
 
-                  {/* Event Content */}
-                  <div className="p-6">
-                    <div className="mb-4">
-                      <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gold transition-colors">
-                        {event.title}
-                      </h3>
-                      <p className="text-gray-300 text-sm mb-4">
-                        {event.description}
-                      </p>
-                    </div>
+			{/* Events Grid */}
+			<section className='py-10 pb-20'>
+				<div className='container mx-auto px-4'>
+					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+						{loadingDynamic && (
+							<div className='col-span-full flex justify-center py-8'>
+								<Loader2 className='w-6 h-6 text-gold animate-spin' />
+							</div>
+						)}
+						{previousEvents.map((event, index) => (
+							<motion.div
+								key={event.id}
+								initial={{ opacity: 0, y: 50 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{
+									duration: 0.5,
+									delay: index * 0.1,
+								}}
+								whileHover={{ y: -10 }}
+								className='group'
+							>
+								<div className='bg-black/50 rounded-2xl overflow-hidden border border-gold/20 hover:border-gold/50 transition-all duration-300 h-full'>
+									{/* Clickable Event Image - Each with its own link */}
+									<div className='relative h-48 overflow-hidden'>
+										<motion.div
+											whileHover={{ scale: 1.1 }}
+											transition={{ duration: 0.3 }}
+											onClick={() =>
+												event.link &&
+												openLink(event.link)
+											}
+											className='w-full h-full cursor-pointer'
+										>
+											<img
+												src={event.image}
+												alt={event.title}
+												className='w-full h-full object-cover'
+											/>
+											<div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent' />
 
-                    {/* Event Details */}
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center gap-3">
-                        <Calendar className="w-4 h-4 text-gold" />
-                        <span className="text-sm text-gray-300">{event.date}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <MapPin className="w-4 h-4 text-gold" />
-                        <span className="text-sm text-gray-300">{event.location}</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Users className="w-4 h-4 text-gold" />
-                        <span className="text-sm text-gray-300">{event.attendees} attendees</span>
-                      </div>
-                    </div>
+											{/* Clickable overlay with external link icon */}
+											<div className='absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40'>
+												<motion.div
+													initial={{ scale: 0 }}
+													whileHover={{ scale: 1.1 }}
+													className='p-4 rounded-full bg-gold/20 backdrop-blur-sm border border-gold'
+												>
+													<ExternalLink className='w-6 h-6 text-gold' />
+												</motion.div>
+											</div>
 
-                    {/* Event Highlights */}
-                    <div>
-                      <h4 className="text-sm font-semibold text-gold mb-2">Highlights:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {event.highlights.map((highlight, idx) => (
-                          <span
-                            key={idx}
-                            className="px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-xs text-gray-300"
-                          >
-                            {highlight}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+											<div className='absolute top-4 left-4 px-3 py-1 rounded-full bg-black/80 backdrop-blur-sm border border-gold'>
+												<span className='text-xs text-gold font-medium'>
+													PAST EVENT
+												</span>
+											</div>
+										</motion.div>
+									</div>
 
-                    {/* View More Button - Also clickable to external link */}
-                    {event.link && (
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => openLink(event.link!)}
-                        className="w-full mt-6 px-4 py-2 rounded-lg border border-gold text-gold text-sm font-medium hover:bg-gold/10 transition flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <span>View Video Highlight</span>
-                        <ExternalLink className="w-3 h-3" />
-                      </motion.button>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-    </main>
-  );
+									{/* Event Content */}
+									<div className='p-6'>
+										<div className='mb-4'>
+											<h3 className='text-xl font-bold text-white mb-2 group-hover:text-gold transition-colors'>
+												{event.title}
+											</h3>
+											<p className='text-gray-300 text-sm mb-4'>
+												{event.description}
+											</p>
+										</div>
+
+										{/* Event Details */}
+										<div className='space-y-3 mb-6'>
+											<div className='flex items-center gap-3'>
+												<Calendar className='w-4 h-4 text-gold' />
+												<span className='text-sm text-gray-300'>
+													{event.date}
+												</span>
+											</div>
+											<div className='flex items-center gap-3'>
+												<MapPin className='w-4 h-4 text-gold' />
+												<span className='text-sm text-gray-300'>
+													{event.location}
+												</span>
+											</div>
+											<div className='flex items-center gap-3'>
+												<Users className='w-4 h-4 text-gold' />
+												<span className='text-sm text-gray-300'>
+													{event.attendees} attendees
+												</span>
+											</div>
+										</div>
+
+										{/* Event Highlights */}
+										<div>
+											<h4 className='text-sm font-semibold text-gold mb-2'>
+												Highlights:
+											</h4>
+											<div className='flex flex-wrap gap-2'>
+												{event.highlights.map(
+													(highlight, idx) => (
+														<span
+															key={idx}
+															className='px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-xs text-gray-300'
+														>
+															{highlight}
+														</span>
+													),
+												)}
+											</div>
+										</div>
+
+										{/* View More Button - Also clickable to external link */}
+										{event.link && (
+											<motion.button
+												whileHover={{ scale: 1.05 }}
+												whileTap={{ scale: 0.95 }}
+												onClick={() =>
+													openLink(event.link!)
+												}
+												className='w-full mt-6 px-4 py-2 rounded-lg border border-gold text-gold text-sm font-medium hover:bg-gold/10 transition flex items-center justify-center gap-2 cursor-pointer'
+											>
+												<span>
+													View Video Highlight
+												</span>
+												<ExternalLink className='w-3 h-3' />
+											</motion.button>
+										)}
+									</div>
+								</div>
+							</motion.div>
+						))}
+					</div>
+				</div>
+			</section>
+		</main>
+	)
 }
