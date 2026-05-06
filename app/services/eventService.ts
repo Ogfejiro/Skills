@@ -270,6 +270,37 @@ class EventService {
 		}
 	}
 
+	async getPublicEventById(
+		eventId: string,
+	): Promise<{ success: boolean; data: Event }> {
+		try {
+			console.log('📖 Fetching public event:', eventId)
+
+			const response = await fetch(
+				`${this.baseUrl}/api/event-public/${eventId}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			)
+
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Get public event error:', error)
+				throw new Error(error.message || 'Failed to fetch event')
+			}
+
+			const result = await response.json()
+			console.log('✅ Public event fetched successfully:', result.data)
+			return result
+		} catch (error) {
+			console.error('❌ Get public event service error:', error)
+			throw error
+		}
+	}
+
 	async getPublicEvents(
 		page: number = 1,
 		limit: number = 10,

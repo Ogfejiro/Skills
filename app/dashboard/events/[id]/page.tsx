@@ -19,6 +19,9 @@ import {
 	List,
 	ListOrdered,
 	Mail,
+	Share2,
+	Copy,
+	Check,
 } from 'lucide-react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
@@ -44,6 +47,8 @@ export default function ViewEventPage() {
 	const [showModal, setShowModal] = useState(false)
 	const [editingTicket, setEditingTicket] = useState<Ticket | null>(null)
 	const [creating, setProcessing] = useState(false)
+
+	const [linkCopied, setLinkCopied] = useState(false)
 
 	const [eventEmail, setEventEmail] = useState<EventEmail | null>(null)
 	const [emailLoading, setEmailLoading] = useState(true)
@@ -348,6 +353,20 @@ export default function ViewEventPage() {
 		}
 	}
 
+	const handleCopyShareLink = async () => {
+		if (typeof window === 'undefined') return
+		const shareUrl = `${window.location.origin}/events/${eventId}`
+
+		try {
+			await navigator.clipboard.writeText(shareUrl)
+			setLinkCopied(true)
+			setTimeout(() => setLinkCopied(false), 2000)
+		} catch (err) {
+			console.error('Copy failed:', err)
+			alert(`Copy this link:\n${shareUrl}`)
+		}
+	}
+
 	const formatDate = (dateString: string) => {
 		return new Date(dateString).toLocaleDateString('en-US', {
 			month: 'long',
@@ -497,10 +516,10 @@ export default function ViewEventPage() {
 						</div>
 					</div>
 				)}
-				<div className='flex gap-4 pt-4'>
+				<div className='flex gap-4 pt-4 flex-wrap'>
 					<Link
 						href={`/dashboard/events/${event._id}/edit`}
-						className='flex-1 px-6 py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition text-center'
+						className='flex-1 min-w-[160px] px-6 py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition text-center'
 					>
 						{' '}
 						Edit Event{' '}
@@ -508,7 +527,7 @@ export default function ViewEventPage() {
 					<button
 						onClick={openEmailModal}
 						disabled={emailLoading}
-						className='flex-1 px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center flex items-center justify-center gap-2 disabled:opacity-50'
+						className='flex-1 min-w-[160px] px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center flex items-center justify-center gap-2 disabled:opacity-50'
 					>
 						<Mail className='w-4 h-4' />
 						{emailLoading
@@ -517,6 +536,31 @@ export default function ViewEventPage() {
 								? 'View Event Email'
 								: 'Create Event Email'}
 					</button>
+					<button
+						onClick={handleCopyShareLink}
+						className='flex-1 min-w-[160px] px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center flex items-center justify-center gap-2'
+					>
+						{linkCopied ? (
+							<>
+								<Check className='w-4 h-4 text-green-400' />
+								Link Copied!
+							</>
+						) : (
+							<>
+								<Share2 className='w-4 h-4' />
+								Copy Share Link
+							</>
+						)}
+					</button>
+				</div>
+
+				<div className='mt-4 bg-black/40 border border-gold/10 rounded-lg p-3 flex items-center gap-2 text-sm'>
+					<Copy className='w-4 h-4 text-gold flex-shrink-0' />
+					<code className='text-gray-300 truncate flex-1'>
+						{typeof window !== 'undefined'
+							? `${window.location.origin}/events/${event._id}`
+							: `/events/${event._id}`}
+					</code>
 				</div>
 			</div>
 

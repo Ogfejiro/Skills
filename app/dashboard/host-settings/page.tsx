@@ -35,9 +35,7 @@ export default function HostSettingsPage() {
 	const [loading, setLoading] = useState(true)
 	const [saving, setSaving] = useState(false)
 	const [hostProfile, setHostProfile] = useState<any>(null)
-	const [walletType, setWalletType] = useState<'solana' | 'ethereum'>(
-		'ethereum',
-	)
+	const walletType: 'solana' = 'solana'
 
 	const [formData, setFormData] = useState({
 		organization: '',
@@ -117,11 +115,6 @@ export default function HostSettingsPage() {
 					conversionRate: response.data.conversionRate || 1400,
 					socials,
 				})
-				setWalletType(
-					response.data.walletType === 'solana'
-						? 'solana'
-						: 'ethereum',
-				)
 			}
 		} catch (error: any) {
 			toast.error('Failed to load host profile')
@@ -301,72 +294,38 @@ export default function HostSettingsPage() {
 							</div>
 
 							<div className='space-y-6'>
-								{/* Wallet Type Selection */}
+								{/* Wallet Type (Solana only) */}
 								<div>
 									<label className='block text-sm font-medium text-gray-300 mb-3'>
-										Select Wallet Type
+										Wallet Type
 									</label>
-									<div className='grid grid-cols-2 gap-4'>
-										<button
-											type='button'
-											onClick={() =>
-												setWalletType('ethereum')
-											}
-											className={`p-4 rounded-lg border-2 transition ${
-												walletType === 'ethereum'
-													? 'border-[#c9a227] bg-[#c9a227]/10'
-													: 'border-white/[0.08] bg-white/[0.03] hover:border-[#c9a227]/30'
-											}`}
-										>
-											<div className='text-lg font-bold mb-1'>
-												Ethereum (ETH)
-											</div>
-											<div className='text-sm text-gray-400'>
-												ERC-20 compatible
-											</div>
-										</button>
-										<button
-											type='button'
-											onClick={() =>
-												setWalletType('solana')
-											}
-											className={`p-4 rounded-lg border-2 transition ${
-												walletType === 'solana'
-													? 'border-[#c9a227] bg-[#c9a227]/10'
-													: 'border-white/[0.08] bg-white/[0.03] hover:border-[#c9a227]/30'
-											}`}
-										>
-											<div className='text-lg font-bold mb-1'>
-												Solana (SOL)
-											</div>
-											<div className='text-sm text-gray-400'>
-												SPL token compatible
-											</div>
-										</button>
+									<div className='p-4 rounded-lg border-2 border-[#c9a227] bg-[#c9a227]/10'>
+										<div className='text-lg font-bold mb-1'>
+											Solana (SOL)
+										</div>
+										<div className='text-sm text-gray-400'>
+											All crypto withdrawals are processed
+											in SOL.
+										</div>
 									</div>
 								</div>
 
 								{/* Wallet Address */}
 								<div>
 									<label className='block text-sm font-medium text-gray-300 mb-2'>
-										Wallet Address (Optional)
+										Solana Wallet Address (Optional)
 									</label>
 									<input
 										type='text'
 										name='walletAddress'
 										value={formData.walletAddress}
 										onChange={handleInputChange}
-										placeholder={
-											walletType === 'ethereum'
-												? '0x...'
-												: 'Your Solana wallet address'
-										}
+										placeholder='Your Solana wallet address'
 										className='w-full px-4 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-white placeholder-gray-600 text-sm focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition font-mono text-sm'
 									/>
 									<p className='text-xs text-gray-500 mt-2'>
-										{walletType === 'ethereum'
-											? 'Enter your Ethereum wallet address where payouts will be sent'
-											: 'Enter your Solana wallet address where payouts will be sent'}
+										Enter your Solana wallet address where
+										payouts will be sent.
 									</p>
 								</div>
 

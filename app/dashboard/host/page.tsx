@@ -209,6 +209,9 @@ export default function HostDashboard() {
 		setShowWithdrawalModal(true)
 	}
 
+	const conversionRate = hostProfile?.conversionRate || 1400
+	const MIN_WITHDRAWAL_USD = 5
+
 	const handleWithdrawal = async () => {
 		try {
 			const amount = parseFloat(withdrawalAmount)
@@ -218,14 +221,14 @@ export default function HostDashboard() {
 				return
 			}
 
-			if (amount < 5000) {
-				toast.error('Minimum withdrawal amount is \u20a65,000')
+			if (amount < MIN_WITHDRAWAL_USD) {
+				toast.error(`Minimum withdrawal amount is $${MIN_WITHDRAWAL_USD}`)
 				return
 			}
 
 			if (amount > stats.totalBalance) {
 				toast.error(
-					`Insufficient balance. Your balance is \u20a6${stats.totalBalance.toLocaleString()}`,
+					`Insufficient balance. Your balance is $${stats.totalBalance.toLocaleString()}`,
 				)
 				return
 			}
@@ -420,8 +423,7 @@ export default function HostDashboard() {
 									<DollarSign className='w-4 h-4 text-emerald-400' />
 								</div>
 								<p className='text-2xl font-bold'>
-									{'\u20a6'}
-									{(stats.totalBalance || 0).toLocaleString()}
+									${(stats.totalBalance || 0).toLocaleString()}
 								</p>
 							</div>
 
@@ -433,8 +435,7 @@ export default function HostDashboard() {
 									<TrendingUp className='w-4 h-4 text-blue-400' />
 								</div>
 								<p className='text-2xl font-bold'>
-									{'\u20a6'}
-									{(stats.revenue || 0).toLocaleString()}
+									${(stats.revenue || 0).toLocaleString()}
 								</p>
 							</div>
 						</div>
@@ -628,8 +629,7 @@ export default function HostDashboard() {
 						<p className='text-sm text-gray-500 text-center mb-6'>
 							Balance:{' '}
 							<span className='font-semibold text-[#c9a227]'>
-								{'\u20a6'}
-								{stats.totalBalance.toLocaleString()}
+								${stats.totalBalance.toLocaleString()}
 							</span>
 						</p>
 
@@ -725,15 +725,13 @@ export default function HostDashboard() {
 
 							<div>
 								<label className='block text-xs font-medium text-gray-400 mb-1.5'>
-									Amount
+									Amount (USD)
 								</label>
 								<div className='flex items-center gap-2'>
-									<span className='text-gray-500 text-sm'>
-										{'\u20a6'}
-									</span>
+									<span className='text-gray-500 text-sm'>$</span>
 									<input
 										type='number'
-										placeholder='5000'
+										placeholder='50'
 										value={withdrawalAmount}
 										onChange={(e) =>
 											setWithdrawalAmount(e.target.value)
@@ -746,18 +744,46 @@ export default function HostDashboard() {
 									/>
 								</div>
 								<p className='text-[11px] text-gray-600 mt-1.5'>
-									Minimum: {'\u20a6'}5,000
+									Minimum: ${MIN_WITHDRAWAL_USD}
 								</p>
+
+								{withdrawalMethod === 'bank' &&
+									withdrawalAmount &&
+									parseFloat(withdrawalAmount) > 0 && (
+										<div className='mt-2 p-3 rounded-lg bg-[#c9a227]/5 border border-[#c9a227]/15 space-y-1'>
+											<p className='text-[11px] text-gray-400'>
+												Conversion rate:{' '}
+												<span className='text-[#c9a227] font-semibold'>
+													1 USD = \u20a6
+													{conversionRate.toLocaleString()}
+												</span>
+											</p>
+											<p className='text-sm text-white font-semibold'>
+												\u2248 \u20a6
+												{(
+													parseFloat(withdrawalAmount) *
+													conversionRate
+												).toLocaleString(undefined, {
+													maximumFractionDigits: 2,
+												})}
+											</p>
+											<p className='text-[10px] text-gray-500'>
+												You will receive this amount in
+												your bank account.
+											</p>
+										</div>
+									)}
 							</div>
 
 							{withdrawalAmount &&
-								parseFloat(withdrawalAmount) < 5000 &&
+								parseFloat(withdrawalAmount) <
+									MIN_WITHDRAWAL_USD &&
 								parseFloat(withdrawalAmount) > 0 && (
 									<div className='flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/15'>
 										<AlertCircle className='w-4 h-4 text-red-400 flex-shrink-0' />
 										<p className='text-xs text-red-400'>
-											Minimum withdrawal amount is{' '}
-											{'\u20a6'}5,000
+											Minimum withdrawal amount is $
+											{MIN_WITHDRAWAL_USD}
 										</p>
 									</div>
 								)}
@@ -800,7 +826,8 @@ export default function HostDashboard() {
 									!hasAnyPaymentMethod ||
 									!withdrawalMethod ||
 									!withdrawalAmount ||
-									parseFloat(withdrawalAmount) < 5000 ||
+									parseFloat(withdrawalAmount) <
+										MIN_WITHDRAWAL_USD ||
 									parseFloat(withdrawalAmount) >
 										stats.totalBalance
 								}
