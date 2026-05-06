@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Calendar, MapPin, X } from 'lucide-react'
+import { Calendar, MapPin, X, AlertCircle } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Props {
 	event: any
@@ -10,6 +10,17 @@ interface Props {
 
 const ViewEventModal = ({ event, isOpen, onClose, onGetTickets }: Props) => {
 	if (!isOpen || !event) return null
+
+	const isLiveEvent = event.status === 'live'
+
+	const handleGetTicketsClick = () => {
+		if (!isLiveEvent) {
+			toast.error('Tickets are only available for live events')
+			return
+		}
+
+		onGetTickets(event._id)
+	}
 
 	return (
 		<div className='fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-4'>
@@ -55,15 +66,32 @@ const ViewEventModal = ({ event, isOpen, onClose, onGetTickets }: Props) => {
 							{event.venue || 'TBA'}
 						</div>
 					</div>
+
+					{!isLiveEvent && (
+						<div className='mt-5 rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-4 text-sm text-yellow-200 flex gap-2 items-start'>
+							<AlertCircle
+								size={16}
+								className='shrink-0 mt-0.5 text-yellow-400'
+							/>
+							<span>
+								This event is not currently live, so tickets are
+								unavailable.
+							</span>
+						</div>
+					)}
 				</div>
 
 				{/* Footer (always visible) */}
 				<div className='p-5 border-t border-white/10'>
 					<button
-						onClick={() => onGetTickets(event._id)}
-						className='w-full bg-[#c9a227] text-black py-3 rounded-md font-bold hover:opacity-90 transition'
+						onClick={handleGetTicketsClick}
+						className={`w-full py-3 rounded-md font-bold transition ${
+							isLiveEvent
+								? 'bg-[#c9a227] text-black hover:opacity-90'
+								: 'bg-white/10 text-gray-400 border border-white/10 hover:bg-white/15'
+						}`}
 					>
-						Get Tickets
+						{isLiveEvent ? 'Get Tickets' : 'Tickets Unavailable'}
 					</button>
 				</div>
 			</div>

@@ -2,6 +2,29 @@ import AppError from '../../services/shared/appError.js'
 import Event from '../../models/Event.model.js'
 import EventTicket from '../../models/EventTicket.model.js'
 import paymentModel from '../../models/payment.model.js'
+import { getAdminConversionRate } from '../../models/AdminSettings.model.js'
+
+function paymentToUsd(payment, fallbackRate) {
+	if (payment.grossUsd !== undefined && payment.grossUsd !== null) {
+		return payment.grossUsd
+	}
+
+	const amount = Number(payment.amount) || 0
+	if (!amount) return 0
+
+	if (payment.currency === 'NGN') {
+		return fallbackRate ? amount / fallbackRate : 0
+	}
+
+	return amount
+}
+
+function sumUsdRevenue(payments, fallbackRate) {
+	return payments.reduce(
+		(sum, payment) => sum + paymentToUsd(payment, fallbackRate),
+		0,
+	)
+}
 
 const eventHostPopulate = {
 	path: 'hostId',
@@ -37,6 +60,7 @@ export async function getAllEventsWithStats(page, limit) {
 		.populate(eventHostPopulate)
 
 	const totalEvents = await Event.countDocuments()
+	const fallbackRate = await getAdminConversionRate()
 
 	const eventsWithStats = await Promise.all(
 		events.map(async (event) => {
@@ -51,16 +75,7 @@ export async function getAllEventsWithStats(page, limit) {
 				status: 'successful',
 			})
 
-			const EXCHANGE_RATE = 1350
-
-			const totalRevenue = payments.reduce((sum, payment) => {
-				const amount = payment.amount || 0
-
-				const normalizedAmount =
-					payment.currency === 'NGN' ? amount : amount * EXCHANGE_RATE
-
-				return sum + normalizedAmount
-			}, 0)
+			const totalRevenue = sumUsdRevenue(payments, fallbackRate)
 
 			return {
 				_id: event._id,
@@ -72,6 +87,7 @@ export async function getAllEventsWithStats(page, limit) {
 				capacity: event.capacity,
 				ticketsSold,
 				totalRevenue,
+				revenueCurrency: 'USD',
 				host: mapHostProfile(event.hostId),
 			}
 		}),
@@ -102,21 +118,12 @@ export async function getAdminAnalytics() {
 
 	const totalTicketsSold = ticketStats[0]?.totalTicketsSold || 0
 
-	const paymentStats = await paymentModel.aggregate([
-		{
-			$match: { status: 'successful' },
-		},
-		{
-			$group: {
-				_id: null,
-				totalEarned: { $sum: '$amount' },
-				totalTransactions: { $sum: 1 },
-			},
-		},
-	])
-
-	const totalAmountEarned = paymentStats[0]?.totalEarned || 0
-	const totalTransactions = paymentStats[0]?.totalTransactions || 0
+	const successfulPayments = await paymentModel.find({
+		status: 'successful',
+	})
+	const fallbackRate = await getAdminConversionRate()
+	const totalAmountEarned = sumUsdRevenue(successfulPayments, fallbackRate)
+	const totalTransactions = successfulPayments.length
 
 	const eventsByStatus = await Event.aggregate([
 		{
@@ -137,6 +144,7 @@ export async function getAdminAnalytics() {
 		totalLiveEvents,
 		totalTicketsSold,
 		totalAmountEarned,
+		revenueCurrency: 'USD',
 		totalTransactions,
 		eventsByStatus: statusBreakdown,
 	}
@@ -213,10 +221,8 @@ export async function getEventByIdAdmin(eventId) {
 		status: 'successful',
 	})
 
-	const totalRevenue = payments.reduce(
-		(sum, payment) => sum + (payment.amount || 0),
-		0,
-	)
+	const fallbackRate = await getAdminConversionRate()
+	const totalRevenue = sumUsdRevenue(payments, fallbackRate)
 	const totalTransactions = payments.length
 
 	return {
@@ -233,6 +239,7 @@ export async function getEventByIdAdmin(eventId) {
 		ticketsAvailable,
 		ticketsRemaining: ticketsAvailable - ticketsSold,
 		totalRevenue,
+		revenueCurrency: 'USD',
 		totalTransactions,
 		ticketDetails: tickets,
 		host: mapHostProfile(event.hostId),
@@ -266,6 +273,7 @@ export async function searchEventsAdmin(searchTerm, page, limit) {
 		.populate(eventHostPopulate)
 
 	const total = await Event.countDocuments(query)
+	const fallbackRate = await getAdminConversionRate()
 
 	const eventsWithStats = await Promise.all(
 		events.map(async (event) => {
@@ -282,10 +290,7 @@ export async function searchEventsAdmin(searchTerm, page, limit) {
 				status: 'successful',
 			})
 
-			const totalRevenue = payments.reduce(
-				(sum, payment) => sum + (payment.amount || 0),
-				0,
-			)
+			const totalRevenue = sumUsdRevenue(payments, fallbackRate)
 
 			return {
 				_id: event._id,
@@ -294,6 +299,7 @@ export async function searchEventsAdmin(searchTerm, page, limit) {
 				status: event.status,
 				ticketsSold,
 				totalRevenue,
+				revenueCurrency: 'USD',
 				host: mapHostProfile(event.hostId),
 			}
 		}),

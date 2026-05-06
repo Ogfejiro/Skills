@@ -15,6 +15,7 @@ const paymentSchema = new mongoose.Schema(
 		paidAmountCrypto: String,
 		outcomeAmount: Number,
 		outcomeCurrency: String,
+		grossUsd: Number,
 		hostEarningsUsd: Number,
 		ticketName: String,
 	},

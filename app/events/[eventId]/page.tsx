@@ -16,6 +16,7 @@ import eventService from '@/app/services/eventService'
 import ticketService from '@/app/services/ticketService'
 import Navbar from '@/components/Navbar'
 import PaymentModal from '@/components/PaymentModal'
+import { toast } from 'sonner'
 
 export default function EventDetailPage() {
 	const params = useParams()
@@ -33,6 +34,7 @@ export default function EventDetailPage() {
 	const [selectedTicket, setSelectedTicket] = useState<any>(null)
 	const [isPaymentOpen, setIsPaymentOpen] = useState(false)
 	const [copied, setCopied] = useState(false)
+	const isLiveEvent = event?.status === 'live'
 
 	useEffect(() => {
 		if (!eventId) return
@@ -56,6 +58,11 @@ export default function EventDetailPage() {
 	}, [eventId])
 
 	const handleGetTickets = async () => {
+		if (!isLiveEvent) {
+			toast.error('Tickets are only available for live events')
+			return
+		}
+
 		try {
 			setTicketsLoading(true)
 			setTicketsError('')
@@ -228,11 +235,28 @@ export default function EventDetailPage() {
 									)}
 							</div>
 
+							{!isLiveEvent && (
+								<div className='mb-6 rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-4 text-sm text-yellow-200 flex gap-2 items-start'>
+									<AlertCircle
+										size={18}
+										className='shrink-0 mt-0.5 text-yellow-400'
+									/>
+									<span>
+										This event is not currently live, so tickets
+										are unavailable.
+									</span>
+								</div>
+							)}
+
 							<button
 								onClick={handleGetTickets}
-								className='w-full sm:w-auto bg-[#c9a227] hover:bg-[#b8921f] text-black px-8 py-3 rounded-md font-bold transition'
+								className={`w-full sm:w-auto px-8 py-3 rounded-md font-bold transition ${
+									isLiveEvent
+										? 'bg-[#c9a227] hover:bg-[#b8921f] text-black'
+										: 'bg-white/10 text-gray-400 border border-white/10 hover:bg-white/15'
+								}`}
 							>
-								Get Tickets
+								{isLiveEvent ? 'Get Tickets' : 'Tickets Unavailable'}
 							</button>
 						</div>
 					</div>

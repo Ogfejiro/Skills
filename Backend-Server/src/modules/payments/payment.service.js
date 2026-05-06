@@ -245,7 +245,7 @@ export async function handleFlutterwaveWebhook(payload) {
 
 		await Payment.updateOne(
 			{ _id: updatedPayment._id },
-			{ hostEarningsUsd: hostEarnings },
+			{ grossUsd: usdAmount, hostEarningsUsd: hostEarnings },
 		)
 
 		hostProfile.balance += hostEarnings
@@ -550,7 +550,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 
 		await Payment.updateOne(
 			{ _id: updatedPayment._id },
-			{ hostEarningsUsd: hostEarnings },
+			{ grossUsd: usdCredited, hostEarningsUsd: hostEarnings },
 		)
 
 		hostProfile.balance += hostEarnings
