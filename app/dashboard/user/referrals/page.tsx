@@ -16,24 +16,23 @@ import {
 	X,
 } from 'lucide-react'
 import DashboardSidebar from '@/components/DashboardSidebar'
-import referralService, { Referral } from '@/app/services/referralService'
+import referralService, {
+	Referee,
+	Commission,
+	ReferralOverview,
+} from '@/app/services/referralService'
 import { toast } from 'sonner'
 
 type WithdrawalMethod = 'bank' | 'crypto'
 
 export default function ReferralsPage() {
-	const {
-		user,
-		isAuthenticated,
-		loading: authLoading,
-		token,
-	} = useAuth()
+	const { user, isAuthenticated, loading: authLoading, token } = useAuth()
 	const router = useRouter()
 
 	const [loading, setLoading] = useState(true)
-	const [referrals, setReferrals] = useState<Referral[]>([])
-	const [totalEarned, setTotalEarned] = useState(0)
-	const [currency, setCurrency] = useState<'USD' | 'NGN'>('USD')
+	const [overview, setOverview] = useState<ReferralOverview | null>(null)
+	const [referees, setReferees] = useState<Referee[]>([])
+	const [commissions, setCommissions] = useState<Commission[]>([])
 	const [error, setError] = useState('')
 	const [copiedField, setCopiedField] = useState<'id' | 'link' | null>(null)
 	const [activeTab, setActiveTab] = useState<'list' | 'commissions'>('list')
@@ -48,20 +47,23 @@ export default function ReferralsPage() {
 		accountName: '',
 		accountNo: '',
 	})
+	const [walletType, setWalletType] = useState('SOL')
 	const [walletAddress, setWalletAddress] = useState('')
 
-	const refId = user?.refId || ''
+	const refId = overview?.refId || ''
 
 	const referralLink =
 		typeof window !== 'undefined' && refId
 			? `${window.location.origin}/auth/register?ref=${refId}`
 			: ''
 
-	const currencySymbol = currency === 'USD' ? '$' : '₦'
+	const currencySymbol = '$'
 	const MIN_WITHDRAWAL_USD = 5
 
-	const paidCommissions = referrals.filter((r) => r.status === 'paid')
-	const pendingCommissions = referrals.filter((r) => r.status !== 'paid')
+	const paidCommissions = commissions.filter((c) => c.status === 'rewarded')
+	const pendingCommissions = commissions.filter(
+		(c) => c.status !== 'rewarded',
+	)
 
 	useEffect(() => {
 		if (authLoading) return
@@ -71,29 +73,33 @@ export default function ReferralsPage() {
 			return
 		}
 
-		const fetchReferrals = async () => {
+		const fetchReferralData = async () => {
 			try {
 				if (!token) return
 				setLoading(true)
 				setError('')
 
-				const res = await referralService.getMyReferrals(token)
+				const [overviewRes, refereesRes, commissionsRes] =
+					await Promise.all([
+						referralService.getMyOverview(token),
+						referralService.getMyReferees(token, 1, 100),
+						referralService.getMyCommissions(token, 1, 100),
+					])
 
-				if (res?.success && res.data) {
-					setReferrals(res.data.referrals || [])
-					setTotalEarned(res.data.totalEarned || 0)
-					setCurrency(res.data.currency || 'USD')
-				}
+				setOverview(overviewRes)
+				setReferees(refereesRes?.referees || [])
+				setCommissions(commissionsRes?.entries || [])
 			} catch (err: any) {
-				setReferrals([])
-				setTotalEarned(0)
-				setError(err?.message || 'Could not load referrals yet')
+				setError(err?.message || 'Could not load referral data')
+				setOverview(null)
+				setReferees([])
+				setCommissions([])
 			} finally {
 				setLoading(false)
 			}
 		}
 
-		fetchReferrals()
+		fetchReferralData()
 	}, [authLoading, isAuthenticated, token])
 
 	const copyToClipboard = async (text: string, field: 'id' | 'link') => {
@@ -102,7 +108,9 @@ export default function ReferralsPage() {
 			await navigator.clipboard.writeText(text)
 			setCopiedField(field)
 			setTimeout(() => setCopiedField(null), 2000)
-			toast.success(field === 'id' ? 'Referral code copied' : 'Link copied')
+			toast.success(
+				field === 'id' ? 'Referral code copied' : 'Link copied',
+			)
 		} catch (err) {
 			toast.error('Could not copy. Please copy manually.')
 		}
@@ -129,6 +137,7 @@ export default function ReferralsPage() {
 		setWithdrawalAmount('')
 		setWithdrawalMethod('bank')
 		setBankDetails({ bankName: '', accountName: '', accountNo: '' })
+		setWalletType('SOL')
 		setWalletAddress('')
 		setShowWithdrawal(true)
 	}
@@ -151,7 +160,7 @@ export default function ReferralsPage() {
 			return
 		}
 
-		if (amount > totalEarned) {
+		if (amount > (overview?.referralWallet || 0)) {
 			toast.error('Amount exceeds your earnings')
 			return
 		}
@@ -167,7 +176,11 @@ export default function ReferralsPage() {
 			}
 		} else {
 			if (!walletAddress.trim()) {
-				toast.error('Enter your Solana wallet address')
+				toast.error('Enter your wallet address')
+				return
+			}
+			if (!walletType.trim()) {
+				toast.error('Select a wallet type')
 				return
 			}
 		}
@@ -181,11 +194,14 @@ export default function ReferralsPage() {
 					paymentInfo:
 						withdrawalMethod === 'bank'
 							? {
-								bankName: bankDetails.bankName.trim(),
-								accountName: bankDetails.accountName.trim(),
-								accountNo: bankDetails.accountNo.trim(),
-							}
-							: { walletAddress: walletAddress.trim() },
+									bankName: bankDetails.bankName.trim(),
+									accountName: bankDetails.accountName.trim(),
+									accountNo: bankDetails.accountNo.trim(),
+								}
+							: {
+									walletType: walletType.trim(),
+									walletAddress: walletAddress.trim(),
+								},
 				},
 				token,
 			)
@@ -195,6 +211,10 @@ export default function ReferralsPage() {
 					'Withdrawal requested! Funds usually arrive within 24-48 hours.',
 				)
 				setShowWithdrawal(false)
+				// Refresh overview to show updated balance
+				const updatedOverview =
+					await referralService.getMyOverview(token)
+				setOverview(updatedOverview)
 			}
 		} catch (err: any) {
 			toast.error(err?.message || 'Failed to request withdrawal')
@@ -273,12 +293,13 @@ export default function ReferralsPage() {
 										<DollarSign className='w-4 h-4 text-emerald-400 flex-shrink-0' />
 										<div className='min-w-0'>
 											<p className='text-[10px] uppercase tracking-wide text-gray-400'>
-												Earnings
+												Available
 											</p>
 											<p className='text-base font-bold text-emerald-300'>
 												{currencySymbol}
 												{(
-													totalEarned || 0
+													overview?.referralWallet ||
+													0
 												).toLocaleString()}
 											</p>
 										</div>
@@ -301,7 +322,10 @@ export default function ReferralsPage() {
 									</code>
 									<button
 										onClick={() =>
-											copyToClipboard(referralLink, 'link')
+											copyToClipboard(
+												referralLink,
+												'link',
+											)
 										}
 										disabled={!referralLink}
 										className='flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-gray-300 bg-white/5 hover:bg-white/10 rounded transition disabled:opacity-40'
@@ -339,7 +363,7 @@ export default function ReferralsPage() {
 
 							<button
 								onClick={openWithdrawalModal}
-								disabled={totalEarned <= 0}
+								disabled={(overview?.referralWallet || 0) <= 0}
 								className='flex items-center justify-center gap-2 px-5 py-2.5 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10 disabled:opacity-40 disabled:cursor-not-allowed font-semibold rounded-lg transition'
 							>
 								<Wallet className='w-4 h-4' />
@@ -353,12 +377,12 @@ export default function ReferralsPage() {
 						<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-4'>
 							<div className='flex items-center justify-between mb-2'>
 								<p className='text-xs text-gray-500'>
-									Total Referrals
+									People Referred
 								</p>
 								<Users className='w-4 h-4 text-[#c9a227]' />
 							</div>
 							<p className='text-2xl font-bold'>
-								{referrals.length}
+								{overview?.totalReferred || 0}
 							</p>
 						</div>
 
@@ -371,7 +395,9 @@ export default function ReferralsPage() {
 							</div>
 							<p className='text-2xl font-bold'>
 								{currencySymbol}
-								{(totalEarned || 0).toLocaleString()}
+								{(
+									overview?.referralEarningsTotal || 0
+								).toLocaleString()}
 							</p>
 						</div>
 					</div>
@@ -410,17 +436,19 @@ export default function ReferralsPage() {
 							</div>
 						</div>
 
-						{error && referrals.length === 0 && (
-							<div className='p-5 flex items-start gap-2 bg-yellow-500/5 border-b border-yellow-500/10'>
-								<AlertCircle className='w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5' />
-								<p className='text-xs text-yellow-300'>
-									{error}
-								</p>
-							</div>
-						)}
+						{error &&
+							referees.length === 0 &&
+							commissions.length === 0 && (
+								<div className='p-5 flex items-start gap-2 bg-yellow-500/5 border-b border-yellow-500/10'>
+									<AlertCircle className='w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5' />
+									<p className='text-xs text-yellow-300'>
+										{error}
+									</p>
+								</div>
+							)}
 
 						{activeTab === 'list' ? (
-							referrals.length === 0 ? (
+							referees.length === 0 ? (
 								<div className='p-12 text-center'>
 									<Users className='w-10 h-10 text-gray-700 mx-auto mb-3' />
 									<p className='text-gray-500 text-sm mb-1'>
@@ -432,23 +460,26 @@ export default function ReferralsPage() {
 								</div>
 							) : (
 								<div className='divide-y divide-white/[0.04]'>
-									{referrals.map((r) => (
+									{referees.map((referee) => (
 										<div
-											key={r._id}
+											key={referee.id}
 											className='p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/[0.02] transition'
 										>
 											<div className='min-w-0'>
 												<p className='text-sm font-semibold text-white truncate'>
-													{r.refereeName || 'Anonymous'}
+													{referee.firstName &&
+													referee.lastName
+														? `${referee.firstName} ${referee.lastName}`
+														: referee.email}
 												</p>
-												{r.refereeEmail && (
+												{referee.email && (
 													<p className='text-xs text-gray-500 truncate'>
-														{r.refereeEmail}
+														{referee.email}
 													</p>
 												)}
 												<p className='text-[11px] text-gray-600 mt-0.5'>
 													{new Date(
-														r.createdAt,
+														referee.joinedAt,
 													).toLocaleDateString(
 														'en-US',
 														{
@@ -459,25 +490,11 @@ export default function ReferralsPage() {
 													)}
 												</p>
 											</div>
-
-											<div className='flex items-center gap-3'>
-												{r.status && (
-													<span
-														className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${
-															r.status === 'paid'
-																? 'bg-green-500/10 text-green-400 border-green-500/20'
-																: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-														}`}
-													>
-														{r.status}
-													</span>
-												)}
-											</div>
 										</div>
 									))}
 								</div>
 							)
-						) : referrals.length === 0 ? (
+						) : commissions.length === 0 ? (
 							<div className='p-12 text-center'>
 								<DollarSign className='w-10 h-10 text-gray-700 mx-auto mb-3' />
 								<p className='text-gray-500 text-sm mb-1'>
@@ -493,15 +510,14 @@ export default function ReferralsPage() {
 								<div className='grid grid-cols-2 gap-px bg-white/[0.04]'>
 									<div className='bg-[#111118] p-4'>
 										<p className='text-xs text-gray-500 mb-1'>
-											Paid out
+											Rewarded
 										</p>
 										<p className='text-base font-bold text-green-400'>
 											{currencySymbol}
 											{paidCommissions
 												.reduce(
-													(sum, r) =>
-														sum +
-														(r.amountEarned || 0),
+													(sum, c) =>
+														sum + (c.amount || 0),
 													0,
 												)
 												.toLocaleString()}
@@ -515,9 +531,8 @@ export default function ReferralsPage() {
 											{currencySymbol}
 											{pendingCommissions
 												.reduce(
-													(sum, r) =>
-														sum +
-														(r.amountEarned || 0),
+													(sum, c) =>
+														sum + (c.amount || 0),
 													0,
 												)
 												.toLocaleString()}
@@ -526,20 +541,22 @@ export default function ReferralsPage() {
 								</div>
 
 								<div className='divide-y divide-white/[0.04]'>
-									{referrals.map((r) => (
+									{commissions.map((commission) => (
 										<div
-											key={r._id}
+											key={commission.id}
 											className='p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-white/[0.02] transition'
 										>
 											<div className='min-w-0'>
 												<p className='text-sm font-semibold text-white truncate'>
-													{r.refereeName ||
-														r.refereeEmail ||
-														'Referral'}
+													{commission.referee
+														? `${commission.referee.firstName || ''} ${commission.referee.lastName || ''}`.trim() ||
+														  commission.referee
+															.email
+														: 'Unknown'}
 												</p>
 												<p className='text-[11px] text-gray-600 mt-0.5'>
 													{new Date(
-														r.createdAt,
+														commission.createdAt,
 													).toLocaleDateString(
 														'en-US',
 														{
@@ -552,23 +569,23 @@ export default function ReferralsPage() {
 											</div>
 
 											<div className='flex items-center gap-3'>
-												{r.status && (
-													<span
-														className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${
-															r.status === 'paid'
-																? 'bg-green-500/10 text-green-400 border-green-500/20'
-																: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
-														}`}
-													>
-														{r.status}
-													</span>
-												)}
+												<span
+													className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${
+														commission.status ===
+														'rewarded'
+															? 'bg-green-500/10 text-green-400 border-green-500/20'
+															: commission.status ===
+														  'qualified'
+														? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+														: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+													}`}
+												>
+													{commission.status}
+												</span>
 												<p className='text-sm font-bold text-emerald-400'>
-													{r.currency === 'NGN'
-														? '₦'
-														: '$'}
+													$
 													{(
-														r.amountEarned || 0
+														commission.amount || 0
 													).toLocaleString()}
 												</p>
 											</div>
@@ -601,7 +618,7 @@ export default function ReferralsPage() {
 							Available:{' '}
 							<span className='font-semibold text-emerald-400'>
 								{currencySymbol}
-								{totalEarned.toLocaleString()}
+								{(overview?.referralWallet || 0).toLocaleString()}
 							</span>
 						</p>
 
@@ -729,22 +746,48 @@ export default function ReferralsPage() {
 
 							{/* Crypto Wallet */}
 							{withdrawalMethod === 'crypto' && (
-								<div className='p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]'>
-									<label className='block text-xs font-medium text-gray-400 mb-1.5'>
-										Solana Wallet Address
-									</label>
-									<input
-										type='text'
-										value={walletAddress}
-										onChange={(e) =>
-											setWalletAddress(e.target.value)
-										}
-										placeholder='Your SOL wallet address'
-										disabled={withdrawing}
-										className='w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white text-sm font-mono focus:outline-none focus:border-[#c9a227]/50'
-									/>
-									<p className='text-[11px] text-gray-500 mt-1.5'>
-										Withdrawals are processed in SOL only.
+								<div className='space-y-3 p-3 rounded-lg bg-white/[0.02] border border-white/[0.05]'>
+									<div>
+										<label className='block text-xs font-medium text-gray-400 mb-1.5'>
+											Wallet Type
+										</label>
+										<select
+											value={walletType}
+											onChange={(e) =>
+												setWalletType(e.target.value)
+											}
+											disabled={withdrawing}
+											className='w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white text-sm focus:outline-none focus:border-[#c9a227]/50'
+										>
+											<option value='SOL'>
+												Solana (SOL)
+											</option>
+											<option value='USDC'>
+												USDC
+											</option>
+											<option value='USDT'>
+												Tether (USDT)
+											</option>
+										</select>
+									</div>
+									<div>
+										<label className='block text-xs font-medium text-gray-400 mb-1.5'>
+											Wallet Address
+										</label>
+										<input
+											type='text'
+											value={walletAddress}
+											onChange={(e) =>
+												setWalletAddress(e.target.value)
+											}
+											placeholder='Your wallet address'
+											disabled={withdrawing}
+											className='w-full px-3 py-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white text-sm font-mono focus:outline-none focus:border-[#c9a227]/50'
+										/>
+									</div>
+									<p className='text-[11px] text-gray-500'>
+										Double-check your wallet address to
+										avoid losing funds.
 									</p>
 								</div>
 							)}
