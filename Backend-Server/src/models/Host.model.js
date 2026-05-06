@@ -50,6 +50,10 @@ const hostSchema = new mongoose.Schema(
 			default: 1400, // NGN per USD unit, host editable
 			min: 100,
 		},
+		balanceMigratedToUsd: {
+			type: Boolean,
+			default: true,
+		},
 		bankName: {
 			type: String,
 		},
