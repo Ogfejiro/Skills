@@ -7,6 +7,7 @@ import DashboardSidebar from '@/components/DashboardSidebar'
 import adminService, {
 	AdminEvent,
 	Analytics,
+	AdminSettings,
 } from '@/app/services/adminService'
 import {
 	Loader2,
@@ -28,6 +29,7 @@ import {
 	FileText,
 	Shield,
 	Activity,
+	Save,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -53,6 +55,10 @@ export default function AdminDashboard() {
 	const [showDetailModal, setShowDetailModal] = useState(false)
 	const [newStatus, setNewStatus] = useState<'draft' | 'Auditing' | 'live' | 'ended' | 'cancelled'>('live')
 	const [actionLoading, setActionLoading] = useState(false)
+	const [settingsLoading, setSettingsLoading] = useState(true)
+	const [savingConversionRate, setSavingConversionRate] = useState(false)
+	const [adminSettings, setAdminSettings] = useState<AdminSettings | null>(null)
+	const [conversionRateInput, setConversionRateInput] = useState('1500')
 	const [pagination, setPagination] = useState({
 		page: 1,
 		limit: 10,
@@ -79,9 +85,10 @@ export default function AdminDashboard() {
 			setLoading(true)
 			if (!token) throw new Error('No authentication token')
 
-			const [eventsData, analyticsData] = await Promise.all([
+			const [eventsData, analyticsData, settingsData] = await Promise.all([
 				adminService.getAllEvents(1, 10, token),
 				adminService.getAnalytics(token),
+				adminService.getSettings(token),
 			])
 
 			setEvents(normalizeEventsResponse(eventsData))
@@ -92,11 +99,14 @@ export default function AdminDashboard() {
 				totalPages: eventsData.totalPages ?? 1,
 			})
 			setAnalytics(analyticsData)
+			setAdminSettings(settingsData)
+			setConversionRateInput(String(settingsData.conversionRate ?? 1500))
 		} catch (err: any) {
 			toast.error(err.message || 'Failed to load dashboard')
 			console.error(err)
 		} finally {
 			setLoading(false)
+			setSettingsLoading(false)
 		}
 	}
 
@@ -132,6 +142,31 @@ export default function AdminDashboard() {
 			toast.error(err.message || 'Failed to update status')
 		} finally {
 			setActionLoading(false)
+		}
+	}
+
+	const handleSaveConversionRate = async () => {
+		if (!token) return
+
+		const conversionRate = Number(conversionRateInput)
+		if (!Number.isFinite(conversionRate) || conversionRate < 100) {
+			toast.error('Conversion rate must be a number of at least 100')
+			return
+		}
+
+		try {
+			setSavingConversionRate(true)
+			const updatedSettings = await adminService.updateSettings(
+				{ conversionRate },
+				token,
+			)
+			setAdminSettings(updatedSettings)
+			setConversionRateInput(String(updatedSettings.conversionRate))
+			toast.success('Conversion rate updated successfully')
+		} catch (err: any) {
+			toast.error(err.message || 'Failed to update conversion rate')
+		} finally {
+			setSavingConversionRate(false)
 		}
 	}
 
@@ -258,6 +293,89 @@ export default function AdminDashboard() {
 							<div className='px-3 py-1.5 bg-[#c9a227]/10 border border-[#c9a227]/20 rounded-lg flex items-center gap-2'>
 								<Shield className='w-4 h-4 text-[#c9a227]' />
 								<span className='text-xs font-semibold text-[#c9a227]'>Admin</span>
+							</div>
+						</div>
+					</div>
+
+					<div className='bg-[#111118] rounded-xl border border-white/[0.06] p-5 mb-8'>
+						<div className='flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4'>
+							<div className='max-w-xl'>
+								<h2 className='text-lg font-semibold flex items-center gap-2'>
+									<DollarSign className='w-5 h-5 text-[#c9a227]' />
+									Admin Conversion Rate
+								</h2>
+								<p className='text-sm text-gray-500 mt-1'>
+									This rate is used for admin-controlled NGN payout
+									calculations such as host bank withdrawals.
+								</p>
+								{adminSettings?.updatedAt && (
+									<p className='text-[11px] text-gray-600 mt-2'>
+										Last updated:{' '}
+										{new Date(
+											adminSettings.updatedAt,
+										).toLocaleString('en-US', {
+											month: 'short',
+											day: 'numeric',
+											year: 'numeric',
+											hour: 'numeric',
+											minute: '2-digit',
+										})}
+									</p>
+								)}
+							</div>
+
+							<div className='w-full lg:w-auto lg:min-w-[360px]'>
+								<label className='block text-xs font-medium text-gray-400 mb-1.5'>
+									Conversion Rate (NGN per USD)
+								</label>
+								<div className='flex flex-col sm:flex-row gap-3'>
+									<input
+										type='number'
+										min='100'
+										value={conversionRateInput}
+										onChange={(e) =>
+											setConversionRateInput(
+												e.target.value,
+											)
+										}
+										disabled={
+											settingsLoading ||
+											savingConversionRate
+										}
+										className='flex-1 px-4 py-2.5 rounded-lg bg-white/[0.03] border border-white/[0.08] text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#c9a227]/50 focus:ring-1 focus:ring-[#c9a227]/30 transition disabled:opacity-60'
+										placeholder='1500'
+									/>
+									<button
+										onClick={handleSaveConversionRate}
+										disabled={
+											settingsLoading ||
+											savingConversionRate ||
+											!conversionRateInput.trim()
+										}
+										className='px-4 py-2.5 rounded-lg bg-[#c9a227] text-black text-sm font-bold hover:bg-[#d4b84a] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 whitespace-nowrap'
+									>
+										{savingConversionRate ? (
+											<>
+												<Loader2 className='w-4 h-4 animate-spin' />
+												Saving...
+											</>
+										) : (
+											<>
+												<Save className='w-4 h-4' />
+												Save Rate
+											</>
+										)}
+									</button>
+								</div>
+								<p className='text-[11px] text-gray-600 mt-1.5'>
+									Current payout rate preview:{' '}
+									<span className='text-[#c9a227]'>
+										1 USD = NGN{' '}
+										{Number(
+											conversionRateInput || 0,
+										).toLocaleString()}
+									</span>
+								</p>
 							</div>
 						</div>
 					</div>

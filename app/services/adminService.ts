@@ -55,6 +55,11 @@ export interface SearchEventsResponse {
 	totalPages: number
 }
 
+export interface AdminSettings {
+	conversionRate: number
+	updatedAt: string
+}
+
 class AdminService {
 	private baseUrl =
 		process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com'
@@ -242,6 +247,54 @@ class AdminService {
 			return result.data
 		} catch (error) {
 			console.error('❌ Error searching events:', error)
+			throw error
+		}
+	}
+
+	async getSettings(token: string): Promise<AdminSettings> {
+		try {
+			const response = await fetch(`${this.baseUrl}/api/admin/settings`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+			})
+
+			if (!response.ok) {
+				const error = await response.json()
+				throw new Error(error.message || 'Failed to fetch settings')
+			}
+
+			return response.json()
+		} catch (error) {
+			console.error('❌ Error fetching admin settings:', error)
+			throw error
+		}
+	}
+
+	async updateSettings(
+		payload: { conversionRate: number },
+		token: string,
+	): Promise<AdminSettings> {
+		try {
+			const response = await fetch(`${this.baseUrl}/api/admin/settings`, {
+				method: 'PATCH',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify(payload),
+			})
+
+			if (!response.ok) {
+				const error = await response.json()
+				throw new Error(error.message || 'Failed to update settings')
+			}
+
+			return response.json()
+		} catch (error) {
+			console.error('❌ Error updating admin settings:', error)
 			throw error
 		}
 	}
