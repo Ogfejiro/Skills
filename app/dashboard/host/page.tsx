@@ -755,12 +755,12 @@ export default function HostDashboard() {
 											<p className='text-[11px] text-gray-400'>
 												Admin payout rate:{' '}
 												<span className='text-[#c9a227] font-semibold'>
-													1 USD = \u20a6
+													1 USD = NGN 
 													{withdrawalConversionRate.toLocaleString()}
 												</span>
 											</p>
 											<p className='text-sm text-white font-semibold'>
-												\u2248 \u20a6
+												Approx. NGN 
 												{(
 													parseFloat(withdrawalAmount) *
 													withdrawalConversionRate
