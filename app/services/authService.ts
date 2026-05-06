@@ -27,6 +27,7 @@ export interface RegisterRequest {
   lastName: string;
   role?: 'User' | 'Host' | 'Admin';
   profession?: string;
+  referralCode?: string;
 }
 
 export interface GoogleAuthRequest {

@@ -20,6 +20,7 @@ import {
 	BarChart3,
 	Menu,
 	X,
+	Gift,
 } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -57,6 +58,11 @@ export default function DashboardSidebar() {
 			label: 'My Tickets',
 			href: '/tickets',
 			icon: <Ticket className='w-5 h-5' />,
+		},
+		{
+			label: 'Referrals',
+			href: '/dashboard/user/referrals',
+			icon: <Gift className='w-5 h-5' />,
 		},
 		{
 			label: 'Settings',

@@ -14,6 +14,7 @@ import {
 	AlertCircle,
 	Loader2,
 	ArrowLeft,
+	Gift,
 } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -25,10 +26,19 @@ export default function RegisterPage() {
 		phone: '',
 		password: '',
 		confirmPassword: '',
+		referralCode: '',
 	})
 	const [isLoading, setIsLoading] = useState(false)
 	const { register, isAuthenticated } = useAuth()
 	const router = useRouter()
+
+	useEffect(() => {
+		if (typeof window === 'undefined') return
+		const ref = new URLSearchParams(window.location.search).get('ref')
+		if (ref) {
+			setFormData((prev) => ({ ...prev, referralCode: ref }))
+		}
+	}, [])
 
 	useEffect(() => {
 		if (isAuthenticated) {
@@ -90,6 +100,7 @@ export default function RegisterPage() {
 				email: formData.email,
 				phone: formData.phone,
 				password: formData.password,
+				referralCode: formData.referralCode.trim() || undefined,
 			})
 
 			toast.success('Registration successful! Redirecting to dashboard...')
@@ -286,6 +297,32 @@ export default function RegisterPage() {
 									value={formData.confirmPassword}
 									onChange={handleChange}
 									placeholder='••••••••'
+									className='w-full pl-9 pr-3 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all text-sm'
+								/>
+							</div>
+						</motion.div>
+
+						{/* Referral Code (optional) */}
+						<motion.div
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ duration: 0.5, delay: 0.42 }}
+						>
+							<label className='block text-xs font-medium text-gray-300 mb-1'>
+								Referral Code{' '}
+								<span className='text-gray-500'>
+									(optional)
+								</span>
+							</label>
+							<div className='relative'>
+								<Gift className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/50' />
+								<input
+									type='text'
+									name='referralCode'
+									value={formData.referralCode}
+									onChange={handleChange}
+									placeholder='Got a code? Paste it here'
+									autoComplete='off'
 									className='w-full pl-9 pr-3 py-2 bg-black/50 border border-gold/20 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all text-sm'
 								/>
 							</div>

@@ -36,6 +36,7 @@ interface AuthContextType {
     lastName: string;
     role?: 'User' | 'Host' | 'Admin';
     profession?: string;
+    referralCode?: string;
   }) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -198,6 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     lastName: string;
     role?: 'User' | 'Host' | 'Admin';
     profession?: string;
+    referralCode?: string;
   }) => {
     setLoading(true);
     setError(null);
