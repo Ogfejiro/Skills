@@ -115,6 +115,14 @@ export async function sendPasswordResetEmail(customerEmail, resetLink) {
 	}
 }
 
+function formatAmount(amount, currency = 'NGN') {
+	const n = Number(amount) || 0
+	if (currency === 'USD') {
+		return `$${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+	}
+	return `₦${n.toLocaleString()}`
+}
+
 export async function sendWithdrawalAdminEmail(payload) {
 	try {
 		const {
@@ -125,9 +133,32 @@ export async function sendWithdrawalAdminEmail(payload) {
 			method,
 			paymentInfo,
 			requestedAt,
+			currency = 'NGN',
+			requestType = 'host',
+			payoutAmount,
+			payoutCurrency,
+			conversionRate,
 		} = payload
 
 		const isBank = method === 'bank'
+		const formattedAmount = formatAmount(amount, currency)
+		const requestLabel =
+			requestType === 'referral' ? 'Referral Withdrawal' : 'Withdrawal'
+
+		const hasPayoutOverride =
+			payoutAmount !== undefined && payoutCurrency !== undefined
+		const formattedPayout = hasPayoutOverride
+			? formatAmount(payoutAmount, payoutCurrency)
+			: null
+		const headlineAmount = formattedPayout || formattedAmount
+
+		const conversionRow =
+			hasPayoutOverride && conversionRate
+				? `<tr><td><strong>Conversion Rate</strong></td><td>1 ${currency} = ${Number(conversionRate).toLocaleString()} ${payoutCurrency}</td></tr>`
+				: ''
+		const requestedAmountRow = hasPayoutOverride
+			? `<tr><td><strong>Requested (Wallet)</strong></td><td>${formattedAmount}</td></tr>`
+			: ''
 
 		const paymentRows = isBank
 			? `
@@ -152,15 +183,17 @@ export async function sendWithdrawalAdminEmail(payload) {
 					name: 'Lofte Events',
 				},
 				to: [{ email: process.env.EMAIL_FROM }],
-				subject: `New Withdrawal Request - ₦${Number(amount).toLocaleString()}`,
+				subject: `New ${requestLabel} Request - ${headlineAmount}`,
 				htmlContent: `
-					<h2>New Withdrawal Request</h2>
-					<p>A host has requested a withdrawal. Please review and process it within 24 hours.</p>
+					<h2>New ${requestLabel} Request</h2>
+					<p>A user has requested a ${requestLabel.toLowerCase()}. Please review and process it within 24 hours.</p>
 					<table style="border-collapse:collapse;width:100%;max-width:560px" cellpadding="8" border="1">
-						<tr><td><strong>Host Name</strong></td><td>${hostName || '-'}</td></tr>
-						<tr><td><strong>Host Email</strong></td><td>${hostEmail || '-'}</td></tr>
-						<tr><td><strong>Host Phone</strong></td><td>${hostPhone || '-'}</td></tr>
-						<tr><td><strong>Amount</strong></td><td>₦${Number(amount).toLocaleString()}</td></tr>
+						<tr><td><strong>Name</strong></td><td>${hostName || '-'}</td></tr>
+						<tr><td><strong>Email</strong></td><td>${hostEmail || '-'}</td></tr>
+						<tr><td><strong>Phone</strong></td><td>${hostPhone || '-'}</td></tr>
+						<tr><td><strong>Amount to Send</strong></td><td>${headlineAmount}</td></tr>
+						${requestedAmountRow}
+						${conversionRow}
 						<tr><td><strong>Method</strong></td><td>${isBank ? 'Bank Transfer' : 'Crypto'}</td></tr>
 						${paymentRows}
 						<tr><td><strong>Requested At</strong></td><td>${requestedAt}</td></tr>
@@ -183,12 +216,20 @@ export async function sendWithdrawalAdminEmail(payload) {
 
 export async function sendWithdrawalUserEmail(payload) {
 	try {
-		const { customerEmail, hostName, amount, method, paymentInfo } = payload
+		const {
+			customerEmail,
+			hostName,
+			amount,
+			method,
+			paymentInfo,
+			currency = 'NGN',
+		} = payload
 
 		const isBank = method === 'bank'
 		const destination = isBank
 			? `${paymentInfo.bankName || ''} - ${paymentInfo.accountNo || ''} (${paymentInfo.accountName || ''})`
 			: `${paymentInfo.walletType || ''} - ${paymentInfo.walletAddress || ''}`
+		const formattedAmount = formatAmount(amount, currency)
 
 		const response = await fetch('https://api.brevo.com/v3/smtp/email', {
 			method: 'POST',
@@ -205,7 +246,7 @@ export async function sendWithdrawalUserEmail(payload) {
 				subject: 'Your withdrawal is being processed',
 				htmlContent: `
 					<p>Hello ${hostName || ''},</p>
-					<p>We have received your withdrawal request of <strong>₦${Number(amount).toLocaleString()}</strong>.</p>
+					<p>We have received your withdrawal request of <strong>${formattedAmount}</strong>.</p>
 					<p>Your funds will be sent to:</p>
 					<p><strong>${isBank ? 'Bank Account' : 'Crypto Wallet'}:</strong> ${destination}</p>
 					<p>Your payment is being processed and will be ready within the next 24 hours.</p>

@@ -23,6 +23,10 @@ import {
 	markWebhookProcessed,
 	markWebhookFailed,
 } from '../../services/shared/webhookIdempotency.js'
+import {
+	splitWithReferralCommission,
+	payReferralCommission,
+} from '../../services/shared/referralCommission.js'
 
 export async function initiateInvoice(
 	amount,
@@ -226,25 +230,34 @@ export async function handleFlutterwaveWebhook(payload) {
 			// Continue - custom email is optional
 		}
 
-		const amount = payload.amount
-		const platformFee = amount * 0.05
-		const hostEarnings = amount - platformFee
+		const ngnAmount = payload.amount
 
-		const hostId = updateEvent.host
-
-		const updateBalance = await Host.findOneAndUpdate(
-			{ hostId: hostId },
-			{
-				$inc: {
-					balance: hostEarnings,
-					revenue: hostEarnings,
-				},
-			},
-		)
-
-		if (!updateBalance) {
+		const hostProfile = await Host.findById(updateEvent.hostId)
+		if (!hostProfile) {
 			throw new AppError('Update Balance Failed', 409)
 		}
+
+		const conversionRate = hostProfile.conversionRate // NGN per USD
+		const usdAmount = ngnAmount / conversionRate
+
+		const { hostEarnings, referrerEarnings, referrerId } =
+			await splitWithReferralCommission(usdAmount, hostProfile)
+
+		await Payment.updateOne(
+			{ _id: updatedPayment._id },
+			{ hostEarningsUsd: hostEarnings },
+		)
+
+		hostProfile.balance += hostEarnings
+		hostProfile.revenue += hostEarnings
+		await hostProfile.save()
+
+		await payReferralCommission({
+			referrerId,
+			refereeUserId: hostProfile.userId,
+			amountUsd: referrerEarnings,
+			paymentId: updatedPayment._id,
+		})
 
 		// Mark webhook as processed
 		await markWebhookProcessed('flutterwave', externalId)
@@ -315,8 +328,8 @@ export async function createCryptoInvoice(
 			price_amount: amount,
 			price_currency: 'USD',
 			order_id: tx_ref,
-			is_fee_paid_by_user: eventExist.feeByUser,
-			is_fixed_rate: true,
+			is_fee_paid_by_user: false,
+			is_fixed_rate: false,
 			payout_currency: 'usdtsol',
 			order_description: `Payment for ${ticketName} ticket`,
 			ipn_callback_url: `${process.env.BACKEND_URL}/api/payments/crypto-webhook`,
@@ -400,6 +413,15 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			throw new AppError('Invalid payment data', 400)
 		}
 
+		// Determine USD credited (usdtsol ≈ USD). Fall back to price_amount
+		// if outcome data is missing or in an unexpected currency.
+		const outcomeCurrency = paymentData.outcome_currency
+		const outcomeAmount = Number(paymentData.outcome_amount)
+		const usdCredited =
+			outcomeCurrency === 'usdtsol' && Number.isFinite(outcomeAmount)
+				? outcomeAmount
+				: Number(paymentData.price_amount)
+
 		// Update payment
 		const updatedPayment = await Payment.findOneAndUpdate(
 			{ _id: paymentData.order_id },
@@ -409,6 +431,8 @@ export async function handleCryptoWebhook(rawBody, signature) {
 				tx_ref: paymentData.order_id,
 				paidAmountCrypto: paymentData.pay_amount,
 				currencyPaid: paymentData.pay_currency,
+				outcomeAmount: paymentData.outcome_amount,
+				outcomeCurrency: paymentData.outcome_currency,
 			},
 			{ new: true },
 		)
@@ -516,26 +540,29 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			// Continue - custom email is optional
 		}
 
-		const usdAmount = paymentData.price_amount
-		const conversionRate = updateEvent.host.conversionRate // USD → NGN
-		const localAmount = usdAmount * conversionRate
-		const platformFee = localAmount * 0.03
-		const hostEarnings = localAmount - platformFee
-
-		const hostId = updateEvent.host
-
-		const hostBalance = await Host.findOneAndUpdate(
-			{ hostId: hostId },
-			{
-				$inc: {
-					balance: hostEarnings,
-				},
-			},
-		)
-
-		if (!hostBalance) {
+		const hostProfile = await Host.findById(updateEvent.hostId)
+		if (!hostProfile) {
 			throw new AppError(`Updating Balance failed, Host not found.`, 404)
 		}
+
+		const { hostEarnings, referrerEarnings, referrerId } =
+			await splitWithReferralCommission(usdCredited, hostProfile)
+
+		await Payment.updateOne(
+			{ _id: updatedPayment._id },
+			{ hostEarningsUsd: hostEarnings },
+		)
+
+		hostProfile.balance += hostEarnings
+		hostProfile.revenue += hostEarnings
+		await hostProfile.save()
+
+		await payReferralCommission({
+			referrerId,
+			refereeUserId: hostProfile.userId,
+			amountUsd: referrerEarnings,
+			paymentId: updatedPayment._id,
+		})
 
 		// Mark webhook as processed
 		await markWebhookProcessed('crypto', externalId)

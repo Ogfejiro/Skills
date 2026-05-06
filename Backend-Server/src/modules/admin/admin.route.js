@@ -5,6 +5,8 @@ import {
 	updateEventStatusController,
 	getEventDetailsController,
 	searchEventsController,
+	getAdminSettingsController,
+	updateAdminSettingsController,
 } from './admin.controller.js'
 import {
 	authenticateToken,
@@ -20,6 +22,8 @@ router.use(authenticateToken, authorizeRoles('Admin'))
 router.get('/', getAllEventsController)
 router.get('/stats/analytics', getAnalyticsController)
 router.get('/search', searchEventsController)
+router.get('/settings', getAdminSettingsController)
+router.patch('/settings', updateAdminSettingsController)
 router.get('/:eventId', getEventDetailsController)
 router.put('/:eventId/status', updateEventStatusController)
 

@@ -10,7 +10,8 @@ import {
 } from './auth.service.js'
 
 export const register = asyncHandler(async (req, res) => {
-	const { email, phone, password, firstName, lastName } = req.body
+	const { email, phone, password, firstName, lastName, referralCode } =
+		req.body
 
 	if (!email || !phone || !password || !firstName || !lastName) {
 		throw new AppError('All Fields are required', 402)
@@ -24,7 +25,14 @@ export const register = asyncHandler(async (req, res) => {
 		throw new AppError('Password is less than 6', 401)
 	}
 
-	await registrationService(email, phone, password, firstName, lastName)
+	await registrationService(
+		email,
+		phone,
+		password,
+		firstName,
+		lastName,
+		referralCode,
+	)
 
 	return res.status(201).json({ message: 'User registration successful' })
 })
