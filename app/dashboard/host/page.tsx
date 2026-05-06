@@ -209,7 +209,8 @@ export default function HostDashboard() {
 		setShowWithdrawalModal(true)
 	}
 
-	const conversionRate = hostProfile?.conversionRate || 1400
+	const withdrawalConversionRate =
+		hostProfile?.adminConversionRate || hostProfile?.conversionRate || 1400
 	const MIN_WITHDRAWAL_USD = 5
 
 	const handleWithdrawal = async () => {
@@ -752,17 +753,17 @@ export default function HostDashboard() {
 									parseFloat(withdrawalAmount) > 0 && (
 										<div className='mt-2 p-3 rounded-lg bg-[#c9a227]/5 border border-[#c9a227]/15 space-y-1'>
 											<p className='text-[11px] text-gray-400'>
-												Conversion rate:{' '}
+												Admin payout rate:{' '}
 												<span className='text-[#c9a227] font-semibold'>
 													1 USD = \u20a6
-													{conversionRate.toLocaleString()}
+													{withdrawalConversionRate.toLocaleString()}
 												</span>
 											</p>
 											<p className='text-sm text-white font-semibold'>
 												\u2248 \u20a6
 												{(
 													parseFloat(withdrawalAmount) *
-													conversionRate
+													withdrawalConversionRate
 												).toLocaleString(undefined, {
 													maximumFractionDigits: 2,
 												})}

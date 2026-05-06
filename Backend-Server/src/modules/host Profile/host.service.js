@@ -118,12 +118,16 @@ async function updateUserFields(userId, userUpdateData) {
 }
 
 async function buildHostResponse(userId) {
-	const user = await getUserOrThrow(userId)
-	const profile = await getHostProfileOrThrow(userId)
+	const [user, profile, adminConversionRate] = await Promise.all([
+		getUserOrThrow(userId),
+		getHostProfileOrThrow(userId),
+		getAdminConversionRate(),
+	])
 
 	return {
 		...user.toObject(),
 		...profile.toObject(),
+		adminConversionRate,
 	}
 }
 

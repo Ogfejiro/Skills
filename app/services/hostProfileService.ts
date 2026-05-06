@@ -21,6 +21,7 @@ export interface HostProfile {
 	balance: number
 	revenue: number
 	conversionRate: number
+	adminConversionRate?: number
 	socials?: {
 		twitter?: string
 		instagram?: string
