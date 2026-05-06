@@ -316,7 +316,7 @@ export async function createCryptoInvoice(
 			price_currency: 'USD',
 			order_id: tx_ref,
 			is_fee_paid_by_user: eventExist.feeByUser,
-			is_fixed_rate: true,
+			is_fixed_rate: false,
 			payout_currency: 'usdtsol',
 			order_description: `Payment for ${ticketName} ticket`,
 			ipn_callback_url: `${process.env.BACKEND_URL}/api/payments/crypto-webhook`,
