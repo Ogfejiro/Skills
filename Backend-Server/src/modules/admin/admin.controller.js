@@ -7,6 +7,41 @@ import {
 	getEventByIdAdmin,
 	searchEventsAdmin,
 } from './admin.service.js'
+import AdminSettings, {
+	getAdminSettings,
+} from '../../models/AdminSettings.model.js'
+
+export const getAdminSettingsController = asyncHandler(async (req, res) => {
+	const settings = await getAdminSettings()
+	return res.status(200).json({
+		conversionRate: settings.conversionRate,
+		updatedAt: settings.updatedAt,
+	})
+})
+
+export const updateAdminSettingsController = asyncHandler(async (req, res) => {
+	const { conversionRate } = req.body
+
+	if (conversionRate === undefined) {
+		throw new AppError('conversionRate is required', 400)
+	}
+
+	const rate = Number(conversionRate)
+	if (!Number.isFinite(rate) || rate < 100) {
+		throw new AppError('conversionRate must be a number >= 100', 400)
+	}
+
+	const settings = await AdminSettings.findOneAndUpdate(
+		{ key: 'global' },
+		{ $set: { conversionRate: rate } },
+		{ new: true, upsert: true },
+	)
+
+	return res.status(200).json({
+		conversionRate: settings.conversionRate,
+		updatedAt: settings.updatedAt,
+	})
+})
 
 export const getAllEventsController = asyncHandler(async (req, res) => {
 	const { page = 1, limit = 10 } = req.query

@@ -23,6 +23,10 @@ import {
 	markWebhookProcessed,
 	markWebhookFailed,
 } from '../../services/shared/webhookIdempotency.js'
+import {
+	splitWithReferralCommission,
+	payReferralCommission,
+} from '../../services/shared/referralCommission.js'
 
 export async function initiateInvoice(
 	amount,
@@ -235,8 +239,9 @@ export async function handleFlutterwaveWebhook(payload) {
 
 		const conversionRate = hostProfile.conversionRate // NGN per USD
 		const usdAmount = ngnAmount / conversionRate
-		const platformFee = usdAmount * 0.05
-		const hostEarnings = usdAmount - platformFee
+
+		const { hostEarnings, referrerEarnings, referrerId } =
+			await splitWithReferralCommission(usdAmount, hostProfile)
 
 		await Payment.updateOne(
 			{ _id: updatedPayment._id },
@@ -246,6 +251,13 @@ export async function handleFlutterwaveWebhook(payload) {
 		hostProfile.balance += hostEarnings
 		hostProfile.revenue += hostEarnings
 		await hostProfile.save()
+
+		await payReferralCommission({
+			referrerId,
+			refereeUserId: hostProfile.userId,
+			amountUsd: referrerEarnings,
+			paymentId: updatedPayment._id,
+		})
 
 		// Mark webhook as processed
 		await markWebhookProcessed('flutterwave', externalId)
@@ -528,24 +540,29 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			// Continue - custom email is optional
 		}
 
-		const platformFee = usdCredited * 0.03
-		const hostEarnings = usdCredited - platformFee
+		const hostProfile = await Host.findById(updateEvent.hostId)
+		if (!hostProfile) {
+			throw new AppError(`Updating Balance failed, Host not found.`, 404)
+		}
+
+		const { hostEarnings, referrerEarnings, referrerId } =
+			await splitWithReferralCommission(usdCredited, hostProfile)
 
 		await Payment.updateOne(
 			{ _id: updatedPayment._id },
 			{ hostEarningsUsd: hostEarnings },
 		)
 
-		const hostBalance = await Host.findByIdAndUpdate(updateEvent.hostId, {
-			$inc: {
-				balance: hostEarnings,
-				revenue: hostEarnings,
-			},
-		})
+		hostProfile.balance += hostEarnings
+		hostProfile.revenue += hostEarnings
+		await hostProfile.save()
 
-		if (!hostBalance) {
-			throw new AppError(`Updating Balance failed, Host not found.`, 404)
-		}
+		await payReferralCommission({
+			referrerId,
+			refereeUserId: hostProfile.userId,
+			amountUsd: referrerEarnings,
+			paymentId: updatedPayment._id,
+		})
 
 		// Mark webhook as processed
 		await markWebhookProcessed('crypto', externalId)

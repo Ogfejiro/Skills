@@ -1,12 +1,14 @@
 import HostProfile from '../../models/Host.model.js'
 import User from '../../models/User.model.js'
+import Withdrawal from '../../models/Withdrawal.model.js'
 import AppError from '../../services/shared/appError.js'
 import {
 	sendWithdrawalAdminEmail,
 	sendWithdrawalUserEmail,
 } from '../../services/shared/sendVerificationEmail.js'
+import { getAdminConversionRate } from '../../models/AdminSettings.model.js'
 
-const MIN_WITHDRAWAL = 5000
+const MIN_WITHDRAWAL_USD = 5
 const WITHDRAWAL_METHODS = ['bank', 'crypto']
 
 const USER_FIELDS = ['firstName', 'lastName', 'phone']
@@ -289,9 +291,9 @@ export async function requestWithdrawal(userId, payload) {
 		throw new AppError('Please enter a valid withdrawal amount', 400)
 	}
 
-	if (amount < MIN_WITHDRAWAL) {
+	if (amount < MIN_WITHDRAWAL_USD) {
 		throw new AppError(
-			`Minimum withdrawal amount is ₦${MIN_WITHDRAWAL.toLocaleString()}`,
+			`Minimum withdrawal amount is $${MIN_WITHDRAWAL_USD}`,
 			400,
 		)
 	}
@@ -329,6 +331,30 @@ export async function requestWithdrawal(userId, payload) {
 	const hostName = `${user.firstName || ''} ${user.lastName || ''}`.trim()
 	const requestedAt = new Date().toISOString()
 
+	let payoutAmount
+	let payoutCurrency
+	let conversionRate
+
+	if (method === 'bank') {
+		conversionRate = await getAdminConversionRate()
+		payoutAmount = amount * conversionRate
+		payoutCurrency = 'NGN'
+	}
+
+	const withdrawal = await Withdrawal.create({
+		userId,
+		source: 'host',
+		amount,
+		currency: 'USD',
+		method,
+		paymentInfo,
+		payoutAmount,
+		payoutCurrency,
+		conversionRate,
+		status: 'pending',
+		requestedAt,
+	})
+
 	const [adminResult, userResult] = await Promise.all([
 		sendWithdrawalAdminEmail({
 			hostName,
@@ -338,6 +364,11 @@ export async function requestWithdrawal(userId, payload) {
 			method,
 			paymentInfo,
 			requestedAt,
+			currency: 'USD',
+			requestType: 'host',
+			payoutAmount,
+			payoutCurrency,
+			conversionRate,
 		}),
 		sendWithdrawalUserEmail({
 			customerEmail: user.email,
@@ -345,21 +376,59 @@ export async function requestWithdrawal(userId, payload) {
 			amount,
 			method,
 			paymentInfo,
+			currency: 'USD',
 		}),
 	])
 
 	if (!adminResult.success || !userResult.success) {
+		// Refund on email failure so the user can retry
+		await HostProfile.updateOne(
+			{ userId },
+			{ $inc: { balance: amount } },
+		)
+
+		await Withdrawal.updateOne(
+			{ _id: withdrawal._id },
+			{
+				status: 'refunded',
+				emailStatus: {
+					admin: adminResult.success ? 'sent' : 'failed',
+					user: userResult.success ? 'sent' : 'failed',
+				},
+				failureReason:
+					adminResult.error || userResult.error || 'Email delivery failed',
+			},
+		)
+
 		console.error('Withdrawal email failure:', {
 			admin: adminResult,
 			user: userResult,
 		})
+
+		throw new AppError(
+			'Could not submit withdrawal request. Please try again later.',
+			502,
+		)
 	}
 
+	await Withdrawal.updateOne(
+		{ _id: withdrawal._id },
+		{
+			status: 'submitted',
+			emailStatus: { admin: 'sent', user: 'sent' },
+		},
+	)
+
 	return {
+		withdrawalId: withdrawal._id,
 		amount,
+		currency: 'USD',
 		method,
 		paymentInfo,
 		balance: updatedProfile.balance,
+		payoutAmount,
+		payoutCurrency,
+		conversionRate,
 		requestedAt,
 	}
 }

@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import User from '../../models/User.model.js'
+import Referral from '../../models/Referral.model.js'
 import { verifyGoogleToken } from '../../services/shared/GoogleAuth.js'
 import AppError from '../../services/shared/appError.js'
 import { generateRefId } from '../../services/shared/generateRefId.js'
@@ -16,6 +17,7 @@ export async function registrationService(
 	password,
 	firstName,
 	lastName,
+	referralCode,
 ) {
 	const existingUser = await User.findOne({
 		$or: [{ email }, { phone }],
@@ -30,6 +32,14 @@ export async function registrationService(
 		}
 	}
 
+	let referrer = null
+	if (referralCode) {
+		referrer = await User.findOne({ refId: referralCode.trim() })
+		if (!referrer) {
+			throw new AppError('Invalid referral code', 400)
+		}
+	}
+
 	const hashedPassword = await bcrypt.hash(password, 10)
 
 	const refId = await generateRefId()
@@ -40,7 +50,24 @@ export async function registrationService(
 		firstName,
 		lastName,
 		refId: refId,
+		referredBy: referrer ? referrer._id : null,
 	})
+
+	if (referrer) {
+		try {
+			await Referral.create({
+				referrerId: referrer._id,
+				refereeId: user._id,
+				eventType: 'signup',
+				status: 'qualified',
+			})
+		} catch (err) {
+			console.warn(
+				`⚠️ Failed to log signup referral for user ${user._id}:`,
+				err.message,
+			)
+		}
+	}
 
 	return user
 }

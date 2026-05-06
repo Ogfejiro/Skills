@@ -27,6 +27,25 @@ const userSchema = new mongoose.Schema(
 			unique: true,
 		},
 
+		referredBy: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
+			default: null,
+			index: true,
+		},
+
+		referralWallet: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
+
+		referralEarningsTotal: {
+			type: Number,
+			default: 0,
+			min: 0,
+		},
+
 		firstName: {
 			type: String,
 		},
