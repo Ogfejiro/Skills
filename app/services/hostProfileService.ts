@@ -126,6 +126,41 @@ class HostProfileService {
 		}
 	}
 
+	async createProfile(
+		data: UpdateProfileData & {
+			organization: string
+			walletAddress?: string
+			walletType?: string
+		},
+		token: string,
+	): Promise<ProfileResponse> {
+		try {
+			console.log('🏗️ Creating host profile:', data)
+
+			const response = await fetch(`${this.baseUrl}/api/host/profile`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify(data),
+			})
+
+			if (!response.ok) {
+				const error = await response.json()
+				console.error('❌ Create profile error:', error)
+				throw new Error(error.message || 'Failed to create profile')
+			}
+
+			const result = await response.json()
+			console.log('✅ Profile created successfully:', result.data)
+			return result
+		} catch (error) {
+			console.error('❌ Create profile service error:', error)
+			throw error
+		}
+	}
+
 	async setWallet(
 		data: SetWalletData,
 		token: string,

@@ -62,6 +62,11 @@ export default function HostSettingsPage() {
 			return
 		}
 
+		if (isCreating && hostProfileCache.hasProfile) {
+			router.push('/dashboard/host')
+			return
+		}
+
 		if (isCreating) {
 			setLoading(false)
 			return
@@ -166,7 +171,7 @@ export default function HostSettingsPage() {
 
 		try {
 			setSaving(true)
-			const updateData = {
+			const profileData = {
 				organization: formData.organization,
 				address: formData.address,
 				bankName: formData.bankName,
@@ -176,17 +181,32 @@ export default function HostSettingsPage() {
 				socials: formData.socials,
 			}
 
-			await hostProfileService.updateProfile(updateData, token)
+			if (isCreating) {
+				const createPayload = formData.walletAddress
+					? {
+							...profileData,
+							walletAddress: formData.walletAddress,
+							walletType: walletType,
+						}
+					: profileData
 
-			// Set wallet if it's new or changed
-			if (formData.walletAddress) {
-				await hostProfileService.setWallet(
-					{
-						walletAddress: formData.walletAddress,
-						walletType: walletType,
-					},
+				await hostProfileService.createProfile(
+					createPayload,
 					token,
 				)
+			} else {
+				await hostProfileService.updateProfile(profileData, token)
+
+				// Set wallet if it's new or changed
+				if (formData.walletAddress) {
+					await hostProfileService.setWallet(
+						{
+							walletAddress: formData.walletAddress,
+							walletType: walletType,
+						},
+						token,
+					)
+				}
 			}
 
 			// Refresh the cached host profile so all pages get updated instantly

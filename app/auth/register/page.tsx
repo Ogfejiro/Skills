@@ -103,9 +103,9 @@ export default function RegisterPage() {
 				referralCode: formData.referralCode.trim() || undefined,
 			})
 
-			toast.success('Registration successful! Redirecting to dashboard...')
+			toast.success('Registration successful! Please log in.')
 			setTimeout(() => {
-				router.push('/dashboard/user')
+				router.push('/auth/login')
 			}, 1500)
 		} catch (error: any) {
 			toast.error(
