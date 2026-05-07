@@ -202,7 +202,7 @@ export default function AdminDashboard() {
 	}
 
 	const formatCurrency = (amount: number) => {
-		return `\u20a6${(amount || 0).toLocaleString()}`
+		return `$${(amount || 0).toLocaleString()}`
 	}
 
 	const getGreeting = () => {
