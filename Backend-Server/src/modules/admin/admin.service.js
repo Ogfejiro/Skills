@@ -40,7 +40,10 @@ function mapHostProfile(hostProfile) {
 
 	return {
 		_id: hostProfile?._id,
-		name: [user?.firstName, user?.lastName].filter(Boolean).join(' ').trim(),
+		name: [user?.firstName, user?.lastName]
+			.filter(Boolean)
+			.join(' ')
+			.trim(),
 		email: user?.email,
 		organization: hostProfile?.organization,
 	}
@@ -184,7 +187,12 @@ export async function updateEventStatusAdmin(eventId, newStatus) {
 
 	const updatedEvent = await Event.findByIdAndUpdate(
 		eventId,
-		{ status: newStatus },
+		{
+			status: newStatus,
+			...(newStatus === 'live' && {
+				approvalStatus: 'approved',
+			}),
+		},
 		{
 			new: true,
 			runValidators: true,
