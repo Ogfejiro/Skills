@@ -306,17 +306,17 @@ export async function TicketById(ticketId) {
 	let eventDate = ticket.eventDate
 	let eventLocation = ticket.location
 
-	if (ticket.tx_ref) {
-		const payment = await Payment.findOne({ _id: ticket.tx_ref })
-		if (payment?.eventId) {
-			const event = await Event.findById(payment.eventId)
-			if (event) {
-				eventName = eventName || event.title
-				eventDate = eventDate || event.date
-				eventLocation = eventLocation || event.venue
-			}
-		}
-	}
+	// if (ticket.tx_ref) {
+	// 	const payment = await Payment.findOne({ _id: ticket.tx_ref })
+	// 	if (payment?.eventId) {
+	// 		const event = await Event.findById(payment.eventId)
+	// 		if (event) {
+	// 			eventName = eventName || event.title
+	// 			eventDate = eventDate || event.date
+	// 			eventLocation = eventLocation || event.venue
+	// 		}
+	// 	}
+	// }
 
 	return {
 		ticketId: ticket.ticketId,
