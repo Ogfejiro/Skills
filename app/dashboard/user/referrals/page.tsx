@@ -58,7 +58,7 @@ export default function ReferralsPage() {
 			: ''
 
 	const currencySymbol = '$'
-	const MIN_WITHDRAWAL_USD = 5
+	const MIN_WITHDRAWAL_USD = 2
 
 	const paidCommissions = commissions.filter((c) => c.status === 'rewarded')
 	const pendingCommissions = commissions.filter(
@@ -550,8 +550,8 @@ export default function ReferralsPage() {
 												<p className='text-sm font-semibold text-white truncate'>
 													{commission.referee
 														? `${commission.referee.firstName || ''} ${commission.referee.lastName || ''}`.trim() ||
-														  commission.referee
-															.email
+															commission.referee
+																.email
 														: 'Unknown'}
 												</p>
 												<p className='text-[11px] text-gray-600 mt-0.5'>
@@ -575,9 +575,9 @@ export default function ReferralsPage() {
 														'rewarded'
 															? 'bg-green-500/10 text-green-400 border-green-500/20'
 															: commission.status ===
-														  'qualified'
-														? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-														: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+																  'qualified'
+																? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+																: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
 													}`}
 												>
 													{commission.status}
@@ -618,7 +618,9 @@ export default function ReferralsPage() {
 							Available:{' '}
 							<span className='font-semibold text-emerald-400'>
 								{currencySymbol}
-								{(overview?.referralWallet || 0).toLocaleString()}
+								{(
+									overview?.referralWallet || 0
+								).toLocaleString()}
 							</span>
 						</p>
 
@@ -762,9 +764,7 @@ export default function ReferralsPage() {
 											<option value='SOL'>
 												Solana (SOL)
 											</option>
-											<option value='USDC'>
-												USDC
-											</option>
+											<option value='USDC'>USDC</option>
 											<option value='USDT'>
 												Tether (USDT)
 											</option>

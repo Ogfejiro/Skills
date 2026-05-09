@@ -11,6 +11,7 @@ import {
 	PlusCircle,
 	LogOut,
 	User,
+	Search,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -83,6 +84,12 @@ export default function Navbar() {
 			label: 'Why Attend',
 			icon: <Sparkles className='w-5 h-5' />,
 			href: '#/why-attend',
+		},
+		{
+			id: 'verify-ticket',
+			label: 'Find Ticket',
+			icon: <Search className='w-5 h-5' />,
+			href: '/verify-ticket',
 		},
 		{
 			id: 'waitlist',

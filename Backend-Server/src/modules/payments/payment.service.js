@@ -157,7 +157,7 @@ export async function handleFlutterwaveWebhook(payload) {
 		const updateEventTicket = await EventTicket.findOneAndUpdate(
 			{
 				eventId: updateEvent._id,
-				ticketName: existingPayment.ticketName,
+				title: existingPayment.ticketName,
 			},
 			{
 				$inc: {
@@ -168,9 +168,8 @@ export async function handleFlutterwaveWebhook(payload) {
 		)
 
 		if (!updateEventTicket) {
-			throw new AppError(
-				`Event ticket not found for ID: ${existingPayment.ticketName}`,
-				404,
+			console.warn(
+				`⚠️ EventTicket not found for title: ${existingPayment.ticketName} (eventId: ${updateEvent._id}). Skipping EventTicket update.`,
 			)
 		}
 
@@ -295,6 +294,44 @@ export async function TicketByRef(tx_ref) {
 		throw new AppError('Ticket not found', 404)
 	}
 	return ticket
+}
+
+export async function TicketById(ticketId) {
+	const ticket = await Ticket.findOne({ ticketId })
+	if (!ticket) {
+		throw new AppError('Ticket not found', 404)
+	}
+
+	let eventName = ticket.eventName
+	let eventDate = ticket.eventDate
+	let eventLocation = ticket.location
+
+	if (ticket.tx_ref) {
+		const payment = await Payment.findOne({ _id: ticket.tx_ref })
+		if (payment?.eventId) {
+			const event = await Event.findById(payment.eventId)
+			if (event) {
+				eventName = eventName || event.title
+				eventDate = eventDate || event.date
+				eventLocation = eventLocation || event.venue
+			}
+		}
+	}
+
+	return {
+		ticketId: ticket.ticketId,
+		ticketName: ticket.ticketName,
+		amount: ticket.amount,
+		currency: ticket.currency,
+		status: ticket.status,
+		quantity: ticket.quantity,
+		customerEmail: ticket.customerEmail,
+		eventName,
+		eventDate,
+		eventLocation,
+		purchaseDate: ticket.createdAt,
+		tx_ref: ticket.tx_ref,
+	}
 }
 
 export async function createCryptoInvoice(
@@ -470,7 +507,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 		const updateEventTicket = await EventTicket.findOneAndUpdate(
 			{
 				eventId: updateEvent._id,
-				ticketName: existingPayment.ticketName,
+				title: existingPayment.ticketName,
 			},
 			{
 				$inc: {
@@ -481,9 +518,8 @@ export async function handleCryptoWebhook(rawBody, signature) {
 		)
 
 		if (!updateEventTicket) {
-			throw new AppError(
-				`Updating Event Ticket failed, Event with ID: ${existingPayment.ticketName} not found. `,
-				404,
+			console.warn(
+				`⚠️ EventTicket not found for title: ${existingPayment.ticketName} (eventId: ${updateEvent._id}). Skipping EventTicket update.`,
 			)
 		}
 

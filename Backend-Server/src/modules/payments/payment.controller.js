@@ -5,10 +5,18 @@ import {
 	verifyPay,
 	handleFlutterwaveWebhook,
 	TicketByRef,
+	TicketById,
 	createCryptoInvoice,
 	handleCryptoWebhook,
 	regularTicketService,
 } from './payment.service.js'
+import { runPaymentRecoverySweep } from '../../services/shared/paymentRecoverySweep.js'
+
+function triggerRecoverySweep(source) {
+	runPaymentRecoverySweep().catch((err) =>
+		console.error(`Recovery sweep after ${source} failed:`, err.message),
+	)
+}
 
 export const initiatePayment = asyncHandler(async (req, res) => {
 	const { amount, email, userId, ticketName, eventId, quantity } = req.body
@@ -55,6 +63,8 @@ export const flutterwaveWebhook = asyncHandler(async (req, res) => {
 
 	await handleFlutterwaveWebhook(payload)
 
+	triggerRecoverySweep('flutterwave webhook')
+
 	return res.sendStatus(200)
 })
 
@@ -67,6 +77,17 @@ export const getTicketByTxRef = asyncHandler(async (req, res) => {
 	const tickets = await TicketByRef(tx_ref)
 
 	return res.json(tickets)
+})
+
+export const getTicketById = asyncHandler(async (req, res) => {
+	const { ticketId } = req.params
+	if (!ticketId) {
+		throw new AppError('ticketId is required', 400)
+	}
+
+	const ticket = await TicketById(ticketId.trim())
+
+	return res.json(ticket)
 })
 
 export const createInvoice = asyncHandler(async (req, res) => {
@@ -98,6 +119,8 @@ export const cryptoWebhook = asyncHandler(async (req, res) => {
 	const rawBody = req.body
 
 	await handleCryptoWebhook(rawBody, signature)
+
+	triggerRecoverySweep('crypto webhook')
 
 	return res.sendStatus(200)
 })

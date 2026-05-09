@@ -8,7 +8,7 @@ import {
 } from '../../services/shared/sendVerificationEmail.js'
 import { getAdminConversionRate } from '../../models/AdminSettings.model.js'
 
-const MIN_WITHDRAWAL_USD = 5
+const MIN_WITHDRAWAL_USD = 2
 const WITHDRAWAL_METHODS = ['bank', 'crypto']
 
 const USER_FIELDS = ['firstName', 'lastName', 'phone']
@@ -241,7 +241,8 @@ function ensurePaymentInfoMatches(profile, method, paymentInfo) {
 
 	if (method === 'bank') {
 		const mismatch =
-			(paymentInfo.accountNo && paymentInfo.accountNo !== profile.accountNo) ||
+			(paymentInfo.accountNo &&
+				paymentInfo.accountNo !== profile.accountNo) ||
 			(paymentInfo.accountName &&
 				paymentInfo.accountName !== profile.accountName) ||
 			(paymentInfo.bankName && paymentInfo.bankName !== profile.bankName)
@@ -386,10 +387,7 @@ export async function requestWithdrawal(userId, payload) {
 
 	if (!adminResult.success || !userResult.success) {
 		// Refund on email failure so the user can retry
-		await HostProfile.updateOne(
-			{ userId },
-			{ $inc: { balance: amount } },
-		)
+		await HostProfile.updateOne({ userId }, { $inc: { balance: amount } })
 
 		await Withdrawal.updateOne(
 			{ _id: withdrawal._id },
@@ -400,7 +398,9 @@ export async function requestWithdrawal(userId, payload) {
 					user: userResult.success ? 'sent' : 'failed',
 				},
 				failureReason:
-					adminResult.error || userResult.error || 'Email delivery failed',
+					adminResult.error ||
+					userResult.error ||
+					'Email delivery failed',
 			},
 		)
 

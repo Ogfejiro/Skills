@@ -49,7 +49,13 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 
 	const totalPrice = unitPrice * quantity
 
+	const cryptoMinUSD = 2.5
+	const cryptoBelowMinimum =
+		currency === 'USD' && totalPrice > 0 && totalPrice < cryptoMinUSD
+
 	const handlePayment = async () => {
+		if (cryptoBelowMinimum) return
+
 		if (!email) {
 			alert('Please enter your email')
 			return
@@ -189,17 +195,27 @@ export default function PaymentModal({ isOpen, onClose, ticket }: Props) {
 					/>
 				</div>
 
+				{/* CRYPTO MINIMUM WARNING */}
+				{cryptoBelowMinimum && (
+					<div className='mb-4 p-3 rounded-lg border border-red-500/40 bg-red-500/10 text-red-300 text-sm'>
+						You cannot pay with crypto for ticket amounts less than $
+						{cryptoMinUSD}. Please switch to the NGN payment option.
+					</div>
+				)}
+
 				{/* BUTTON */}
 				<button
 					onClick={handlePayment}
-					disabled={loading}
-					className='w-full bg-[#c9a227] hover:bg-[#b8921f] text-black py-3 rounded-lg font-bold transition disabled:opacity-50'
+					disabled={loading || cryptoBelowMinimum}
+					className='w-full bg-[#c9a227] hover:bg-[#b8921f] text-black py-3 rounded-lg font-bold transition disabled:opacity-50 disabled:cursor-not-allowed'
 				>
 					{loading
 						? 'Processing...'
-						: totalPrice === 0
-							? 'Register Free Ticket'
-							: 'Proceed to Payment'}
+						: cryptoBelowMinimum
+							? 'Crypto unavailable below $2.5'
+							: totalPrice === 0
+								? 'Register Free Ticket'
+								: 'Proceed to Payment'}
 				</button>
 			</div>
 		</div>

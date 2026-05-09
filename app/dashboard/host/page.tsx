@@ -211,7 +211,7 @@ export default function HostDashboard() {
 
 	const withdrawalConversionRate =
 		hostProfile?.adminConversionRate || hostProfile?.conversionRate || 1400
-	const MIN_WITHDRAWAL_USD = 5
+	const MIN_WITHDRAWAL_USD = 2
 
 	const handleWithdrawal = async () => {
 		try {
@@ -223,7 +223,9 @@ export default function HostDashboard() {
 			}
 
 			if (amount < MIN_WITHDRAWAL_USD) {
-				toast.error(`Minimum withdrawal amount is $${MIN_WITHDRAWAL_USD}`)
+				toast.error(
+					`Minimum withdrawal amount is $${MIN_WITHDRAWAL_USD}`,
+				)
 				return
 			}
 
@@ -424,7 +426,8 @@ export default function HostDashboard() {
 									<DollarSign className='w-4 h-4 text-emerald-400' />
 								</div>
 								<p className='text-2xl font-bold'>
-									${(stats.totalBalance || 0).toLocaleString()}
+									$
+									{(stats.totalBalance || 0).toLocaleString()}
 								</p>
 							</div>
 
@@ -729,7 +732,9 @@ export default function HostDashboard() {
 									Amount (USD)
 								</label>
 								<div className='flex items-center gap-2'>
-									<span className='text-gray-500 text-sm'>$</span>
+									<span className='text-gray-500 text-sm'>
+										$
+									</span>
 									<input
 										type='number'
 										placeholder='50'
@@ -755,15 +760,16 @@ export default function HostDashboard() {
 											<p className='text-[11px] text-gray-400'>
 												Admin payout rate:{' '}
 												<span className='text-[#c9a227] font-semibold'>
-													1 USD = NGN 
+													1 USD = NGN
 													{withdrawalConversionRate.toLocaleString()}
 												</span>
 											</p>
 											<p className='text-sm text-white font-semibold'>
-												Approx. NGN 
+												Approx. NGN
 												{(
-													parseFloat(withdrawalAmount) *
-													withdrawalConversionRate
+													parseFloat(
+														withdrawalAmount,
+													) * withdrawalConversionRate
 												).toLocaleString(undefined, {
 													maximumFractionDigits: 2,
 												})}

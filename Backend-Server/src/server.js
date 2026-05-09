@@ -16,6 +16,7 @@ import errorMiddle from '../src/services/middleware/error.js'
 import { cryptoWebhook } from '../src/modules/payments/payment.controller.js'
 import { validateEnvironment } from '../src/services/shared/validateEnv.js'
 import { schedulePaymentCleanup } from '../src/services/shared/paymentCleanup.js'
+import { schedulePaymentRecoverySweep } from '../src/services/shared/paymentRecoverySweep.js'
 import emailRouter from './modules/event-email/eventEmail.route.js'
 import referralRoutes from './modules/referrals/referral.route.js'
 
@@ -69,6 +70,7 @@ const server = app.listen(PORT, async () => {
 	console.log('✅ Server running on port', PORT)
 
 	schedulePaymentCleanup()
+	schedulePaymentRecoverySweep()
 })
 
 process.on('unhandledRejection', (err) => {

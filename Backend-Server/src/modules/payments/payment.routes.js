@@ -5,6 +5,7 @@ import {
 	verifyPayment,
 	flutterwaveWebhook,
 	getTicketByTxRef,
+	getTicketById,
 	createInvoice,
 	cryptoWebhook,
 	regularTicket,
@@ -20,5 +21,6 @@ router.post('/crypto-webhook', cryptoWebhook)
 router.post('/verify', verifyPayment)
 router.post('/webhook', flutterwaveWebhook)
 router.get('/ticket/:tx_ref', getTicketByTxRef)
+router.get('/ticket-by-id/:ticketId', getTicketById)
 
 export default router
