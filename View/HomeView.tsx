@@ -186,7 +186,7 @@ export default function HomePage() {
 		setSelectedTicket({
 			eventId: ticket.eventId,
 			title: ticket.title,
-			priceUSD: ticket.price,
+			priceUSD: ticket.priceUSD,
 			priceNGN: ticket.priceNGN,
 			currency: ticket.currency,
 		})
@@ -600,8 +600,9 @@ export default function HomePage() {
 
 											<div className='mt-4'>
 												<p className='text-[#c9a227] font-bold text-lg mb-3'>
-													{ticket.currency}{' '}
-													{ticket.price}
+													{ticket.currency === 'USD'
+														? `$${ticket.priceUSD?.toLocaleString()}`
+														: `₦${ticket.priceNGN?.toLocaleString()}`}
 												</p>
 												<button
 													onClick={() =>
