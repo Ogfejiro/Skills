@@ -637,7 +637,7 @@ export async function regularTicketService(email, ticketName, eventId) {
 		email,
 		ticketName,
 		eventName,
-		dateOnly,
+		date,
 		event.venue,
 	)
 
