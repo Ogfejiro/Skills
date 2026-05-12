@@ -6,6 +6,7 @@ import Ticket from '../../models/ticket.model.js'
 import Event from '../../models/Event.model.js'
 import EventTicket from '../../models/EventTicket.model.js'
 import Host from '../../models/Host.model.js'
+import { getAdminConversionRate } from '../../models/AdminSettings.model.js'
 import {
 	sendVerificationEmail,
 	sendCustomHostEmail,
@@ -47,6 +48,9 @@ export async function initiateInvoice(
 		ticketName,
 		eventId,
 	})
+
+	const adminConversionRate = await getAdminConversionRate()
+	console.log('Admin Conversion Rate (NGN per USD):', adminConversionRate)
 
 	const tx_ref = payment._id.toString()
 
@@ -236,7 +240,8 @@ export async function handleFlutterwaveWebhook(payload) {
 			throw new AppError('Update Balance Failed', 409)
 		}
 
-		const conversionRate = hostProfile.conversionRate // NGN per USD
+		const adminConversionRate = await getAdminConversionRate() // NGN per USD
+		const conversionRate = adminConversionRate // NGN per USD
 		const usdAmount = ngnAmount / conversionRate
 
 		const { hostEarnings, referrerEarnings, referrerId } =
