@@ -177,6 +177,8 @@ export async function handleFlutterwaveWebhook(payload) {
 			)
 		}
 
+		const dateOnly = updateEvent.date.split('T')[0]
+
 		// Send email
 		try {
 			const emailResult = await sendVerificationEmail(
@@ -185,7 +187,7 @@ export async function handleFlutterwaveWebhook(payload) {
 				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
 				updateEvent.title,
 				updateEvent.venue,
-				updateEvent.date,
+				dateOnly,
 			)
 
 			if (!emailResult.success) {
@@ -528,6 +530,8 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			)
 		}
 
+		const dateOnly = updateEvent.date.split('T')[0]
+
 		// Send email
 		try {
 			const emailResult = await sendVerificationEmail(
@@ -536,7 +540,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
 				updateEvent.title,
 				updateEvent.venue,
-				updateEvent.date,
+				dateOnly,
 			)
 
 			if (!emailResult.success) {
