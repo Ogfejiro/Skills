@@ -177,7 +177,7 @@ export async function handleFlutterwaveWebhook(payload) {
 			)
 		}
 
-		const dateOnly = updateEvent.date.split('T')[0]
+		const date = updateEvent.date.toISOString().split('T')[0]
 
 		// Send email
 		try {
@@ -187,7 +187,7 @@ export async function handleFlutterwaveWebhook(payload) {
 				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
 				updateEvent.title,
 				updateEvent.venue,
-				dateOnly,
+				date,
 			)
 
 			if (!emailResult.success) {
@@ -530,7 +530,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 			)
 		}
 
-		const dateOnly = updateEvent.date.split('T')[0]
+		const date = updateEvent.date.toISOString().split('T')[0]
 
 		// Send email
 		try {
@@ -540,7 +540,7 @@ export async function handleCryptoWebhook(rawBody, signature) {
 				`https://www.lofte.live/tickets?tx_ref=${updatedPayment.tx_ref}`,
 				updateEvent.title,
 				updateEvent.venue,
-				dateOnly,
+				date,
 			)
 
 			if (!emailResult.success) {
@@ -630,7 +630,7 @@ export async function regularTicketService(email, ticketName, eventId) {
 		throw new AppError('Event not found', 404)
 	}
 
-	const dateOnly = event.date.split('T')[0]
+	const date = event.date.toISOString().split('T')[0]
 
 	const eventName = event.title
 	const ticket = await generateRegularTicket(
