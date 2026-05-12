@@ -637,7 +637,7 @@ export async function regularTicketService(email, ticketName, eventId) {
 		email,
 		ticketName,
 		eventName,
-		date,
+		event.date,
 		event.venue,
 	)
 
@@ -679,7 +679,7 @@ export async function regularTicketService(email, ticketName, eventId) {
 	}
 
 	// Send platform verification email
-	await sendVerificationEmail(email, ticketName, link)
+	await sendVerificationEmail(email, ticketName, link, eventName, event.venue, date)
 
 	// Send custom host email if template exists
 	try {
