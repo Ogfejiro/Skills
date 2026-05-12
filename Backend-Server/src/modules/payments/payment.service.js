@@ -630,12 +630,14 @@ export async function regularTicketService(email, ticketName, eventId) {
 		throw new AppError('Event not found', 404)
 	}
 
+	const dateOnly = event.date.split('T')[0]
+
 	const eventName = event.title
 	const ticket = await generateRegularTicket(
 		email,
 		ticketName,
 		eventName,
-		event.date,
+		dateOnly,
 		event.venue,
 	)
 
