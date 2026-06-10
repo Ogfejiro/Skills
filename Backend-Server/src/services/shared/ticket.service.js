@@ -28,6 +28,7 @@ export async function generateTicket(tx_ref) {
 
 	const newTicket = await Ticket.create({
 		paymentId: payment._id,
+		eventId: payment.eventId,
 		ticketId,
 		tx_ref: payment.tx_ref,
 		ticketName: payment.ticketName,
@@ -41,8 +42,8 @@ export async function generateTicket(tx_ref) {
 	return newTicket
 }
 
-export async function generateRegularTicket(email, ticketName, eventName) {
-	const existingTicket = await Ticket.findOne({ customerEmail: email })
+export async function generateRegularTicket(email, ticketName, eventName, eventDate, location, eventId) {
+	const existingTicket = await Ticket.findOne({ customerEmail: email, eventName })
 	if (existingTicket?.amount === 0) {
 		return existingTicket
 	}
@@ -58,6 +59,7 @@ export async function generateRegularTicket(email, ticketName, eventName) {
 
 	const newTicket = await Ticket.create({
 		paymentId: nanoid(6),
+		eventId: eventId,
 		ticketId,
 		tx_ref: tx_ref,
 		ticketName: ticketName,
@@ -65,6 +67,8 @@ export async function generateRegularTicket(email, ticketName, eventName) {
 		status: 'active',
 		customerEmail: email,
 		eventName: eventName,
+		eventDate: eventDate,
+		location: location,
 		quantity: 1,
 	})
 

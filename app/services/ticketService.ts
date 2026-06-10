@@ -35,6 +35,37 @@ export interface GetTicketsResponse {
 	data: Ticket[]
 }
 
+export interface PurchasedTicket {
+	_id: string
+	paymentId: string
+	eventId?: string
+	ticketId: string
+	tx_ref: string
+	amount: number
+	currency?: string
+	status: string
+	quantity: number
+	customerEmail: string
+	ticketName: string
+	eventDate?: string
+	eventName?: string
+	location?: string
+	createdAt: string
+	updatedAt: string
+}
+
+export interface PurchasedTicketsResponse {
+	success: boolean
+	tickets: PurchasedTicket[]
+	totalBought: number
+	pagination: {
+		total: number
+		page: number
+		limit: number
+		pages: number
+	}
+}
+
 class TicketService {
 	private baseUrl =
 		process.env.NEXT_PUBLIC_API_URL || 'https://skills-k6pv.onrender.com'
@@ -236,6 +267,56 @@ class TicketService {
 			}
 		} catch (error) {
 			console.error('❌ Delete ticket service error:', error)
+			throw error
+		}
+	}
+
+	async getPurchasedTickets(
+		eventId: string,
+		token: string,
+		filters: {
+			page?: number
+			limit?: number
+			search?: string
+			ticketType?: string
+			startDate?: string
+			endDate?: string
+		} = {},
+	): Promise<PurchasedTicketsResponse> {
+		try {
+			const queryParams = new URLSearchParams()
+			if (filters.page) queryParams.append('page', String(filters.page))
+			if (filters.limit) queryParams.append('limit', String(filters.limit))
+			if (filters.search) queryParams.append('search', filters.search)
+			if (filters.ticketType) queryParams.append('ticketType', filters.ticketType)
+			if (filters.startDate) queryParams.append('startDate', filters.startDate)
+			if (filters.endDate) queryParams.append('endDate', filters.endDate)
+
+			const response = await fetch(
+				`${this.baseUrl}/api/tickets/${eventId}/purchases?${queryParams.toString()}`,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+						Authorization: `Bearer ${token}`,
+					},
+				},
+			)
+
+			if (!response.ok) {
+				const error = await response.json()
+				throw new Error(error.message || 'Failed to fetch purchased tickets')
+			}
+
+			const result = await response.json()
+			return {
+				success: true,
+				tickets: result.tickets || [],
+				totalBought: result.totalBought || 0,
+				pagination: result.pagination || { total: 0, page: 1, limit: 25, pages: 1 }
+			}
+		} catch (error) {
+			console.error('❌ Get purchased tickets service error:', error)
 			throw error
 		}
 	}

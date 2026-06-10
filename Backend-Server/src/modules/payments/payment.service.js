@@ -639,6 +639,7 @@ export async function regularTicketService(email, ticketName, eventId) {
 		eventName,
 		event.date,
 		event.venue,
+		eventId,
 	)
 
 	const link = `https://www.lofte.live/tickets?tx_ref=${ticket.tx_ref}`

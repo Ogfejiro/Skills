@@ -7,6 +7,10 @@ const ticketSchema = new mongoose.Schema(
 			unique: true,
 			required: true,
 		},
+		eventId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Event',
+		},
 		ticketId: { type: String, required: true, unique: true },
 		tx_ref: { type: String, required: true, unique: true },
 		amount: { type: Number, required: true },

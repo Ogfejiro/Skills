@@ -9,6 +9,7 @@ import {
 	getTickets,
 	editTicket,
 	deleteTicket,
+	getTicketPurchases,
 } from './ticket.controller.js'
 
 const router = express.Router()
@@ -17,6 +18,7 @@ router.use(profileLimiter)
 router.get('/public/:id', getTickets)
 
 router.use(authenticateToken, requireHostProfile)
+router.get('/:eventId/purchases', getTicketPurchases)
 router.get('/:id', getTickets)
 router.post('/:eventId', createTicket)
 router.put('/:id', editTicket)

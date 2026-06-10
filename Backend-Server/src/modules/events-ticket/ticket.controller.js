@@ -5,8 +5,10 @@ import {
 	getTicketsByEvent,
 	editTicketById,
 	deleteTicketById,
+	getPurchasedTicketsForEvent,
 } from './ticket.service.js'
 
+// ... existing controller code ...
 export const createTicket = asyncHandler(async (req, res) => {
 	const hostProfileId = req.hostProfile._id
 	const { eventId } = req.params
@@ -77,4 +79,34 @@ export const deleteTicket = asyncHandler(async (req, res) => {
 	const result = await deleteTicketById(id, hostProfileId)
 
 	res.status(200).json(result)
+})
+
+export const getTicketPurchases = asyncHandler(async (req, res) => {
+	const hostProfileId = req.hostProfile._id
+	const { eventId } = req.params
+
+	if (!eventId) {
+		throw new AppError('Event ID is required', 400)
+	}
+
+	const page = parseInt(req.query.page, 10) || 1
+	const limit = parseInt(req.query.limit, 10) || 25
+	const search = req.query.search || ''
+	const ticketType = req.query.ticketType || ''
+	const startDate = req.query.startDate || ''
+	const endDate = req.query.endDate || ''
+
+	const result = await getPurchasedTicketsForEvent(eventId, hostProfileId, {
+		page,
+		limit,
+		search,
+		ticketType,
+		startDate,
+		endDate,
+	})
+
+	res.status(200).json({
+		status: 'success',
+		...result,
+	})
 })

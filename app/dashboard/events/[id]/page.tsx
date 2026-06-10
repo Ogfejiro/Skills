@@ -70,6 +70,63 @@ export default function ViewEventPage() {
 		benefits: [''],
 	})
 
+	// Purchased Tickets Modal States
+	const [showPurchasesModal, setShowPurchasesModal] = useState(false)
+	const [purchasedTickets, setPurchasedTickets] = useState<any[]>([])
+	const [purchasedTotalBought, setPurchasedTotalBought] = useState(0)
+	const [purchasedTotalFiltered, setPurchasedTotalFiltered] = useState(0)
+	const [purchasedLoading, setPurchasedLoading] = useState(false)
+	const [purchasedPage, setPurchasedPage] = useState(1)
+	const [purchasedTotalPages, setPurchasedTotalPages] = useState(1)
+	const [purchasedSearch, setPurchasedSearch] = useState('')
+	const [searchTerm, setSearchTerm] = useState('')
+	const [purchasedTicketType, setPurchasedTicketType] = useState('')
+	const [purchasedStartDate, setPurchasedStartDate] = useState('')
+	const [purchasedEndDate, setPurchasedEndDate] = useState('')
+
+	const fetchPurchasedTickets = async (pageNumber = 1) => {
+		if (!token) return
+		setPurchasedLoading(true)
+		try {
+			const res = await ticketService.getPurchasedTickets(eventId, token, {
+				page: pageNumber,
+				limit: 25,
+				search: purchasedSearch,
+				ticketType: purchasedTicketType,
+				startDate: purchasedStartDate,
+				endDate: purchasedEndDate,
+			})
+			if (res.success) {
+				setPurchasedTickets(res.tickets)
+				setPurchasedTotalBought(res.totalBought)
+				setPurchasedTotalFiltered(res.pagination.total)
+				setPurchasedPage(res.pagination.page)
+				setPurchasedTotalPages(res.pagination.pages)
+			}
+		} catch (err) {
+			console.error('Failed to load ticket purchases:', err)
+		} finally {
+			setPurchasedLoading(false)
+		}
+	}
+
+	useEffect(() => {
+		if (showPurchasesModal && token) {
+			fetchPurchasedTickets(purchasedPage)
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [showPurchasesModal, purchasedSearch, purchasedTicketType, purchasedStartDate, purchasedEndDate, token])
+
+	const openPurchasesModal = () => {
+		setSearchTerm('')
+		setPurchasedSearch('')
+		setPurchasedTicketType('')
+		setPurchasedStartDate('')
+		setPurchasedEndDate('')
+		setPurchasedPage(1)
+		setShowPurchasesModal(true)
+	}
+
 	const isEventLocked =
 		event?.status === 'ended' || event?.status === 'cancelled'
 
@@ -408,205 +465,224 @@ export default function ViewEventPage() {
 		<main className='min-h-screen bg-black text-white'>
 			<Navbar />
 
-			{/* Event UI unchanged */}
-			<div className='container mx-auto px-4 pt-28 pb-12'>
+			<div className='max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12 space-y-8'>
 				<Link
 					href='/dashboard/host'
-					className='flex items-center gap-2 text-gold mb-4'
+					className='inline-flex items-center gap-2 text-gold'
 				>
 					<ArrowLeft className='w-4 h-4' />
 					Back
 				</Link>
-			</div>
 
-			{/* Event Banner */}
-
-			{event.banner && (
-				<div className='mb-8 rounded-xl overflow-hidden border border-gold/20'>
-					<img
-						src={event.banner}
-						alt={event.title}
-						className='w-full h-96 object-cover'
-					/>
-				</div>
-			)}
-
-			{/* Event Details Card */}
-
-			<div className='bg-gray-900/50 border border-gold/20 rounded-xl p-8 space-y-6'>
-				{/* Title and Status */}
-				<div>
-					<h1 className='text-4xl font-bold mb-4'>{event.title}</h1>
-					<div className='flex items-center gap-3 flex-wrap'>
-						{getStatusBadge(event.status)}{' '}
-						{event.category && (
-							<span className='inline-block px-3 py-1 text-sm bg-gray-800 text-gray-300 rounded-lg border border-gold/20'>
-								{event.category}
-							</span>
-						)}
-					</div>
-				</div>
-
-				{/* Key Information */}
-				<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-					<div className='space-y-4'>
-						<div className='flex items-start gap-3'>
-							<Calendar className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
-							<div>
-								<p className='text-gray-400 text-sm'>
-									{' '}
-									Date & Time{' '}
-								</p>
-								<p className='text-white'>
-									{' '}
-									{formatDate(event.date)}{' '}
-								</p>
-							</div>
-						</div>
-						<div className='flex items-start gap-3'>
-							<MapPin className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
-							<div>
-								<p className='text-gray-400 text-sm'>Venue</p>
-								<p className='text-white'>{event.venue}</p>
-							</div>
-						</div>
-						<div className='flex items-start gap-3'>
-							<Users className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
-							<div>
-								<p className='text-gray-400 text-sm'>
-									{' '}
-									Capacity{' '}
-								</p>
-								<p className='text-white'>
-									{' '}
-									{event.ticketsSold} / {event.capacity}{' '}
-									attendees{' '}
-								</p>
-							</div>
-						</div>
-					</div>
-
-					{/* Description */}
-					<div>
-						<p className='text-gray-400 text-sm mb-2'>
-							{' '}
-							Description{' '}
-						</p>
-						<p className='text-white whitespace-pre-wrap'>
-							{' '}
-							{event.description}{' '}
-						</p>
-					</div>
-				</div>
-
-				{/* Tags */}
-				{event.tags && event.tags.length > 0 && (
-					<div>
-						<p className='text-gray-400 text-sm mb-3'>Tags</p>
-						<div className='flex flex-wrap gap-2'>
-							{' '}
-							{event.tags.map((tag, index) => (
-								<span
-									key={index}
-									className='inline-flex items-center gap-1 px-3 py-1 bg-gold/10 text-gold rounded-lg border border-gold/30 text-sm'
-								>
-									<Tag className='w-3 h-3' /> {tag}
-								</span>
-							))}
-						</div>
+				{/* Event Banner */}
+				{event.banner && (
+					<div className='rounded-xl overflow-hidden border border-gold/20'>
+						<img
+							src={event.banner}
+							alt={event.title}
+							className='w-full h-96 object-cover'
+						/>
 					</div>
 				)}
-				<div className='flex gap-4 pt-4 flex-wrap'>
-					<Link
-						href={`/dashboard/events/${event._id}/edit`}
-						className='flex-1 min-w-[160px] px-6 py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition text-center'
-					>
-						{' '}
-						Edit Event{' '}
-					</Link>
-					<button
-						onClick={openEmailModal}
-						disabled={emailLoading}
-						className='flex-1 min-w-[160px] px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center flex items-center justify-center gap-2 disabled:opacity-50'
-					>
-						<Mail className='w-4 h-4' />
-						{emailLoading
-							? 'Loading...'
-							: eventEmail
-								? 'View Event Email'
-								: 'Create Event Email'}
-					</button>
-					<button
-						onClick={handleCopyShareLink}
-						className='flex-1 min-w-[160px] px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center flex items-center justify-center gap-2'
-					>
-						{linkCopied ? (
-							<>
-								<Check className='w-4 h-4 text-green-400' />
-								Link Copied!
-							</>
-						) : (
-							<>
-								<Share2 className='w-4 h-4' />
-								Copy Share Link
-							</>
-						)}
-					</button>
-				</div>
 
-				<div className='mt-4 bg-black/40 border border-gold/10 rounded-lg p-3 flex items-center gap-2 text-sm'>
-					<Copy className='w-4 h-4 text-gold flex-shrink-0' />
-					<code className='text-gray-300 truncate flex-1'>
-						{typeof window !== 'undefined'
-							? `${window.location.origin}/events/${event._id}`
-							: `/events/${event._id}`}
-					</code>
-				</div>
-			</div>
+				{/* Event Details Card */}
+				<div className='bg-gray-900/50 border border-gold/20 rounded-xl p-8 space-y-6'>
+					{/* Title and Status */}
+					<div>
+						<h1 className='text-4xl font-bold mb-4'>{event.title}</h1>
+						<div className='flex items-center gap-3 flex-wrap'>
+							{getStatusBadge(event.status)}{' '}
+							{event.category && (
+								<span className='inline-block px-3 py-1 text-sm bg-gray-800 text-gray-300 rounded-lg border border-gold/20'>
+									{event.category}
+								</span>
+							)}
+						</div>
+					</div>
 
-			<div className='mt-8 bg-gray-900/50 border border-gold/20 rounded-xl p-8'>
-				<div className='flex justify-between items-center mb-6'>
-					<h2 className='text-2xl font-bold'>Tickets</h2>
-
-					<button
-						onClick={openCreateModal}
-						disabled={isEventLocked}
-						className='px-4 py-2 bg-gold text-black rounded-lg disabled:opacity-40'
-					>
-						+ Add Ticket
-					</button>
-				</div>
-
-				{ticketsLoading ? (
-					<Loader2 className='animate-spin' />
-				) : tickets.length === 0 ? (
-					<p className='text-gray-400'>No tickets yet</p>
-				) : (
-					<div className='space-y-4'>
-						{tickets.map((ticket) => (
-							<div
-								key={ticket._id}
-								className='p-4 border border-gold/20 rounded-lg flex justify-between'
-							>
+					{/* Key Information */}
+					<div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+						<div className='space-y-4'>
+							<div className='flex items-start gap-3'>
+								<Calendar className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
 								<div>
-									<h3>{ticket.title}</h3>
-									<p>
-										{ticket.currency} {ticket.price}
+									<p className='text-gray-400 text-sm'>
+										{' '}
+										Date & Time{' '}
+									</p>
+									<p className='text-white'>
+										{' '}
+										{formatDate(event.date)}{' '}
 									</p>
 								</div>
-
-								<div className='flex gap-3'>
-									<Pencil
-										onClick={() => openEditModal(ticket)}
-									/>
-									<Trash2
-										onClick={() => handleDelete(ticket._id)}
-									/>
+							</div>
+							<div className='flex items-start gap-3'>
+								<MapPin className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
+								<div>
+									<p className='text-gray-400 text-sm'>Venue</p>
+									<p className='text-white'>{event.venue}</p>
 								</div>
 							</div>
-						))}
+							<div className='flex items-start gap-3'>
+								<Users className='w-5 h-5 text-gold flex-shrink-0 mt-1' />
+								<div>
+									<p className='text-gray-400 text-sm'>
+										{' '}
+										Capacity{' '}
+									</p>
+									<p className='text-white'>
+										{' '}
+										{event.ticketsSold} / {event.capacity}{' '}
+										attendees{' '}
+									</p>
+								</div>
+							</div>
+						</div>
+
+						{/* Description */}
+						<div>
+							<p className='text-gray-400 text-sm mb-2'>
+								{' '}
+								Description{' '}
+							</p>
+							<p className='text-white whitespace-pre-wrap'>
+								{' '}
+								{event.description}{' '}
+							</p>
+						</div>
 					</div>
-				)}
+
+					{/* Tags */}
+					{event.tags && event.tags.length > 0 && (
+						<div>
+							<p className='text-gray-400 text-sm mb-3'>Tags</p>
+							<div className='flex flex-wrap gap-2'>
+								{' '}
+								{event.tags.map((tag, index) => (
+									<span
+										key={index}
+										className='inline-flex items-center gap-1 px-3 py-1 bg-gold/10 text-gold rounded-lg border border-gold/30 text-sm'
+									>
+										<Tag className='w-3 h-3' /> {tag}
+									</span>
+								))}
+							</div>
+						</div>
+					)}
+					<div className='flex gap-4 pt-4 flex-wrap'>
+						<Link
+							href={`/dashboard/events/${event._id}/edit`}
+							className='flex-1 min-w-[160px] px-6 py-3 bg-gold text-black font-bold rounded-lg hover:opacity-90 transition text-center'
+						>
+							{' '}
+							Edit Event{' '}
+						</Link>
+						<button
+							onClick={openEmailModal}
+							disabled={emailLoading}
+							className='flex-1 min-w-[160px] px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center flex items-center justify-center gap-2 disabled:opacity-50'
+						>
+							<Mail className='w-4 h-4' />
+							{emailLoading
+								? 'Loading...'
+								: eventEmail
+									? 'View Event Email'
+									: 'Create Event Email'}
+						</button>
+						<button
+							onClick={handleCopyShareLink}
+							className='flex-1 min-w-[160px] px-6 py-3 border border-gold/30 rounded-lg hover:bg-gray-800 transition text-center flex items-center justify-center gap-2'
+						>
+							{linkCopied ? (
+								<>
+									<Check className='w-4 h-4 text-green-400' />
+									Link Copied!
+								</>
+							) : (
+								<>
+									<Share2 className='w-4 h-4' />
+									Copy Share Link
+								</>
+							)}
+						</button>
+					</div>
+
+					<div className='mt-4 bg-black/40 border border-gold/10 rounded-lg p-3 flex items-center gap-2 text-sm'>
+						<Copy className='w-4 h-4 text-gold flex-shrink-0' />
+						<code className='text-gray-300 truncate flex-1'>
+							{typeof window !== 'undefined'
+								? `${window.location.origin}/events/${event._id}`
+								: `/events/${event._id}`}
+						</code>
+					</div>
+				</div>
+
+				<div className='mt-8 bg-gray-900/50 border border-gold/20 rounded-xl p-8'>
+					<div className='flex justify-between items-center mb-6 flex-wrap gap-4'>
+						<h2 className='text-2xl font-bold'>Tickets</h2>
+
+						<div className='flex gap-3'>
+							<button
+								onClick={openPurchasesModal}
+								className='px-4 py-2 bg-gray-800 text-gold border border-gold/30 hover:bg-gray-700 font-semibold rounded-lg transition flex items-center gap-2'
+							>
+								View Sales
+							</button>
+							<button
+								onClick={openCreateModal}
+								disabled={isEventLocked}
+								className='px-4 py-2 bg-gold text-black font-semibold rounded-lg disabled:opacity-40 transition'
+							>
+								+ Add Ticket
+							</button>
+						</div>
+					</div>
+
+					{ticketsLoading ? (
+						<Loader2 className='animate-spin text-gold' />
+					) : tickets.length === 0 ? (
+						<p className='text-gray-400'>No tickets yet</p>
+					) : (
+						<div className='space-y-4'>
+							{tickets.map((ticket) => (
+								<div
+									key={ticket._id}
+									className='p-4 border border-gold/20 rounded-lg flex justify-between items-center bg-black/30 hover:border-gold/40 transition'
+								>
+									<div>
+										<h3 className='font-bold text-white text-lg'>{ticket.title}</h3>
+										<div className='flex items-center gap-4 mt-1 text-sm text-gray-400'>
+											<span>
+												Price: <span className='text-gold font-semibold'>{ticket.currency} {ticket.price.toLocaleString()}</span>
+											</span>
+											<span>•</span>
+											<span>
+												Sold: <span className='text-green-400 font-semibold'>{ticket.sold || 0}</span> / {ticket.quantity}
+											</span>
+										</div>
+									</div>
+
+									<div className='flex gap-3 text-gray-400'>
+										<button
+											onClick={() => openEditModal(ticket)}
+											className='p-2 hover:bg-gray-800 hover:text-white rounded transition'
+											title='Edit Ticket'
+										>
+											<Pencil className='w-4 h-4' />
+										</button>
+										<button
+											onClick={() => handleDelete(ticket._id)}
+											className='p-2 hover:bg-gray-800 hover:text-red-400 rounded transition'
+											title='Delete Ticket'
+										>
+											<Trash2 className='w-4 h-4' />
+										</button>
+									</div>
+								</div>
+							))}
+						</div>
+					)}
+				</div>
 			</div>
 
 			{/* ✅ MODAL FIXED */}
@@ -1017,6 +1093,296 @@ export default function ViewEventPage() {
 											: emailMode === 'create'
 												? 'Create Email'
 												: 'Save Changes'}
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
+				</div>
+			)}
+
+			{/* Purchased Tickets Modal */}
+			{showPurchasesModal && (
+				<div className='fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fadeIn'>
+					<div className='bg-gray-900 border border-gold/30 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl'>
+						{/* Modal Header */}
+						<div className='p-6 border-b border-gold/20 flex justify-between items-center bg-gray-900/90'>
+							<div>
+								<h2 className='text-2xl font-bold text-white flex items-center gap-2'>
+									<Users className='text-gold w-6 h-6' />
+									Attendee List & Ticket Sales
+								</h2>
+								<p className='text-sm text-gray-400 mt-1'>
+									Manage and track ticket sales for this event.
+								</p>
+							</div>
+							<button
+								onClick={() => setShowPurchasesModal(false)}
+								className='text-gray-400 hover:text-white transition p-2 hover:bg-gray-800 rounded-full'
+							>
+								<X className='w-6 h-6' />
+							</button>
+						</div>
+
+						{/* Quick Stats Banner */}
+						<div className='grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-black/40 border-b border-gold/10'>
+							<div className='bg-gray-800/40 border border-gold/10 rounded-xl p-4'>
+								<p className='text-xs text-gray-400 uppercase tracking-wider font-semibold'>Total Tickets Sold (Overall)</p>
+								<p className='text-2xl font-bold text-white mt-1'>{purchasedTotalBought}</p>
+							</div>
+							<div className='bg-gray-800/40 border border-gold/10 rounded-xl p-4'>
+								<p className='text-xs text-gray-400 uppercase tracking-wider font-semibold'>Filtered Sales Count</p>
+								<p className='text-2xl font-bold text-gold mt-1'>{purchasedTotalFiltered}</p>
+							</div>
+							<div className='bg-gray-800/40 border border-gold/10 rounded-xl p-4'>
+								<p className='text-xs text-gray-400 uppercase tracking-wider font-semibold'>Active Attendees</p>
+								<p className='text-2xl font-bold text-green-400 mt-1'>
+									{purchasedTickets.filter(t => t.status === 'active').length} this page
+								</p>
+							</div>
+						</div>
+
+						{/* Filters Area */}
+						<div className='p-6 border-b border-gold/10 flex flex-col md:flex-row gap-4 items-center justify-between bg-black/10'>
+							{/* Search Box */}
+							<form
+								onSubmit={(e) => {
+									e.preventDefault();
+									setPurchasedSearch(searchTerm);
+									setPurchasedPage(1);
+								}}
+								className='flex gap-2 w-full md:w-auto flex-1 max-w-md'
+							>
+								<input
+									type='text'
+									placeholder='Search by Ticket ID, email, or name...'
+									value={searchTerm}
+									onChange={(e) => setSearchTerm(e.target.value)}
+									className='flex-1 bg-gray-800 border border-gold/20 rounded-lg px-4 py-2 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-gold'
+								/>
+								<button
+									type='submit'
+									className='px-4 py-2 bg-gold text-black font-semibold rounded-lg hover:opacity-90 transition text-sm'
+								>
+									Search
+								</button>
+								{purchasedSearch && (
+									<button
+										type='button'
+										onClick={() => {
+											setSearchTerm('');
+											setPurchasedSearch('');
+											setPurchasedPage(1);
+										}}
+										className='px-3 py-2 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition text-sm'
+									>
+										Clear
+									</button>
+								)}
+							</form>
+
+							{/* Select & Date Filters */}
+							<div className='flex flex-wrap gap-3 w-full md:w-auto items-center'>
+								{/* Ticket Type Dropdown */}
+								<select
+									value={purchasedTicketType}
+									onChange={(e) => {
+										setPurchasedTicketType(e.target.value);
+										setPurchasedPage(1);
+									}}
+									className='bg-gray-800 border border-gold/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-gold'
+								>
+									<option value=''>All Ticket Types</option>
+									{tickets.map((t) => (
+										<option key={t._id} value={t.title}>
+											{t.title}
+										</option>
+									))}
+								</select>
+
+								{/* Date Range Inputs */}
+								<div className='flex items-center gap-2 bg-gray-800 border border-gold/20 rounded-lg px-2 py-1'>
+									<input
+										type='date'
+										value={purchasedStartDate}
+										onChange={(e) => {
+											setPurchasedStartDate(e.target.value);
+											setPurchasedPage(1);
+										}}
+										className='bg-transparent text-white text-xs focus:outline-none'
+										title="Start Date"
+									/>
+									<span className='text-gray-500 text-xs'>to</span>
+									<input
+										type='date'
+										value={purchasedEndDate}
+										onChange={(e) => {
+											setPurchasedEndDate(e.target.value);
+											setPurchasedPage(1);
+										}}
+										className='bg-transparent text-white text-xs focus:outline-none'
+										title="End Date"
+									/>
+									{(purchasedStartDate || purchasedEndDate) && (
+										<button
+											onClick={() => {
+												setPurchasedStartDate('');
+												setPurchasedEndDate('');
+												setPurchasedPage(1);
+											}}
+											className='text-red-400 hover:text-red-300 text-xs px-1 font-bold'
+										>
+											✕
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+
+						{/* Main Content Area (Table) */}
+						<div className='flex-1 overflow-y-auto p-6'>
+							{purchasedLoading ? (
+								<div className='flex flex-col items-center justify-center py-20 gap-3'>
+									<Loader2 className='w-10 h-10 text-gold animate-spin' />
+									<p className='text-sm text-gray-400'>Loading purchases...</p>
+								</div>
+							) : purchasedTickets.length === 0 ? (
+								<div className='text-center py-20 bg-gray-800/20 border border-gold/10 rounded-xl'>
+									<Users className='w-12 h-12 text-gray-600 mx-auto mb-3' />
+									<p className='text-gray-400 font-medium'>No tickets purchased matching your filters.</p>
+									{(purchasedSearch || purchasedTicketType || purchasedStartDate || purchasedEndDate) && (
+										<button
+											onClick={() => {
+												setSearchTerm('');
+												setPurchasedSearch('');
+												setPurchasedTicketType('');
+												setPurchasedStartDate('');
+												setPurchasedEndDate('');
+												setPurchasedPage(1);
+											}}
+											className='mt-4 text-sm text-gold hover:underline'
+										>
+											Reset all filters
+										</button>
+									)}
+								</div>
+							) : (
+								<div className='border border-gold/15 rounded-xl overflow-hidden bg-black/20'>
+									<div className='overflow-x-auto'>
+										<table className='w-full text-left border-collapse min-w-[800px]'>
+											<thead>
+												<tr className='bg-gray-800/60 border-b border-gold/10 text-xs font-semibold text-gray-400 uppercase'>
+													<th className='p-4'>Ticket ID</th>
+													<th className='p-4'>Attendee Email</th>
+													<th className='p-4'>Ticket Type</th>
+													<th className='p-4 text-center'>Qty</th>
+													<th className='p-4'>Amount</th>
+													<th className='p-4'>Purchase Date</th>
+													<th className='p-4'>Status</th>
+												</tr>
+											</thead>
+											<tbody className='divide-y divide-gold/10 text-sm text-gray-300'>
+												{purchasedTickets.map((ticket) => (
+													<tr key={ticket._id} className='hover:bg-gray-800/30 transition-colors'>
+														<td className='p-4 font-mono text-xs text-gold font-semibold selection:bg-gold/30 selection:text-white'>
+															{ticket.ticketId}
+														</td>
+														<td className='p-4 text-white font-medium'>{ticket.customerEmail}</td>
+														<td className='p-4'>
+															<span className='inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gold/10 text-gold border border-gold/20'>
+																{ticket.ticketName}
+															</span>
+														</td>
+														<td className='p-4 text-center font-bold'>{ticket.quantity}</td>
+														<td className='p-4 font-semibold text-white'>
+															{ticket.amount === 0 ? (
+																<span className='text-green-400 font-semibold uppercase text-xs'>Free</span>
+															) : (
+																`${ticket.currency || 'NGN'} ${(ticket.amount || 0).toLocaleString()}`
+															)}
+														</td>
+														<td className='p-4 text-gray-400 text-xs'>
+															{new Date(ticket.createdAt).toLocaleDateString('en-US', {
+																month: 'short',
+																day: 'numeric',
+																year: 'numeric',
+																hour: '2-digit',
+																minute: '2-digit'
+															})}
+														</td>
+														<td className='p-4'>
+															<span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${
+																ticket.status === 'active' 
+																	? 'bg-green-500/10 text-green-400 border-green-500/20' 
+																	: 'bg-red-500/10 text-red-400 border-red-500/20'
+															}`}>
+																{ticket.status}
+															</span>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							)}
+						</div>
+
+						{/* Modal Footer / Pagination */}
+						{purchasedTotalPages > 1 && (
+							<div className='p-6 border-t border-gold/20 flex items-center justify-between bg-gray-900/90'>
+								<span className='text-xs text-gray-400'>
+									Showing Page <strong className='text-white'>{purchasedPage}</strong> of <strong className='text-white'>{purchasedTotalPages}</strong>
+								</span>
+								<div className='flex items-center gap-2'>
+									<button
+										disabled={purchasedPage === 1 || purchasedLoading}
+										onClick={() => {
+											setPurchasedPage(purchasedPage - 1);
+										}}
+										className='px-3 py-1.5 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:hover:bg-gray-800 transition text-xs font-medium text-white'
+									>
+										Previous
+									</button>
+									
+									{/* Numeric page buttons */}
+									{Array.from({ length: purchasedTotalPages }, (_, i) => i + 1).map(pageNo => {
+										if (
+											purchasedTotalPages <= 5 ||
+											pageNo === 1 ||
+											pageNo === purchasedTotalPages ||
+											Math.abs(pageNo - purchasedPage) <= 1
+										) {
+											return (
+												<button
+													key={pageNo}
+													onClick={() => {
+														setPurchasedPage(pageNo);
+													}}
+													className={`px-3 py-1.5 rounded-lg transition text-xs font-semibold ${
+														purchasedPage === pageNo
+															? 'bg-gold text-black'
+															: 'bg-gray-800 hover:bg-gray-700 text-white border border-gold/10'
+													}`}
+												>
+													{pageNo}
+												</button>
+											);
+										}
+										if (pageNo === 2 || pageNo === purchasedTotalPages - 1) {
+											return <span key={pageNo} className='text-gray-500 px-1 text-xs'>...</span>;
+										}
+										return null;
+									})}
+
+									<button
+										disabled={purchasedPage === purchasedTotalPages || purchasedLoading}
+										onClick={() => {
+											setPurchasedPage(purchasedPage + 1);
+										}}
+										className='px-3 py-1.5 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:hover:bg-gray-800 transition text-xs font-medium text-white'
+									>
+										Next
 									</button>
 								</div>
 							</div>
