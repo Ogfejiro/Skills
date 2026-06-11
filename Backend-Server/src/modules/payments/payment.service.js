@@ -300,7 +300,34 @@ export async function TicketByRef(tx_ref) {
 	if (!ticket) {
 		throw new AppError('Ticket not found', 404)
 	}
-	return ticket
+
+	let eventName = ticket.eventName
+	let eventDate = ticket.eventDate
+	let location = ticket.location
+
+	let event
+	if (ticket.eventId) {
+		event = await Event.findById(ticket.eventId)
+	} else {
+		const payment = await Payment.findOne({ tx_ref: ticket.tx_ref })
+		if (payment?.eventId) {
+			event = await Event.findById(payment.eventId)
+		}
+	}
+
+	if (event) {
+		eventName = eventName || event.title
+		eventDate = eventDate || event.date
+		location = location || event.venue
+	}
+
+	return {
+		...ticket.toObject(),
+		eventName,
+		eventDate,
+		location,
+		eventLocation: location,
+	}
 }
 
 export async function TicketById(ticketId) {
@@ -313,17 +340,21 @@ export async function TicketById(ticketId) {
 	let eventDate = ticket.eventDate
 	let eventLocation = ticket.location
 
-	// if (ticket.tx_ref) {
-	// 	const payment = await Payment.findOne({ _id: ticket.tx_ref })
-	// 	if (payment?.eventId) {
-	// 		const event = await Event.findById(payment.eventId)
-	// 		if (event) {
-	// 			eventName = eventName || event.title
-	// 			eventDate = eventDate || event.date
-	// 			eventLocation = eventLocation || event.venue
-	// 		}
-	// 	}
-	// }
+	let event
+	if (ticket.eventId) {
+		event = await Event.findById(ticket.eventId)
+	} else {
+		const payment = await Payment.findOne({ tx_ref: ticket.tx_ref })
+		if (payment?.eventId) {
+			event = await Event.findById(payment.eventId)
+		}
+	}
+
+	if (event) {
+		eventName = eventName || event.title
+		eventDate = eventDate || event.date
+		eventLocation = eventLocation || event.venue
+	}
 
 	return {
 		ticketId: ticket.ticketId,
@@ -336,6 +367,7 @@ export async function TicketById(ticketId) {
 		eventName,
 		eventDate,
 		eventLocation,
+		location: eventLocation,
 		purchaseDate: ticket.createdAt,
 		tx_ref: ticket.tx_ref,
 	}
