@@ -22,6 +22,7 @@ import {
 	Share2,
 	Copy,
 	Check,
+	Download,
 } from 'lucide-react'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
@@ -83,6 +84,7 @@ export default function ViewEventPage() {
 	const [purchasedTicketType, setPurchasedTicketType] = useState('')
 	const [purchasedStartDate, setPurchasedStartDate] = useState('')
 	const [purchasedEndDate, setPurchasedEndDate] = useState('')
+	const [csvDownloading, setCsvDownloading] = useState(false)
 
 	const fetchPurchasedTickets = async (pageNumber = 1) => {
 		if (!token) return
@@ -125,6 +127,52 @@ export default function ViewEventPage() {
 		setPurchasedEndDate('')
 		setPurchasedPage(1)
 		setShowPurchasesModal(true)
+	}
+
+	const handleDownloadCSV = async () => {
+		if (!token || !event) return
+		setCsvDownloading(true)
+		try {
+			const res = await ticketService.getPurchasedTickets(eventId, token, {
+				page: 1,
+				limit: Math.max(10000, purchasedTotalFiltered || 0),
+				search: purchasedSearch,
+				ticketType: purchasedTicketType,
+				startDate: purchasedStartDate,
+				endDate: purchasedEndDate,
+			})
+			if (res.success && res.tickets) {
+				const headers = ['Ticket ID', 'Attendee Email', 'Ticket Type', 'Quantity', 'Amount', 'Currency', 'Purchase Date', 'Status']
+				const rows = res.tickets.map((ticket: any) => [
+					ticket.ticketId || '',
+					ticket.customerEmail || '',
+					ticket.ticketName || '',
+					ticket.quantity !== undefined ? ticket.quantity : 1,
+					ticket.amount !== undefined ? ticket.amount : 0,
+					ticket.currency || 'NGN',
+					new Date(ticket.createdAt).toLocaleString(),
+					ticket.status || ''
+				])
+				
+				const csvContent = [
+					headers.join(','),
+					...rows.map((row: any[]) => row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','))
+				].join('\n')
+				
+				const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+				const url = URL.createObjectURL(blob)
+				const link = document.createElement('a')
+				link.setAttribute('href', url)
+				link.setAttribute('download', `attendees_${event.title.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.csv`)
+				document.body.appendChild(link)
+				link.click()
+				document.body.removeChild(link)
+			}
+		} catch (err) {
+			console.error('Failed to export CSV:', err)
+		} finally {
+			setCsvDownloading(false)
+		}
 	}
 
 	const isEventLocked =
@@ -1103,47 +1151,56 @@ export default function ViewEventPage() {
 
 			{/* Purchased Tickets Modal */}
 			{showPurchasesModal && (
-				<div className='fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fadeIn'>
-					<div className='bg-gray-900 border border-gold/30 rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl'>
+				<div className='fixed inset-0 bg-black/80 flex items-center justify-center z-50 md:p-4 p-0 animate-fadeIn'>
+					<div className='bg-gray-900 border-0 md:border border-gold/30 rounded-none md:rounded-2xl w-full max-w-5xl h-full md:h-auto md:max-h-[90vh] overflow-hidden flex flex-col shadow-2xl'>
 						{/* Modal Header */}
-						<div className='p-6 border-b border-gold/20 flex justify-between items-center bg-gray-900/90'>
+						<div className='p-4 md:p-6 border-b border-gold/20 flex justify-between items-center bg-gray-900/90'>
 							<div>
-								<h2 className='text-2xl font-bold text-white flex items-center gap-2'>
-									<Users className='text-gold w-6 h-6' />
+								<h2 className='text-xl md:text-2xl font-bold text-white flex items-center gap-2'>
+									<Users className='text-gold w-5 h-5 md:w-6 md:h-6' />
 									Attendee List & Ticket Sales
 								</h2>
-								<p className='text-sm text-gray-400 mt-1'>
+								<p className='text-xs md:text-sm text-gray-400 mt-1'>
 									Manage and track ticket sales for this event.
 								</p>
 							</div>
 							<button
 								onClick={() => setShowPurchasesModal(false)}
-								className='text-gray-400 hover:text-white transition p-2 hover:bg-gray-800 rounded-full'
+								className='text-gray-400 hover:text-white transition p-1.5 md:p-2 hover:bg-gray-800 rounded-full cursor-pointer'
 							>
-								<X className='w-6 h-6' />
+								<X className='w-5 h-5 md:w-6 md:h-6' />
 							</button>
 						</div>
 
 						{/* Quick Stats Banner */}
-						<div className='grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 bg-black/40 border-b border-gold/10'>
-							<div className='bg-gray-800/40 border border-gold/10 rounded-xl p-4'>
-								<p className='text-xs text-gray-400 uppercase tracking-wider font-semibold'>Total Tickets Sold (Overall)</p>
-								<p className='text-2xl font-bold text-white mt-1'>{purchasedTotalBought}</p>
+						<div className='grid grid-cols-3 gap-2 md:gap-4 p-3 md:p-6 bg-black/40 border-b border-gold/10'>
+							<div className='bg-gray-800/40 border border-gold/10 rounded-lg md:rounded-xl p-2.5 md:p-4'>
+								<p className='text-[10px] md:text-xs text-gray-400 uppercase tracking-wider font-semibold'>
+									<span className='hidden md:inline'>Total Tickets Sold (Overall)</span>
+									<span className='md:hidden'>Total Sold</span>
+								</p>
+								<p className='text-lg md:text-2xl font-bold text-white mt-0.5 md:mt-1'>{purchasedTotalBought}</p>
 							</div>
-							<div className='bg-gray-800/40 border border-gold/10 rounded-xl p-4'>
-								<p className='text-xs text-gray-400 uppercase tracking-wider font-semibold'>Filtered Sales Count</p>
-								<p className='text-2xl font-bold text-gold mt-1'>{purchasedTotalFiltered}</p>
+							<div className='bg-gray-800/40 border border-gold/10 rounded-lg md:rounded-xl p-2.5 md:p-4'>
+								<p className='text-[10px] md:text-xs text-gray-400 uppercase tracking-wider font-semibold'>
+									<span className='hidden md:inline'>Filtered Sales Count</span>
+									<span className='md:hidden'>Filtered</span>
+								</p>
+								<p className='text-lg md:text-2xl font-bold text-gold mt-0.5 md:mt-1'>{purchasedTotalFiltered}</p>
 							</div>
-							<div className='bg-gray-800/40 border border-gold/10 rounded-xl p-4'>
-								<p className='text-xs text-gray-400 uppercase tracking-wider font-semibold'>Active Attendees</p>
-								<p className='text-2xl font-bold text-green-400 mt-1'>
-									{purchasedTickets.filter(t => t.status === 'active').length} this page
+							<div className='bg-gray-800/40 border border-gold/10 rounded-lg md:rounded-xl p-2.5 md:p-4'>
+								<p className='text-[10px] md:text-xs text-gray-400 uppercase tracking-wider font-semibold'>
+									<span className='hidden md:inline'>Active Attendees</span>
+									<span className='md:hidden'>Active</span>
+								</p>
+								<p className='text-lg md:text-2xl font-bold text-green-400 mt-0.5 md:mt-1'>
+									{purchasedTickets.filter(t => t.status === 'active').length} <span className='text-[10px] md:text-xs font-normal text-gray-400'>/ pg</span>
 								</p>
 							</div>
 						</div>
 
 						{/* Filters Area */}
-						<div className='p-6 border-b border-gold/10 flex flex-col md:flex-row gap-4 items-center justify-between bg-black/10'>
+						<div className='p-3 md:p-6 border-b border-gold/10 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between bg-black/10'>
 							{/* Search Box */}
 							<form
 								onSubmit={(e) => {
@@ -1151,7 +1208,7 @@ export default function ViewEventPage() {
 									setPurchasedSearch(searchTerm);
 									setPurchasedPage(1);
 								}}
-								className='flex gap-2 w-full md:w-auto flex-1 max-w-md'
+								className='flex gap-2 w-full lg:w-auto flex-1 lg:max-w-md'
 							>
 								<input
 									type='text'
@@ -1162,7 +1219,7 @@ export default function ViewEventPage() {
 								/>
 								<button
 									type='submit'
-									className='px-4 py-2 bg-gold text-black font-semibold rounded-lg hover:opacity-90 transition text-sm'
+									className='px-4 py-2 bg-gold text-black font-semibold rounded-lg hover:opacity-90 transition text-sm cursor-pointer'
 								>
 									Search
 								</button>
@@ -1174,15 +1231,15 @@ export default function ViewEventPage() {
 											setPurchasedSearch('');
 											setPurchasedPage(1);
 										}}
-										className='px-3 py-2 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition text-sm'
+										className='px-3 py-2 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition text-sm cursor-pointer'
 									>
 										Clear
 									</button>
 								)}
 							</form>
 
-							{/* Select & Date Filters */}
-							<div className='flex flex-wrap gap-3 w-full md:w-auto items-center'>
+							{/* Select, Date Filters & Export */}
+							<div className='flex flex-wrap gap-3 items-center justify-between sm:justify-start w-full lg:w-auto'>
 								{/* Ticket Type Dropdown */}
 								<select
 									value={purchasedTicketType}
@@ -1190,7 +1247,7 @@ export default function ViewEventPage() {
 										setPurchasedTicketType(e.target.value);
 										setPurchasedPage(1);
 									}}
-									className='bg-gray-800 border border-gold/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-gold'
+									className='bg-gray-800 border border-gold/20 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-gold cursor-pointer'
 								>
 									<option value=''>All Ticket Types</option>
 									{tickets.map((t) => (
@@ -1209,8 +1266,8 @@ export default function ViewEventPage() {
 											setPurchasedStartDate(e.target.value);
 											setPurchasedPage(1);
 										}}
-										className='bg-transparent text-white text-xs focus:outline-none'
-										title="Start Date"
+										className='bg-transparent text-white text-xs focus:outline-none cursor-pointer'
+										title='Start Date'
 									/>
 									<span className='text-gray-500 text-xs'>to</span>
 									<input
@@ -1220,8 +1277,8 @@ export default function ViewEventPage() {
 											setPurchasedEndDate(e.target.value);
 											setPurchasedPage(1);
 										}}
-										className='bg-transparent text-white text-xs focus:outline-none'
-										title="End Date"
+										className='bg-transparent text-white text-xs focus:outline-none cursor-pointer'
+										title='End Date'
 									/>
 									{(purchasedStartDate || purchasedEndDate) && (
 										<button
@@ -1230,17 +1287,37 @@ export default function ViewEventPage() {
 												setPurchasedEndDate('');
 												setPurchasedPage(1);
 											}}
-											className='text-red-400 hover:text-red-300 text-xs px-1 font-bold'
+											className='text-red-400 hover:text-red-300 text-xs px-1 font-bold cursor-pointer'
 										>
 											✕
 										</button>
 									)}
 								</div>
+
+								{/* Download CSV Button */}
+								<button
+									onClick={handleDownloadCSV}
+									disabled={csvDownloading || purchasedTickets.length === 0}
+									className='px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white font-semibold rounded-lg transition text-sm flex items-center justify-center gap-2 w-full sm:w-auto cursor-pointer'
+									title='Download Attendees List as CSV'
+								>
+									{csvDownloading ? (
+										<>
+											<Loader2 className='w-4 h-4 animate-spin' />
+											<span>Exporting...</span>
+										</>
+									) : (
+										<>
+											<Download className='w-4 h-4' />
+											<span>Download CSV</span>
+										</>
+									)}
+								</button>
 							</div>
 						</div>
 
 						{/* Main Content Area (Table) */}
-						<div className='flex-1 overflow-y-auto p-6'>
+						<div className='flex-1 overflow-y-auto p-3 md:p-6'>
 							{purchasedLoading ? (
 								<div className='flex flex-col items-center justify-center py-20 gap-3'>
 									<Loader2 className='w-10 h-10 text-gold animate-spin' />
@@ -1330,17 +1407,17 @@ export default function ViewEventPage() {
 
 						{/* Modal Footer / Pagination */}
 						{purchasedTotalPages > 1 && (
-							<div className='p-6 border-t border-gold/20 flex items-center justify-between bg-gray-900/90'>
+							<div className='p-4 md:p-6 border-t border-gold/20 flex flex-col sm:flex-row gap-4 items-center justify-between bg-gray-900/90'>
 								<span className='text-xs text-gray-400'>
 									Showing Page <strong className='text-white'>{purchasedPage}</strong> of <strong className='text-white'>{purchasedTotalPages}</strong>
 								</span>
-								<div className='flex items-center gap-2'>
+								<div className='flex flex-wrap items-center justify-center gap-2'>
 									<button
 										disabled={purchasedPage === 1 || purchasedLoading}
 										onClick={() => {
 											setPurchasedPage(purchasedPage - 1);
 										}}
-										className='px-3 py-1.5 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:hover:bg-gray-800 transition text-xs font-medium text-white'
+										className='px-3 py-1.5 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:hover:bg-gray-800 transition text-xs font-medium text-white cursor-pointer'
 									>
 										Previous
 									</button>
@@ -1359,7 +1436,7 @@ export default function ViewEventPage() {
 													onClick={() => {
 														setPurchasedPage(pageNo);
 													}}
-													className={`px-3 py-1.5 rounded-lg transition text-xs font-semibold ${
+													className={`px-3 py-1.5 rounded-lg transition text-xs font-semibold cursor-pointer ${
 														purchasedPage === pageNo
 															? 'bg-gold text-black'
 															: 'bg-gray-800 hover:bg-gray-700 text-white border border-gold/10'
@@ -1380,7 +1457,7 @@ export default function ViewEventPage() {
 										onClick={() => {
 											setPurchasedPage(purchasedPage + 1);
 										}}
-										className='px-3 py-1.5 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:hover:bg-gray-800 transition text-xs font-medium text-white'
+										className='px-3 py-1.5 bg-gray-800 border border-gold/20 rounded-lg hover:bg-gray-700 disabled:opacity-40 disabled:hover:bg-gray-800 transition text-xs font-medium text-white cursor-pointer'
 									>
 										Next
 									</button>
