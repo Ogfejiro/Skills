@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+Backend-Server/attendees_ties_web3_onboarding_event 3.csv
+
+Backend-Server/body.txt
